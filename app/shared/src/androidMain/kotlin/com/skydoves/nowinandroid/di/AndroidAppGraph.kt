@@ -29,8 +29,8 @@ import dev.zacsweers.metro.SingleIn
 @DependencyGraph(AppScope::class)
 @SingleIn(AppScope::class)
 interface AndroidAppGraph : AppGraph {
-    @DependencyGraph.Factory
-    fun interface Factory {
-        fun create(@Provides context: Context): AndroidAppGraph
-    }
+  @DependencyGraph.Factory
+  fun interface Factory {
+    fun create(@Provides context: Context): AndroidAppGraph
+  }
 }

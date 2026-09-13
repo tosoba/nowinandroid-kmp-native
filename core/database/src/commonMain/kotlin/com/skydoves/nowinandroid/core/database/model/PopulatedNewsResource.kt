@@ -21,25 +21,24 @@ import androidx.room3.Junction
 import androidx.room3.Relation
 import com.skydoves.nowinandroid.core.model.data.NewsResource
 
-/**
- * External data layer representation of a fully populated NiA news resource
- */
+/** External data layer representation of a fully populated NiA news resource */
 data class PopulatedNewsResource(
-    @Embedded
-    val entity: NewsResourceEntity,
-    @Relation(
-        parentColumns = ["id"],
-        entityColumns = ["id"],
-        associateBy = Junction(
-            value = NewsResourceTopicCrossRef::class,
-            parentColumns = ["news_resource_id"],
-            entityColumns = ["topic_id"],
-        ),
-    )
-    val topics: List<TopicEntity>,
+  @Embedded val entity: NewsResourceEntity,
+  @Relation(
+    parentColumns = ["id"],
+    entityColumns = ["id"],
+    associateBy =
+      Junction(
+        value = NewsResourceTopicCrossRef::class,
+        parentColumns = ["news_resource_id"],
+        entityColumns = ["topic_id"],
+      ),
+  )
+  val topics: List<TopicEntity>,
 )
 
-fun PopulatedNewsResource.asExternalModel() = NewsResource(
+fun PopulatedNewsResource.asExternalModel() =
+  NewsResource(
     id = entity.id,
     title = entity.title,
     content = entity.content,
@@ -48,10 +47,11 @@ fun PopulatedNewsResource.asExternalModel() = NewsResource(
     publishDate = entity.publishDate,
     type = entity.type,
     topics = topics.map(TopicEntity::asExternalModel),
-)
+  )
 
-fun PopulatedNewsResource.asFtsEntity() = NewsResourceFtsEntity(
+fun PopulatedNewsResource.asFtsEntity() =
+  NewsResourceFtsEntity(
     newsResourceId = entity.id,
     title = entity.title,
     content = entity.content,
-)
+  )

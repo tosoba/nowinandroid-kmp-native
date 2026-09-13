@@ -18,12 +18,10 @@ package com.skydoves.nowinandroid.core.ui.platform
 
 import androidx.compose.runtime.Composable
 
-@Composable
-actual fun ReportFullyDrawnWhen(predicate: () -> Boolean) = Unit
+@Composable actual fun ReportFullyDrawnWhen(predicate: () -> Boolean) = Unit
 
 /**
  * iOS asks for notification authorisation at the point of posting one, and the desktop tray needs
  * no permission at all.
  */
-@Composable
-actual fun NotificationPermissionEffect() = Unit
+@Composable actual fun NotificationPermissionEffect() = Unit

@@ -26,12 +26,12 @@ import kotlinx.browser.document
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
-    val appGraph = createGraph<WasmAppGraph>()
-    // A page has no background scheduler, so the one-off start-up sync is requested here, exactly
-    // as the desktop app does.
-    appGraph.syncManager.initializeSync()
+  val appGraph = createGraph<WasmAppGraph>()
+  // A page has no background scheduler, so the one-off start-up sync is requested here, exactly
+  // as the desktop app does.
+  appGraph.syncManager.initializeSync()
 
-    ComposeViewport(document.body!!) {
-        NiaAppRoot(appGraph)
-    }
+  ComposeViewport(document.body!!) {
+    NiaAppRoot(appGraph)
+  }
 }

@@ -15,18 +15,18 @@
  */
 
 plugins {
-    id("nowinandroid.kmp.feature")
+  id("nowinandroid.kmp.feature")
 }
 
 kotlin {
-    sourceSets {
-        commonMain.dependencies {
-            api(projects.feature.topic.api)
-        }
-        // The error state is asserted under a real composition, which needs a window and so runs
-        // off Android; see TopicScreenErrorTest.
-        getByName("nonAndroidTest").dependencies {
-            implementation(libs.compose.ui.test)
-        }
+  sourceSets {
+    commonMain.dependencies {
+      api(projects.feature.topic.api)
     }
+    // The error state is asserted under a real composition, which needs a window and so runs
+    // off Android; see TopicScreenErrorTest.
+    getByName("nonAndroidTest").dependencies {
+      implementation(libs.compose.ui.test)
+    }
+  }
 }

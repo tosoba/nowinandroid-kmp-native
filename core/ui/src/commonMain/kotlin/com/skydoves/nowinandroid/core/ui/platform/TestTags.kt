@@ -19,7 +19,7 @@ package com.skydoves.nowinandroid.core.ui.platform
 import androidx.compose.ui.Modifier
 
 /**
- * Exposes Compose `testTag`s as resource ids so UI Automator can see them from outside the
- * process. Android only; a no-op everywhere else.
+ * Exposes Compose `testTag`s as resource ids so UI Automator can see them from outside the process.
+ * Android only; a no-op everywhere else.
  */
 expect fun Modifier.enableTestTagsAsResourceId(): Modifier

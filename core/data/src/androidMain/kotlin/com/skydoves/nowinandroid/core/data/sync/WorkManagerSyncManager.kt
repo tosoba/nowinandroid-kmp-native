@@ -26,23 +26,26 @@ import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-/**
- * [SyncManager] backed by [WorkInfo] from [WorkManager]
- */
+/** [SyncManager] backed by [WorkInfo] from [WorkManager] */
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class WorkManagerSyncManager(private val context: Context, private val synchronizer: NiaSynchronizer) : SyncManager {
+class WorkManagerSyncManager(
+  private val context: Context,
+  private val synchronizer: NiaSynchronizer,
+) : SyncManager {
 
-    override val isSyncing: Flow<Boolean> =
-        WorkManager.getInstance(context)
-            .getWorkInfosForUniqueWorkFlow(SYNC_WORK_NAME)
-            .map { workInfos -> workInfos.anyRunning }
-
-    override fun requestSync() {
-        SyncWorkerEntryPoint.synchronizer = synchronizer
-        context.enqueueStartUpSync()
+  override val isSyncing: Flow<Boolean> =
+    WorkManager.getInstance(context).getWorkInfosForUniqueWorkFlow(SYNC_WORK_NAME).map { workInfos
+      ->
+      workInfos.anyRunning
     }
+
+  override fun requestSync() {
+    SyncWorkerEntryPoint.synchronizer = synchronizer
+    context.enqueueStartUpSync()
+  }
 }
 
-private val List<WorkInfo>.anyRunning get() = any { it.state == WorkInfo.State.RUNNING }
+private val List<WorkInfo>.anyRunning
+  get() = any { it.state == WorkInfo.State.RUNNING }

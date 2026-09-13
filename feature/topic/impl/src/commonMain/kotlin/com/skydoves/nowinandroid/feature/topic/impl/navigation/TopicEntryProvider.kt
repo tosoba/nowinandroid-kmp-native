@@ -30,17 +30,16 @@ import dev.zacsweers.metrox.viewmodel.assistedMetroViewModel
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 fun EntryProviderScope<NavKey>.topicEntry(navigator: Navigator) {
-    entry<TopicNavKey>(
-        metadata = ListDetailSceneStrategy.detailPane(),
-    ) { key ->
-        val id = key.id
-        TopicScreen(
-            showBackButton = true,
-            onBackClick = { navigator.goBack() },
-            onTopicClick = navigator::navigateToTopic,
-            viewModel = assistedMetroViewModel<TopicViewModel, Factory>(key = id) {
-                create(id)
-            },
-        )
-    }
+  entry<TopicNavKey>(metadata = ListDetailSceneStrategy.detailPane()) { key ->
+    val id = key.id
+    TopicScreen(
+      showBackButton = true,
+      onBackClick = { navigator.goBack() },
+      onTopicClick = navigator::navigateToTopic,
+      viewModel =
+        assistedMetroViewModel<TopicViewModel, Factory>(key = id) {
+          create(id)
+        },
+    )
+  }
 }

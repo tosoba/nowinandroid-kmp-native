@@ -38,32 +38,34 @@ import platform.Foundation.NSUserDomainMask
 @ContributesTo(AppScope::class)
 object IosDataStoreBindings {
 
-    @Provides
-    fun providesDataStorePathProducer(): DataStorePathProducer = DataStorePathProducer { fileName ->
-        "${documentDirectory()}/$fileName"
-    }
+  @Provides
+  fun providesDataStorePathProducer(): DataStorePathProducer = DataStorePathProducer { fileName ->
+    "${documentDirectory()}/$fileName"
+  }
 
-    @OptIn(ExperimentalForeignApi::class)
-    private fun documentDirectory(): String {
-        val url: NSURL? = NSFileManager.defaultManager.URLForDirectory(
-            directory = NSDocumentDirectory,
-            inDomain = NSUserDomainMask,
-            appropriateForURL = null,
-            create = false,
-            error = null,
-        )
-        return requireNotNull(url?.path) { "Unable to resolve the iOS documents directory" }
-    }
+  @OptIn(ExperimentalForeignApi::class)
+  private fun documentDirectory(): String {
+    val url: NSURL? =
+      NSFileManager.defaultManager.URLForDirectory(
+        directory = NSDocumentDirectory,
+        inDomain = NSUserDomainMask,
+        appropriateForURL = null,
+        create = false,
+        error = null,
+      )
+    return requireNotNull(url?.path) { "Unable to resolve the iOS documents directory" }
+  }
 
-    @Provides
-    @SingleIn(AppScope::class)
-    fun providesUserPreferencesDataStore(
-        pathProducer: DataStorePathProducer,
-        @ApplicationScope scope: CoroutineScope,
-        @IoDispatcher ioDispatcher: CoroutineDispatcher,
-    ): DataStore<UserPreferences> = okioUserPreferencesDataStore(
-        fileSystem = FileSystem.SYSTEM,
-        pathProducer = pathProducer,
-        scope = CoroutineScope(scope.coroutineContext + ioDispatcher),
+  @Provides
+  @SingleIn(AppScope::class)
+  fun providesUserPreferencesDataStore(
+    pathProducer: DataStorePathProducer,
+    @ApplicationScope scope: CoroutineScope,
+    @IoDispatcher ioDispatcher: CoroutineDispatcher,
+  ): DataStore<UserPreferences> =
+    okioUserPreferencesDataStore(
+      fileSystem = FileSystem.SYSTEM,
+      pathProducer = pathProducer,
+      scope = CoroutineScope(scope.coroutineContext + ioDispatcher),
     )
 }

@@ -27,21 +27,18 @@ import kotlinx.coroutines.flow.map
 
 class TestTopicsRepository : TopicsRepository {
 
-    private val topicsFlow: MutableSharedFlow<List<Topic>> =
-        MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+  private val topicsFlow: MutableSharedFlow<List<Topic>> =
+    MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
-    override fun getTopics(): Flow<List<Topic>> = topicsFlow
+  override fun getTopics(): Flow<List<Topic>> = topicsFlow
 
-    override fun getTopic(id: String): Flow<Topic> = topicsFlow
-        .map { topics -> topics.find { it.id == id } }
-        .filterNotNull()
+  override fun getTopic(id: String): Flow<Topic> =
+    topicsFlow.map { topics -> topics.find { it.id == id } }.filterNotNull()
 
-    /**
-     * A test-only API to allow controlling the list of topics from tests.
-     */
-    fun sendTopics(topics: List<Topic>) {
-        topicsFlow.tryEmit(topics)
-    }
+  /** A test-only API to allow controlling the list of topics from tests. */
+  fun sendTopics(topics: List<Topic>) {
+    topicsFlow.tryEmit(topics)
+  }
 
-    override suspend fun syncWith(synchronizer: Synchronizer): Boolean = true
+  override suspend fun syncWith(synchronizer: Synchronizer): Boolean = true
 }

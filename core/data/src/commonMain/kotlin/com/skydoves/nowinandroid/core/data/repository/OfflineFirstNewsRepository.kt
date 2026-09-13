@@ -46,102 +46,112 @@ import kotlinx.coroutines.flow.map
 private const val SYNC_BATCH_SIZE = 40
 
 /**
- * Disk storage backed implementation of the [NewsRepository].
- * Reads are exclusively from local storage to support offline access.
+ * Disk storage backed implementation of the [NewsRepository]. Reads are exclusively from local
+ * storage to support offline access.
  */
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class OfflineFirstNewsRepository(
-    private val niaPreferencesDataSource: NiaPreferencesDataSource,
-    private val newsResourceDao: NewsResourceDao,
-    private val topicDao: TopicDao,
-    private val network: NiaNetworkDataSource,
-    private val notifier: Notifier,
+  private val niaPreferencesDataSource: NiaPreferencesDataSource,
+  private val newsResourceDao: NewsResourceDao,
+  private val topicDao: TopicDao,
+  private val network: NiaNetworkDataSource,
+  private val notifier: Notifier,
 ) : NewsRepository {
 
-    override fun getNewsResources(query: NewsResourceQuery): Flow<List<NewsResource>> =
-        newsResourceDao.getNewsResources(
-            useFilterTopicIds = query.filterTopicIds != null,
-            filterTopicIds = query.filterTopicIds ?: emptySet(),
-            useFilterNewsIds = query.filterNewsIds != null,
-            filterNewsIds = query.filterNewsIds ?: emptySet(),
-        ).map { it.map(PopulatedNewsResource::asExternalModel) }
+  override fun getNewsResources(query: NewsResourceQuery): Flow<List<NewsResource>> =
+    newsResourceDao
+      .getNewsResources(
+        useFilterTopicIds = query.filterTopicIds != null,
+        filterTopicIds = query.filterTopicIds ?: emptySet(),
+        useFilterNewsIds = query.filterNewsIds != null,
+        filterNewsIds = query.filterNewsIds ?: emptySet(),
+      )
+      .map { it.map(PopulatedNewsResource::asExternalModel) }
 
-    override suspend fun syncWith(synchronizer: Synchronizer): Boolean {
-        var isFirstSync = false
-        return synchronizer.changeListSync(
-            versionReader = ChangeListVersions::newsResourceVersion,
-            changeListFetcher = { currentVersion ->
-                isFirstSync = currentVersion <= 0
-                network.getNewsResourceChangeList(after = currentVersion)
-            },
-            versionUpdater = { latestVersion ->
-                copy(newsResourceVersion = latestVersion)
-            },
-            modelDeleter = newsResourceDao::deleteNewsResources,
-            modelUpdater = { changedIds ->
-                val userData = niaPreferencesDataSource.userData.first()
-                val hasOnboarded = userData.shouldHideOnboarding
-                val followedTopicIds = userData.followedTopics
+  override suspend fun syncWith(synchronizer: Synchronizer): Boolean {
+    var isFirstSync = false
+    return synchronizer.changeListSync(
+      versionReader = ChangeListVersions::newsResourceVersion,
+      changeListFetcher = { currentVersion ->
+        isFirstSync = currentVersion <= 0
+        network.getNewsResourceChangeList(after = currentVersion)
+      },
+      versionUpdater = { latestVersion ->
+        copy(newsResourceVersion = latestVersion)
+      },
+      modelDeleter = newsResourceDao::deleteNewsResources,
+      modelUpdater = { changedIds ->
+        val userData = niaPreferencesDataSource.userData.first()
+        val hasOnboarded = userData.shouldHideOnboarding
+        val followedTopicIds = userData.followedTopics
 
-                val existingNewsResourceIdsThatHaveChanged = when {
-                    hasOnboarded -> newsResourceDao.getNewsResourceIds(
-                        useFilterTopicIds = true,
-                        filterTopicIds = followedTopicIds,
-                        useFilterNewsIds = true,
-                        filterNewsIds = changedIds.toSet(),
-                    ).first().toSet()
-                    // No need to retrieve anything if notifications won't be sent
-                    else -> emptySet()
-                }
+        val existingNewsResourceIdsThatHaveChanged =
+          when {
+            hasOnboarded ->
+              newsResourceDao
+                .getNewsResourceIds(
+                  useFilterTopicIds = true,
+                  filterTopicIds = followedTopicIds,
+                  useFilterNewsIds = true,
+                  filterNewsIds = changedIds.toSet(),
+                )
+                .first()
+                .toSet()
+            // No need to retrieve anything if notifications won't be sent
+            else -> emptySet()
+          }
 
-                if (isFirstSync) {
-                    // When we first retrieve news, mark everything viewed, so that we aren't
-                    // overwhelmed with all historical news.
-                    niaPreferencesDataSource.setNewsResourcesViewed(changedIds, true)
-                }
+        if (isFirstSync) {
+          // When we first retrieve news, mark everything viewed, so that we aren't
+          // overwhelmed with all historical news.
+          niaPreferencesDataSource.setNewsResourcesViewed(changedIds, true)
+        }
 
-                // Obtain the news resources which have changed from the network and upsert them
-                // locally
-                changedIds.chunked(SYNC_BATCH_SIZE).forEach { chunkedIds ->
-                    val networkNewsResources = network.getNewsResources(ids = chunkedIds)
-                        .getOrThrow()
+        // Obtain the news resources which have changed from the network and upsert them
+        // locally
+        changedIds.chunked(SYNC_BATCH_SIZE).forEach { chunkedIds ->
+          val networkNewsResources = network.getNewsResources(ids = chunkedIds).getOrThrow()
 
-                    // Order of invocation matters to satisfy id and foreign key constraints!
+          // Order of invocation matters to satisfy id and foreign key constraints!
 
-                    topicDao.insertOrIgnoreTopics(
-                        topicEntities = networkNewsResources
-                            .map(NetworkNewsResource::topicEntityShells)
-                            .flatten()
-                            .distinctBy(TopicEntity::id),
-                    )
-                    newsResourceDao.upsertNewsResources(
-                        newsResourceEntities = networkNewsResources.map(
-                            NetworkNewsResource::asEntity,
-                        ),
-                    )
-                    newsResourceDao.insertOrIgnoreTopicCrossRefEntities(
-                        newsResourceTopicCrossReferences = networkNewsResources
-                            .map(NetworkNewsResource::topicCrossReferences)
-                            .distinct()
-                            .flatten(),
-                    )
-                }
+          topicDao.insertOrIgnoreTopics(
+            topicEntities =
+              networkNewsResources
+                .map(NetworkNewsResource::topicEntityShells)
+                .flatten()
+                .distinctBy(TopicEntity::id)
+          )
+          newsResourceDao.upsertNewsResources(
+            newsResourceEntities = networkNewsResources.map(NetworkNewsResource::asEntity)
+          )
+          newsResourceDao.insertOrIgnoreTopicCrossRefEntities(
+            newsResourceTopicCrossReferences =
+              networkNewsResources
+                .map(NetworkNewsResource::topicCrossReferences)
+                .distinct()
+                .flatten()
+          )
+        }
 
-                if (hasOnboarded) {
-                    val addedNewsResources = newsResourceDao.getNewsResources(
-                        useFilterTopicIds = true,
-                        filterTopicIds = followedTopicIds,
-                        useFilterNewsIds = true,
-                        filterNewsIds = changedIds.toSet() - existingNewsResourceIdsThatHaveChanged,
-                    ).first().map(PopulatedNewsResource::asExternalModel)
+        if (hasOnboarded) {
+          val addedNewsResources =
+            newsResourceDao
+              .getNewsResources(
+                useFilterTopicIds = true,
+                filterTopicIds = followedTopicIds,
+                useFilterNewsIds = true,
+                filterNewsIds = changedIds.toSet() - existingNewsResourceIdsThatHaveChanged,
+              )
+              .first()
+              .map(PopulatedNewsResource::asExternalModel)
 
-                    if (addedNewsResources.isNotEmpty()) {
-                        notifier.postNewsNotifications(newsResources = addedNewsResources)
-                    }
-                }
-            },
-        )
-    }
+          if (addedNewsResources.isNotEmpty()) {
+            notifier.postNewsNotifications(newsResources = addedNewsResources)
+          }
+        }
+      },
+    )
+  }
 }

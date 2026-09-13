@@ -31,34 +31,35 @@ import dev.zacsweers.metrox.viewmodel.LocalMetroViewModelFactory
 import dev.zacsweers.metrox.viewmodel.metroViewModel
 
 /**
- * The single entry point every platform renders: Android's `MainActivity`, the desktop `Window`
- * and the iOS `ComposeUIViewController` all call this.
+ * The single entry point every platform renders: Android's `MainActivity`, the desktop `Window` and
+ * the iOS `ComposeUIViewController` all call this.
  */
 @Composable
 fun NiaAppRoot(appGraph: AppGraph) {
-    CompositionLocalProvider(
-        LocalMetroViewModelFactory provides appGraph.metroViewModelFactory,
-        LocalAnalyticsHelper provides appGraph.analyticsHelper,
-        LocalLandscapist provides rememberNiaLandscapist(appGraph.httpClient),
+  CompositionLocalProvider(
+    LocalMetroViewModelFactory provides appGraph.metroViewModelFactory,
+    LocalAnalyticsHelper provides appGraph.analyticsHelper,
+    LocalLandscapist provides rememberNiaLandscapist(appGraph.httpClient),
+  ) {
+    val viewModel: NiaAppViewModel = metroViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    val appState =
+      rememberNiaAppState(
+        networkMonitor = appGraph.networkMonitor,
+        userNewsResourceRepository = appGraph.userNewsResourceRepository,
+        timeZoneMonitor = appGraph.timeZoneMonitor,
+      )
+    val currentTimeZone by appState.currentTimeZone.collectAsStateWithLifecycle()
+
+    NiaTheme(
+      darkTheme = uiState.shouldUseDarkTheme(isSystemInDarkTheme()),
+      androidTheme = uiState.shouldUseAndroidTheme,
+      disableDynamicTheming = uiState.shouldDisableDynamicTheming,
     ) {
-        val viewModel: NiaAppViewModel = metroViewModel()
-        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-        val appState = rememberNiaAppState(
-            networkMonitor = appGraph.networkMonitor,
-            userNewsResourceRepository = appGraph.userNewsResourceRepository,
-            timeZoneMonitor = appGraph.timeZoneMonitor,
-        )
-        val currentTimeZone by appState.currentTimeZone.collectAsStateWithLifecycle()
-
-        NiaTheme(
-            darkTheme = uiState.shouldUseDarkTheme(isSystemInDarkTheme()),
-            androidTheme = uiState.shouldUseAndroidTheme,
-            disableDynamicTheming = uiState.shouldDisableDynamicTheming,
-        ) {
-            CompositionLocalProvider(LocalTimeZone provides currentTimeZone) {
-                NiaApp(appState)
-            }
-        }
+      CompositionLocalProvider(LocalTimeZone provides currentTimeZone) {
+        NiaApp(appState)
+      }
     }
+  }
 }

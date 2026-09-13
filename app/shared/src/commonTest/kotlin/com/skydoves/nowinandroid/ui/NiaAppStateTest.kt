@@ -37,66 +37,71 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * Tests the parts of [NiaAppState] that do not need a composition, so they run on every target.
- * The `rememberNiaAppState` cases live in `NiaAppStateCompositionTest`.
+ * Tests the parts of [NiaAppState] that do not need a composition, so they run on every target. The
+ * `rememberNiaAppState` cases live in `NiaAppStateCompositionTest`.
  */
 class NiaAppStateTest {
 
-    private val networkMonitor = TestNetworkMonitor()
-    private val timeZoneMonitor = TestTimeZoneMonitor()
-    private val userNewsResourceRepository =
-        CompositeUserNewsResourceRepository(TestNewsRepository(), TestUserDataRepository())
+  private val networkMonitor = TestNetworkMonitor()
+  private val timeZoneMonitor = TestTimeZoneMonitor()
+  private val userNewsResourceRepository =
+    CompositeUserNewsResourceRepository(TestNewsRepository(), TestUserDataRepository())
 
-    private fun testNavigationState() = NavigationState(
-        startKey = ForYouNavKey,
-        topLevelStack = NavBackStack(ForYouNavKey),
-        subStacks = mapOf(
-            ForYouNavKey to NavBackStack(ForYouNavKey),
-            BookmarksNavKey to NavBackStack(BookmarksNavKey),
+  private fun testNavigationState() =
+    NavigationState(
+      startKey = ForYouNavKey,
+      topLevelStack = NavBackStack(ForYouNavKey),
+      subStacks =
+        mapOf(
+          ForYouNavKey to NavBackStack(ForYouNavKey),
+          BookmarksNavKey to NavBackStack(BookmarksNavKey),
         ),
     )
 
-    private fun CoroutineScope.appState(navigationState: NavigationState) = NiaAppState(
-        navigationState = navigationState,
-        coroutineScope = this,
-        networkMonitor = networkMonitor,
-        userNewsResourceRepository = userNewsResourceRepository,
-        timeZoneMonitor = timeZoneMonitor,
+  private fun CoroutineScope.appState(navigationState: NavigationState) =
+    NiaAppState(
+      navigationState = navigationState,
+      coroutineScope = this,
+      networkMonitor = networkMonitor,
+      userNewsResourceRepository = userNewsResourceRepository,
+      timeZoneMonitor = timeZoneMonitor,
     )
 
-    @Test
-    fun currentDestinationFollowsTheNavigator() = runTest {
-        val navigationState = testNavigationState()
-        val navigator = Navigator(navigationState)
-        val state = backgroundScope.appState(navigationState)
+  @Test
+  fun currentDestinationFollowsTheNavigator() = runTest {
+    val navigationState = testNavigationState()
+    val navigator = Navigator(navigationState)
+    val state = backgroundScope.appState(navigationState)
 
-        assertEquals(ForYouNavKey, state.navigationState.currentTopLevelKey)
-        assertEquals(ForYouNavKey, state.navigationState.currentKey)
+    assertEquals(ForYouNavKey, state.navigationState.currentTopLevelKey)
+    assertEquals(ForYouNavKey, state.navigationState.currentKey)
 
-        navigator.navigate(BookmarksNavKey)
+    navigator.navigate(BookmarksNavKey)
 
-        assertEquals(BookmarksNavKey, state.navigationState.currentTopLevelKey)
-        assertEquals(BookmarksNavKey, state.navigationState.currentKey)
+    assertEquals(BookmarksNavKey, state.navigationState.currentTopLevelKey)
+    assertEquals(BookmarksNavKey, state.navigationState.currentKey)
+  }
+
+  @Test
+  fun whenNetworkMonitorIsOffline_stateIsOffline() =
+    runTest(UnconfinedTestDispatcher()) {
+      val state = backgroundScope.appState(testNavigationState())
+
+      backgroundScope.launch { state.isOffline.collect() }
+      networkMonitor.setConnected(false)
+
+      assertTrue(state.isOffline.value)
     }
 
-    @Test
-    fun whenNetworkMonitorIsOffline_stateIsOffline() = runTest(UnconfinedTestDispatcher()) {
-        val state = backgroundScope.appState(testNavigationState())
+  @Test
+  fun whenTimeZoneMonitorChanges_stateFollowsIt() =
+    runTest(UnconfinedTestDispatcher()) {
+      val state = backgroundScope.appState(testNavigationState())
 
-        backgroundScope.launch { state.isOffline.collect() }
-        networkMonitor.setConnected(false)
+      backgroundScope.launch { state.currentTimeZone.collect() }
+      val expected = TimeZone.of("Europe/Prague")
+      timeZoneMonitor.setTimeZone(expected)
 
-        assertTrue(state.isOffline.value)
-    }
-
-    @Test
-    fun whenTimeZoneMonitorChanges_stateFollowsIt() = runTest(UnconfinedTestDispatcher()) {
-        val state = backgroundScope.appState(testNavigationState())
-
-        backgroundScope.launch { state.currentTimeZone.collect() }
-        val expected = TimeZone.of("Europe/Prague")
-        timeZoneMonitor.setTimeZone(expected)
-
-        assertEquals(expected, state.currentTimeZone.value)
+      assertEquals(expected, state.currentTimeZone.value)
     }
 }

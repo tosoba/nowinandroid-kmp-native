@@ -15,15 +15,15 @@
  */
 
 plugins {
-    id("nowinandroid.kmp.feature")
+  id("nowinandroid.kmp.feature")
 }
 
 kotlin {
-    sourceSets {
-        commonMain.dependencies {
-            api(projects.feature.search.api)
-            api(projects.feature.interests.api)
-            api(projects.feature.topic.api)
-        }
+  sourceSets {
+    commonMain.dependencies {
+      api(projects.feature.search.api)
+      api(projects.feature.interests.api)
+      api(projects.feature.topic.api)
     }
+  }
 }

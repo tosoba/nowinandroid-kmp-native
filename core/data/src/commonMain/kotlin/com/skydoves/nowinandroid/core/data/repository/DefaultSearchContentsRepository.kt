@@ -42,53 +42,59 @@ import kotlinx.coroutines.withContext
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultSearchContentsRepository(
-    private val newsResourceDao: NewsResourceDao,
-    private val newsResourceFtsDao: NewsResourceFtsDao,
-    private val topicDao: TopicDao,
-    private val topicFtsDao: TopicFtsDao,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+  private val newsResourceDao: NewsResourceDao,
+  private val newsResourceFtsDao: NewsResourceFtsDao,
+  private val topicDao: TopicDao,
+  private val topicFtsDao: TopicFtsDao,
+  @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : SearchContentsRepository {
 
-    override suspend fun populateFtsData() {
-        withContext(ioDispatcher) {
-            newsResourceFtsDao.insertAll(
-                newsResourceDao.getNewsResources(
-                    useFilterTopicIds = false,
-                    useFilterNewsIds = false,
-                ).first().map(PopulatedNewsResource::asFtsEntity),
-            )
-            topicFtsDao.insertAll(topicDao.getOneOffTopicEntities().map { it.asFtsEntity() })
-        }
+  override suspend fun populateFtsData() {
+    withContext(ioDispatcher) {
+      newsResourceFtsDao.insertAll(
+        newsResourceDao
+          .getNewsResources(
+            useFilterTopicIds = false,
+            useFilterNewsIds = false,
+          )
+          .first()
+          .map(PopulatedNewsResource::asFtsEntity)
+      )
+      topicFtsDao.insertAll(topicDao.getOneOffTopicEntities().map { it.asFtsEntity() })
     }
+  }
 
-    override fun searchContents(searchQuery: String): Flow<SearchResult> {
-        // FTS4 only honours a trailing `*`, so this is a prefix match; the leading asterisk is
-        // dropped by the tokenizer, exactly as it is on Android.
-        val newsResourceIds = newsResourceFtsDao.searchAllNewsResources("*$searchQuery*")
-        val topicIds = topicFtsDao.searchAllTopics("*$searchQuery*")
+  override fun searchContents(searchQuery: String): Flow<SearchResult> {
+    // FTS4 only honours a trailing `*`, so this is a prefix match; the leading asterisk is
+    // dropped by the tokenizer, exactly as it is on Android.
+    val newsResourceIds = newsResourceFtsDao.searchAllNewsResources("*$searchQuery*")
+    val topicIds = topicFtsDao.searchAllTopics("*$searchQuery*")
 
-        val newsResourcesFlow = newsResourceIds
-            .mapLatest { it.toSet() }
-            .distinctUntilChanged()
-            .flatMapLatest {
-                newsResourceDao.getNewsResources(useFilterNewsIds = true, filterNewsIds = it)
-            }
-        val topicsFlow = topicIds
-            .mapLatest { it.toSet() }
-            .distinctUntilChanged()
-            .flatMapLatest(topicDao::getTopicEntities)
-        return combine(newsResourcesFlow, topicsFlow) { newsResources, topics ->
-            SearchResult(
-                topics = topics.map { it.asExternalModel() },
-                newsResources = newsResources.map { it.asExternalModel() },
-            )
+    val newsResourcesFlow =
+      newsResourceIds
+        .mapLatest { it.toSet() }
+        .distinctUntilChanged()
+        .flatMapLatest {
+          newsResourceDao.getNewsResources(useFilterNewsIds = true, filterNewsIds = it)
         }
+    val topicsFlow =
+      topicIds
+        .mapLatest { it.toSet() }
+        .distinctUntilChanged()
+        .flatMapLatest(topicDao::getTopicEntities)
+    return combine(newsResourcesFlow, topicsFlow) { newsResources, topics ->
+      SearchResult(
+        topics = topics.map { it.asExternalModel() },
+        newsResources = newsResources.map { it.asExternalModel() },
+      )
     }
+  }
 
-    override fun getSearchContentsCount(): Flow<Int> = combine(
-        newsResourceFtsDao.getCount(),
-        topicFtsDao.getCount(),
+  override fun getSearchContentsCount(): Flow<Int> =
+    combine(
+      newsResourceFtsDao.getCount(),
+      topicFtsDao.getCount(),
     ) { newsResourceCount, topicsCount ->
-        newsResourceCount + topicsCount
+      newsResourceCount + topicsCount
     }
 }

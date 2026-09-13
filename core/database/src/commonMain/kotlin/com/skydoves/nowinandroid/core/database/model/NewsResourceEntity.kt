@@ -22,26 +22,20 @@ import androidx.room3.PrimaryKey
 import com.skydoves.nowinandroid.core.model.data.NewsResource
 import kotlin.time.Instant
 
-/**
- * Defines an NiA news resource.
- */
-@Entity(
-    tableName = "news_resources",
-)
+/** Defines an NiA news resource. */
+@Entity(tableName = "news_resources")
 data class NewsResourceEntity(
-    @PrimaryKey
-    val id: String,
-    val title: String,
-    val content: String,
-    val url: String,
-    @ColumnInfo(name = "header_image_url")
-    val headerImageUrl: String?,
-    @ColumnInfo(name = "publish_date")
-    val publishDate: Instant,
-    val type: String,
+  @PrimaryKey val id: String,
+  val title: String,
+  val content: String,
+  val url: String,
+  @ColumnInfo(name = "header_image_url") val headerImageUrl: String?,
+  @ColumnInfo(name = "publish_date") val publishDate: Instant,
+  val type: String,
 )
 
-fun NewsResourceEntity.asExternalModel() = NewsResource(
+fun NewsResourceEntity.asExternalModel() =
+  NewsResource(
     id = id,
     title = title,
     content = content,
@@ -50,4 +44,4 @@ fun NewsResourceEntity.asExternalModel() = NewsResource(
     publishDate = publishDate,
     type = type,
     topics = emptyList(),
-)
+  )

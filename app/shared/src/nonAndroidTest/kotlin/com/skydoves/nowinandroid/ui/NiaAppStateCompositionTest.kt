@@ -38,46 +38,48 @@ import kotlin.test.assertEquals
  */
 class NiaAppStateCompositionTest {
 
-    private val networkMonitor = TestNetworkMonitor()
-    private val timeZoneMonitor = TestTimeZoneMonitor()
-    private val userNewsResourceRepository =
-        CompositeUserNewsResourceRepository(TestNewsRepository(), TestUserDataRepository())
+  private val networkMonitor = TestNetworkMonitor()
+  private val timeZoneMonitor = TestTimeZoneMonitor()
+  private val userNewsResourceRepository =
+    CompositeUserNewsResourceRepository(TestNewsRepository(), TestUserDataRepository())
 
-    @OptIn(ExperimentalTestApi::class)
-    @Test
-    fun rememberNiaAppStateExposesTheThreeTopLevelDestinations() = runComposeUiTest {
-        lateinit var state: NiaAppState
+  @OptIn(ExperimentalTestApi::class)
+  @Test
+  fun rememberNiaAppStateExposesTheThreeTopLevelDestinations() = runComposeUiTest {
+    lateinit var state: NiaAppState
 
-        setContent {
-            state = rememberNiaAppState(
-                networkMonitor = networkMonitor,
-                userNewsResourceRepository = userNewsResourceRepository,
-                timeZoneMonitor = timeZoneMonitor,
-            )
-        }
-
-        val topLevelKeys = state.navigationState.topLevelKeys
-        assertEquals(3, topLevelKeys.size)
-        assertEquals(
-            setOf(ForYouNavKey, BookmarksNavKey, InterestsNavKey(null)),
-            topLevelKeys,
+    setContent {
+      state =
+        rememberNiaAppState(
+          networkMonitor = networkMonitor,
+          userNewsResourceRepository = userNewsResourceRepository,
+          timeZoneMonitor = timeZoneMonitor,
         )
     }
 
-    @OptIn(ExperimentalTestApi::class)
-    @Test
-    fun rememberNiaAppStateStartsOnTheForYouDestination() = runComposeUiTest {
-        lateinit var state: NiaAppState
+    val topLevelKeys = state.navigationState.topLevelKeys
+    assertEquals(3, topLevelKeys.size)
+    assertEquals(
+      setOf(ForYouNavKey, BookmarksNavKey, InterestsNavKey(null)),
+      topLevelKeys,
+    )
+  }
 
-        setContent {
-            state = rememberNiaAppState(
-                networkMonitor = networkMonitor,
-                userNewsResourceRepository = userNewsResourceRepository,
-                timeZoneMonitor = timeZoneMonitor,
-            )
-        }
+  @OptIn(ExperimentalTestApi::class)
+  @Test
+  fun rememberNiaAppStateStartsOnTheForYouDestination() = runComposeUiTest {
+    lateinit var state: NiaAppState
 
-        assertEquals(ForYouNavKey, state.navigationState.startKey)
-        assertEquals(ForYouNavKey, state.navigationState.currentKey)
+    setContent {
+      state =
+        rememberNiaAppState(
+          networkMonitor = networkMonitor,
+          userNewsResourceRepository = userNewsResourceRepository,
+          timeZoneMonitor = timeZoneMonitor,
+        )
     }
+
+    assertEquals(ForYouNavKey, state.navigationState.startKey)
+    assertEquals(ForYouNavKey, state.navigationState.currentKey)
+  }
 }

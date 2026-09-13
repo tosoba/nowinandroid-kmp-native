@@ -20,17 +20,15 @@ import com.skydoves.nowinandroid.core.model.data.NewsResource
 import kotlinx.serialization.Serializable
 import kotlin.time.Instant
 
-/**
- * Network representation of [NewsResource] when fetched from /newsresources
- */
+/** Network representation of [NewsResource] when fetched from /newsresources */
 @Serializable
 data class NetworkNewsResource(
-    val id: String,
-    val title: String,
-    val content: String,
-    val url: String,
-    val headerImageUrl: String,
-    val publishDate: Instant,
-    val type: String,
-    val topics: List<String> = emptyList(),
+  val id: String,
+  val title: String,
+  val content: String,
+  val url: String,
+  val headerImageUrl: String,
+  val publishDate: Instant,
+  val type: String,
+  val topics: List<String> = emptyList(),
 )

@@ -37,31 +37,31 @@ private const val TAG = "SystemTrayNotifier"
 @ContributesBinding(AppScope::class)
 class SystemTrayNotifier : Notifier {
 
-    private val trayIcon: TrayIcon? by lazy {
-        if (!SystemTray.isSupported()) return@lazy null
-        runCatching {
-            val image = Toolkit.getDefaultToolkit()
-                .createImage(ByteArray(0))
-            TrayIcon(image, "Now in Android").apply {
-                isImageAutoSize = true
-                SystemTray.getSystemTray().add(this)
-            }
-        }.getOrNull()
+  private val trayIcon: TrayIcon? by lazy {
+    if (!SystemTray.isSupported()) return@lazy null
+    runCatching {
+      val image = Toolkit.getDefaultToolkit().createImage(ByteArray(0))
+      TrayIcon(image, "Now in Android").apply {
+        isImageAutoSize = true
+        SystemTray.getSystemTray().add(this)
+      }
     }
+      .getOrNull()
+  }
 
-    override fun postNewsNotifications(newsResources: List<NewsResource>) {
-        val truncated = newsResources.take(MAX_NUM_NOTIFICATIONS)
-        if (truncated.isEmpty()) return
+  override fun postNewsNotifications(newsResources: List<NewsResource>) {
+    val truncated = newsResources.take(MAX_NUM_NOTIFICATIONS)
+    if (truncated.isEmpty()) return
 
-        val icon = trayIcon
-        if (icon == null) {
-            truncated.forEach { NiaLogger.info(TAG, "New: ${it.title}") }
-            return
-        }
-        icon.displayMessage(
-            newsNotificationGroupSummary(truncated.size),
-            truncated.joinToString(separator = "\n") { it.title },
-            TrayIcon.MessageType.INFO,
-        )
+    val icon = trayIcon
+    if (icon == null) {
+      truncated.forEach { NiaLogger.info(TAG, "New: ${it.title}") }
+      return
     }
+    icon.displayMessage(
+      newsNotificationGroupSummary(truncated.size),
+      truncated.joinToString(separator = "\n") { it.title },
+      TrayIcon.MessageType.INFO,
+    )
+  }
 }

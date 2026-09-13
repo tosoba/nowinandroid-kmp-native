@@ -28,37 +28,36 @@ import com.skydoves.nowinandroid.core.ui.platform.rememberUrlLauncher
  * Extension function for displaying a [List] of [NewsResourceCardExpanded] backed by a list of
  * [UserNewsResource]s.
  *
- * [onToggleBookmark] defines the action invoked when a user wishes to bookmark an item
- * When a news resource card is tapped it will open the news resource URL in a Chrome Custom Tab.
+ * [onToggleBookmark] defines the action invoked when a user wishes to bookmark an item When a news
+ * resource card is tapped it will open the news resource URL in a Chrome Custom Tab.
  */
 fun LazyListScope.userNewsResourceCardItems(
-    items: List<UserNewsResource>,
-    onToggleBookmark: (item: UserNewsResource) -> Unit,
-    onNewsResourceViewed: (String) -> Unit,
-    onTopicClick: (String) -> Unit,
-    itemModifier: Modifier = Modifier,
-) = items(
+  items: List<UserNewsResource>,
+  onToggleBookmark: (item: UserNewsResource) -> Unit,
+  onNewsResourceViewed: (String) -> Unit,
+  onTopicClick: (String) -> Unit,
+  itemModifier: Modifier = Modifier,
+) =
+  items(
     items = items,
     key = { it.id },
     itemContent = { userNewsResource ->
-        val backgroundColor = MaterialTheme.colorScheme.background
-        val urlLauncher = rememberUrlLauncher()
-        val analyticsHelper = LocalAnalyticsHelper.current
+      val backgroundColor = MaterialTheme.colorScheme.background
+      val urlLauncher = rememberUrlLauncher()
+      val analyticsHelper = LocalAnalyticsHelper.current
 
-        NewsResourceCardExpanded(
-            userNewsResource = userNewsResource,
-            isBookmarked = userNewsResource.isSaved,
-            hasBeenViewed = userNewsResource.hasBeenViewed,
-            onToggleBookmark = { onToggleBookmark(userNewsResource) },
-            onClick = {
-                analyticsHelper.logNewsResourceOpened(
-                    newsResourceId = userNewsResource.id,
-                )
-                urlLauncher.launch(userNewsResource.url, backgroundColor)
-                onNewsResourceViewed(userNewsResource.id)
-            },
-            onTopicClick = onTopicClick,
-            modifier = itemModifier,
-        )
+      NewsResourceCardExpanded(
+        userNewsResource = userNewsResource,
+        isBookmarked = userNewsResource.isSaved,
+        hasBeenViewed = userNewsResource.hasBeenViewed,
+        onToggleBookmark = { onToggleBookmark(userNewsResource) },
+        onClick = {
+          analyticsHelper.logNewsResourceOpened(newsResourceId = userNewsResource.id)
+          urlLauncher.launch(userNewsResource.url, backgroundColor)
+          onNewsResourceViewed(userNewsResource.id)
+        },
+        onTopicClick = onTopicClick,
+        modifier = itemModifier,
+      )
     },
-)
+  )

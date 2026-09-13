@@ -19,7 +19,7 @@ targets:
         CFBundleDisplayName: Now in Android
         CFBundleShortVersionString: "1.0.0"
         CFBundleVersion: "1"
-        UILaunchScreen: {}
+        UILaunchScreen: { }
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
           - UIInterfaceOrientationLandscapeLeft

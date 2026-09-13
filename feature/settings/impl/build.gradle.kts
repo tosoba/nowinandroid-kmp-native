@@ -15,5 +15,5 @@
  */
 
 plugins {
-    id("nowinandroid.kmp.feature")
+  id("nowinandroid.kmp.feature")
 }

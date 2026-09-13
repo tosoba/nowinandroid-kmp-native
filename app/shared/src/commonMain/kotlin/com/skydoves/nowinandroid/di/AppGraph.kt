@@ -26,16 +26,16 @@ import dev.zacsweers.metrox.viewmodel.ViewModelGraph
 import io.ktor.client.HttpClient
 
 /**
- * What the UI needs from the object graph. Each platform declares a concrete
- * `@DependencyGraph` that extends this, because only the platform knows how to reach a `Context`,
- * a documents directory, and so on.
+ * What the UI needs from the object graph. Each platform declares a concrete `@DependencyGraph`
+ * that extends this, because only the platform knows how to reach a `Context`, a documents
+ * directory, and so on.
  */
 interface AppGraph : ViewModelGraph {
-    val networkMonitor: NetworkMonitor
-    val timeZoneMonitor: TimeZoneMonitor
-    val userNewsResourceRepository: UserNewsResourceRepository
-    val analyticsHelper: AnalyticsHelper
-    val syncManager: SyncManager
-    val deepLinkStore: DeepLinkStore
-    val httpClient: HttpClient
+  val networkMonitor: NetworkMonitor
+  val timeZoneMonitor: TimeZoneMonitor
+  val userNewsResourceRepository: UserNewsResourceRepository
+  val analyticsHelper: AnalyticsHelper
+  val syncManager: SyncManager
+  val deepLinkStore: DeepLinkStore
+  val httpClient: HttpClient
 }

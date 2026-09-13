@@ -22,12 +22,10 @@ import androidx.compose.runtime.Composable
  * Signals that the UI is ready for use, for Time To Full Display metrics. Android reports this to
  * the framework; elsewhere there is nothing listening.
  */
-@Composable
-expect fun ReportFullyDrawnWhen(predicate: () -> Boolean)
+@Composable expect fun ReportFullyDrawnWhen(predicate: () -> Boolean)
 
 /**
- * Asks for the notification permission the first time the feed is shown. Only Android has a
- * runtime notification permission to ask for.
+ * Asks for the notification permission the first time the feed is shown. Only Android has a runtime
+ * notification permission to ask for.
  */
-@Composable
-expect fun NotificationPermissionEffect()
+@Composable expect fun NotificationPermissionEffect()

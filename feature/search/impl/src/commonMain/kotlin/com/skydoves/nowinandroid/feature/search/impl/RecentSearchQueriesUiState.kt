@@ -19,7 +19,8 @@ package com.skydoves.nowinandroid.feature.search.impl
 import com.skydoves.nowinandroid.core.data.model.RecentSearchQuery
 
 sealed interface RecentSearchQueriesUiState {
-    data object Loading : RecentSearchQueriesUiState
+  data object Loading : RecentSearchQueriesUiState
 
-    data class Success(val recentQueries: List<RecentSearchQuery> = emptyList()) : RecentSearchQueriesUiState
+  data class Success(val recentQueries: List<RecentSearchQuery> = emptyList()) :
+    RecentSearchQueriesUiState
 }

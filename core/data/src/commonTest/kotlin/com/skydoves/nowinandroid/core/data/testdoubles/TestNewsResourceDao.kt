@@ -29,90 +29,96 @@ import kotlinx.coroutines.flow.update
 val filteredInterestsIds = setOf("1")
 val nonPresentInterestsIds = setOf("2")
 
-/**
- * Test double for [NewsResourceDao]
- */
+/** Test double for [NewsResourceDao] */
 class TestNewsResourceDao : NewsResourceDao {
 
-    private val entitiesStateFlow = MutableStateFlow(emptyList<NewsResourceEntity>())
+  private val entitiesStateFlow = MutableStateFlow(emptyList<NewsResourceEntity>())
 
-    internal var topicCrossReferences: List<NewsResourceTopicCrossRef> = emptyList()
+  internal var topicCrossReferences: List<NewsResourceTopicCrossRef> = emptyList()
 
-    override fun getNewsResources(
-        useFilterTopicIds: Boolean,
-        filterTopicIds: Set<String>,
-        useFilterNewsIds: Boolean,
-        filterNewsIds: Set<String>,
-    ): Flow<List<PopulatedNewsResource>> = entitiesStateFlow
-        .map { entities -> entities.map { it.asPopulatedNewsResource(topicCrossReferences) } }
-        .map { resources ->
-            resources.filtered(useFilterTopicIds, filterTopicIds, useFilterNewsIds, filterNewsIds)
-        }
-
-    override fun getNewsResourceIds(
-        useFilterTopicIds: Boolean,
-        filterTopicIds: Set<String>,
-        useFilterNewsIds: Boolean,
-        filterNewsIds: Set<String>,
-    ): Flow<List<String>> = getNewsResources(
-        useFilterTopicIds = useFilterTopicIds,
-        filterTopicIds = filterTopicIds,
-        useFilterNewsIds = useFilterNewsIds,
-        filterNewsIds = filterNewsIds,
-    ).map { resources -> resources.map { it.entity.id } }
-
-    override suspend fun upsertNewsResources(newsResourceEntities: List<NewsResourceEntity>) {
-        entitiesStateFlow.update { oldValues ->
-            // New values come first so they overwrite old values
-            (newsResourceEntities + oldValues)
-                .distinctBy(NewsResourceEntity::id)
-                .sortedWith(compareBy(NewsResourceEntity::publishDate).reversed())
-        }
-    }
-
-    override suspend fun insertOrIgnoreTopicCrossRefEntities(
-        newsResourceTopicCrossReferences: List<NewsResourceTopicCrossRef>,
-    ) {
-        // Keep old values over new ones
-        topicCrossReferences = (topicCrossReferences + newsResourceTopicCrossReferences)
-            .distinctBy { it.newsResourceId to it.topicId }
-    }
-
-    override suspend fun deleteNewsResources(ids: List<String>) {
-        val idSet = ids.toSet()
-        entitiesStateFlow.update { entities -> entities.filterNot { it.id in idSet } }
-    }
-}
-
-private fun List<PopulatedNewsResource>.filtered(
+  override fun getNewsResources(
     useFilterTopicIds: Boolean,
     filterTopicIds: Set<String>,
     useFilterNewsIds: Boolean,
     filterNewsIds: Set<String>,
-): List<PopulatedNewsResource> {
-    var result = this
-    if (useFilterTopicIds) {
-        result = result.filter { resource -> resource.topics.any { it.id in filterTopicIds } }
+  ): Flow<List<PopulatedNewsResource>> =
+    entitiesStateFlow
+      .map { entities -> entities.map { it.asPopulatedNewsResource(topicCrossReferences) } }
+      .map { resources ->
+        resources.filtered(useFilterTopicIds, filterTopicIds, useFilterNewsIds, filterNewsIds)
+      }
+
+  override fun getNewsResourceIds(
+    useFilterTopicIds: Boolean,
+    filterTopicIds: Set<String>,
+    useFilterNewsIds: Boolean,
+    filterNewsIds: Set<String>,
+  ): Flow<List<String>> =
+    getNewsResources(
+        useFilterTopicIds = useFilterTopicIds,
+        filterTopicIds = filterTopicIds,
+        useFilterNewsIds = useFilterNewsIds,
+        filterNewsIds = filterNewsIds,
+      )
+      .map { resources -> resources.map { it.entity.id } }
+
+  override suspend fun upsertNewsResources(newsResourceEntities: List<NewsResourceEntity>) {
+    entitiesStateFlow.update { oldValues ->
+      // New values come first so they overwrite old values
+      (newsResourceEntities + oldValues)
+        .distinctBy(NewsResourceEntity::id)
+        .sortedWith(compareBy(NewsResourceEntity::publishDate).reversed())
     }
-    if (useFilterNewsIds) {
-        result = result.filter { resource -> resource.entity.id in filterNewsIds }
-    }
-    return result
+  }
+
+  override suspend fun insertOrIgnoreTopicCrossRefEntities(
+    newsResourceTopicCrossReferences: List<NewsResourceTopicCrossRef>
+  ) {
+    // Keep old values over new ones
+    topicCrossReferences =
+      (topicCrossReferences + newsResourceTopicCrossReferences).distinctBy {
+        it.newsResourceId to it.topicId
+      }
+  }
+
+  override suspend fun deleteNewsResources(ids: List<String>) {
+    val idSet = ids.toSet()
+    entitiesStateFlow.update { entities -> entities.filterNot { it.id in idSet } }
+  }
 }
 
-private fun NewsResourceEntity.asPopulatedNewsResource(topicCrossReferences: List<NewsResourceTopicCrossRef>) =
-    PopulatedNewsResource(
-        entity = this,
-        topics = topicCrossReferences
-            .filter { it.newsResourceId == id }
-            .map { crossRef ->
-                TopicEntity(
-                    id = crossRef.topicId,
-                    name = "name",
-                    shortDescription = "short description",
-                    longDescription = "long description",
-                    url = "URL",
-                    imageUrl = "image URL",
-                )
-            },
-    )
+private fun List<PopulatedNewsResource>.filtered(
+  useFilterTopicIds: Boolean,
+  filterTopicIds: Set<String>,
+  useFilterNewsIds: Boolean,
+  filterNewsIds: Set<String>,
+): List<PopulatedNewsResource> {
+  var result = this
+  if (useFilterTopicIds) {
+    result = result.filter { resource -> resource.topics.any { it.id in filterTopicIds } }
+  }
+  if (useFilterNewsIds) {
+    result = result.filter { resource -> resource.entity.id in filterNewsIds }
+  }
+  return result
+}
+
+private fun NewsResourceEntity.asPopulatedNewsResource(
+  topicCrossReferences: List<NewsResourceTopicCrossRef>
+) =
+  PopulatedNewsResource(
+    entity = this,
+    topics =
+      topicCrossReferences
+        .filter { it.newsResourceId == id }
+        .map { crossRef ->
+          TopicEntity(
+            id = crossRef.topicId,
+            name = "name",
+            shortDescription = "short description",
+            longDescription = "long description",
+            url = "URL",
+            imageUrl = "image URL",
+          )
+        },
+  )

@@ -20,32 +20,23 @@ import androidx.room3.ColumnInfo
 import androidx.room3.Entity
 import androidx.room3.Fts4
 
-/**
- * Fts entity for the topic.
- */
+/** Fts entity for the topic. */
 @Entity(tableName = "topicsFts")
 // `contentEntity` is spelled out even though `Any::class` is its default: on Kotlin/Native the
 // KSP processor cannot resolve the annotation's default value and fails with "Cannot find external
 // content entity class".
 @Fts4(contentEntity = Any::class)
 data class TopicFtsEntity(
-
-    @ColumnInfo(name = "topicId")
-    val topicId: String,
-
-    @ColumnInfo(name = "name")
-    val name: String,
-
-    @ColumnInfo(name = "shortDescription")
-    val shortDescription: String,
-
-    @ColumnInfo(name = "longDescription")
-    val longDescription: String,
+  @ColumnInfo(name = "topicId") val topicId: String,
+  @ColumnInfo(name = "name") val name: String,
+  @ColumnInfo(name = "shortDescription") val shortDescription: String,
+  @ColumnInfo(name = "longDescription") val longDescription: String,
 )
 
-fun TopicEntity.asFtsEntity() = TopicFtsEntity(
+fun TopicEntity.asFtsEntity() =
+  TopicFtsEntity(
     topicId = id,
     name = name,
     shortDescription = shortDescription,
     longDescription = longDescription,
-)
+  )

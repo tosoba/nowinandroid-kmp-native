@@ -23,22 +23,20 @@ package com.skydoves.nowinandroid.core.analytics
  * @param extras - list of parameters which supply additional context to the event.
  */
 data class AnalyticsEvent(val type: String, val extras: List<Param> = emptyList()) {
-    // Standard analytics types.
-    class Types {
-        companion object {
-            const val SCREEN_VIEW = "screen_view" // (extras: SCREEN_NAME)
-        }
+  // Standard analytics types.
+  class Types {
+    companion object {
+      const val SCREEN_VIEW = "screen_view" // (extras: SCREEN_NAME)
     }
+  }
 
-    /**
-     * A key-value pair used to supply extra context to an analytics event.
-     */
-    data class Param(val key: String, val value: String)
+  /** A key-value pair used to supply extra context to an analytics event. */
+  data class Param(val key: String, val value: String)
 
-    // Standard parameter keys.
-    class ParamKeys {
-        companion object {
-            const val SCREEN_NAME = "screen_name"
-        }
+  // Standard parameter keys.
+  class ParamKeys {
+    companion object {
+      const val SCREEN_NAME = "screen_name"
     }
+  }
 }

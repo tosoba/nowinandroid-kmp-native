@@ -24,7 +24,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 
-val emptyUserData = UserData(
+val emptyUserData =
+  UserData(
     bookmarkedNewsResources = emptySet(),
     viewedNewsResources = emptySet(),
     followedTopics = emptySet(),
@@ -32,69 +33,67 @@ val emptyUserData = UserData(
     darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
     useDynamicColor = false,
     shouldHideOnboarding = false,
-)
+  )
 
 class TestUserDataRepository : UserDataRepository {
 
-    /**
-     * The backing hot flow for the list of followed topic ids for testing.
-     */
-    private val internalUserData = MutableSharedFlow<UserData>(replay = 1, extraBufferCapacity = 1)
+  /** The backing hot flow for the list of followed topic ids for testing. */
+  private val internalUserData = MutableSharedFlow<UserData>(replay = 1, extraBufferCapacity = 1)
 
-    private val currentUserData get() = internalUserData.replayCache.firstOrNull() ?: emptyUserData
+  private val currentUserData
+    get() = internalUserData.replayCache.firstOrNull() ?: emptyUserData
 
-    override val userData: Flow<UserData> = internalUserData
+  override val userData: Flow<UserData> = internalUserData
 
-    override suspend fun setFollowedTopicIds(followedTopicIds: Set<String>) {
-        internalUserData.tryEmit(currentUserData.copy(followedTopics = followedTopicIds))
+  override suspend fun setFollowedTopicIds(followedTopicIds: Set<String>) {
+    internalUserData.tryEmit(currentUserData.copy(followedTopics = followedTopicIds))
+  }
+
+  override suspend fun setTopicIdFollowed(followedTopicId: String, followed: Boolean) {
+    val followedTopics = currentUserData.followedTopics.toMutableSet()
+    if (followed) followedTopics.add(followedTopicId) else followedTopics.remove(followedTopicId)
+    internalUserData.tryEmit(currentUserData.copy(followedTopics = followedTopics))
+  }
+
+  override suspend fun setNewsResourceBookmarked(newsResourceId: String, bookmarked: Boolean) {
+    val bookmarkedNewsResources = currentUserData.bookmarkedNewsResources.toMutableSet()
+    if (bookmarked) {
+      bookmarkedNewsResources.add(newsResourceId)
+    } else {
+      bookmarkedNewsResources.remove(newsResourceId)
     }
+    internalUserData.tryEmit(
+      currentUserData.copy(bookmarkedNewsResources = bookmarkedNewsResources)
+    )
+  }
 
-    override suspend fun setTopicIdFollowed(followedTopicId: String, followed: Boolean) {
-        val followedTopics = currentUserData.followedTopics.toMutableSet()
-        if (followed) followedTopics.add(followedTopicId) else followedTopics.remove(followedTopicId)
-        internalUserData.tryEmit(currentUserData.copy(followedTopics = followedTopics))
-    }
+  override suspend fun setNewsResourceViewed(newsResourceId: String, viewed: Boolean) {
+    val viewedNewsResources = currentUserData.viewedNewsResources.toMutableSet()
+    if (viewed) viewedNewsResources.add(newsResourceId)
+    else viewedNewsResources.remove(newsResourceId)
+    internalUserData.tryEmit(currentUserData.copy(viewedNewsResources = viewedNewsResources))
+  }
 
-    override suspend fun setNewsResourceBookmarked(newsResourceId: String, bookmarked: Boolean) {
-        val bookmarkedNewsResources = currentUserData.bookmarkedNewsResources.toMutableSet()
-        if (bookmarked) {
-            bookmarkedNewsResources.add(newsResourceId)
-        } else {
-            bookmarkedNewsResources.remove(newsResourceId)
-        }
-        internalUserData.tryEmit(
-            currentUserData.copy(bookmarkedNewsResources = bookmarkedNewsResources),
-        )
-    }
+  override suspend fun setThemeBrand(themeBrand: ThemeBrand) {
+    internalUserData.tryEmit(currentUserData.copy(themeBrand = themeBrand))
+  }
 
-    override suspend fun setNewsResourceViewed(newsResourceId: String, viewed: Boolean) {
-        val viewedNewsResources = currentUserData.viewedNewsResources.toMutableSet()
-        if (viewed) viewedNewsResources.add(newsResourceId) else viewedNewsResources.remove(newsResourceId)
-        internalUserData.tryEmit(currentUserData.copy(viewedNewsResources = viewedNewsResources))
-    }
+  override suspend fun setDarkThemeConfig(darkThemeConfig: DarkThemeConfig) {
+    internalUserData.tryEmit(currentUserData.copy(darkThemeConfig = darkThemeConfig))
+  }
 
-    override suspend fun setThemeBrand(themeBrand: ThemeBrand) {
-        internalUserData.tryEmit(currentUserData.copy(themeBrand = themeBrand))
-    }
+  override suspend fun setDynamicColorPreference(useDynamicColor: Boolean) {
+    internalUserData.tryEmit(currentUserData.copy(useDynamicColor = useDynamicColor))
+  }
 
-    override suspend fun setDarkThemeConfig(darkThemeConfig: DarkThemeConfig) {
-        internalUserData.tryEmit(currentUserData.copy(darkThemeConfig = darkThemeConfig))
-    }
+  override suspend fun setShouldHideOnboarding(shouldHideOnboarding: Boolean) {
+    internalUserData.tryEmit(currentUserData.copy(shouldHideOnboarding = shouldHideOnboarding))
+  }
 
-    override suspend fun setDynamicColorPreference(useDynamicColor: Boolean) {
-        internalUserData.tryEmit(currentUserData.copy(useDynamicColor = useDynamicColor))
-    }
+  /** A test-only API to allow setting of user data directly. */
+  fun setUserData(userData: UserData) {
+    internalUserData.tryEmit(userData)
+  }
 
-    override suspend fun setShouldHideOnboarding(shouldHideOnboarding: Boolean) {
-        internalUserData.tryEmit(currentUserData.copy(shouldHideOnboarding = shouldHideOnboarding))
-    }
-
-    /**
-     * A test-only API to allow setting of user data directly.
-     */
-    fun setUserData(userData: UserData) {
-        internalUserData.tryEmit(userData)
-    }
-
-    suspend fun getCurrentUserData(): UserData = userData.first()
+  suspend fun getCurrentUserData(): UserData = userData.first()
 }

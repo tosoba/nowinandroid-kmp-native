@@ -36,37 +36,37 @@ import dev.icerock.moko.resources.compose.stringResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NiaTopAppBar(
-    titleRes: StringResource,
-    navigationIcon: ImageVector,
-    navigationIconContentDescription: String,
-    actionIcon: ImageVector,
-    actionIconContentDescription: String,
-    modifier: Modifier = Modifier,
-    colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
-    onNavigationClick: () -> Unit = {},
-    onActionClick: () -> Unit = {},
+  titleRes: StringResource,
+  navigationIcon: ImageVector,
+  navigationIconContentDescription: String,
+  actionIcon: ImageVector,
+  actionIconContentDescription: String,
+  modifier: Modifier = Modifier,
+  colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
+  onNavigationClick: () -> Unit = {},
+  onActionClick: () -> Unit = {},
 ) {
-    CenterAlignedTopAppBar(
-        title = { Text(text = stringResource(titleRes)) },
-        navigationIcon = {
-            IconButton(onClick = onNavigationClick) {
-                Icon(
-                    imageVector = navigationIcon,
-                    contentDescription = navigationIconContentDescription,
-                    tint = MaterialTheme.colorScheme.onSurface,
-                )
-            }
-        },
-        actions = {
-            IconButton(onClick = onActionClick) {
-                Icon(
-                    imageVector = actionIcon,
-                    contentDescription = actionIconContentDescription,
-                    tint = MaterialTheme.colorScheme.onSurface,
-                )
-            }
-        },
-        colors = colors,
-        modifier = modifier.testTag("niaTopAppBar"),
-    )
+  CenterAlignedTopAppBar(
+    title = { Text(text = stringResource(titleRes)) },
+    navigationIcon = {
+      IconButton(onClick = onNavigationClick) {
+        Icon(
+          imageVector = navigationIcon,
+          contentDescription = navigationIconContentDescription,
+          tint = MaterialTheme.colorScheme.onSurface,
+        )
+      }
+    },
+    actions = {
+      IconButton(onClick = onActionClick) {
+        Icon(
+          imageVector = actionIcon,
+          contentDescription = actionIconContentDescription,
+          tint = MaterialTheme.colorScheme.onSurface,
+        )
+      }
+    },
+    colors = colors,
+    modifier = modifier.testTag("niaTopAppBar"),
+  )
 }

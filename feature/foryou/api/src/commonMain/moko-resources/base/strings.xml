@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
     Designed and developed by 2026 skydoves (Jaewoong Eum)
 
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,5 +19,7 @@
     <string name="feature_foryou_api_loading">Loading for you…</string>
     <string name="feature_foryou_api_navigate_up">Navigate up</string>
     <string name="feature_foryou_api_onboarding_guidance_title">What are you interested in?</string>
-    <string name="feature_foryou_api_onboarding_guidance_subtitle">Updates from topics you follow will appear here. Follow some things to get started.</string>
+    <string name="feature_foryou_api_onboarding_guidance_subtitle">Updates from topics you follow
+        will appear here. Follow some things to get started.
+    </string>
 </resources>

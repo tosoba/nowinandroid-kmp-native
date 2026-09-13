@@ -20,13 +20,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 
 /**
- * JankStats is an Android library with no counterpart elsewhere, so the tracking calls compile
- * away to nothing on the desktop and on iOS.
+ * JankStats is an Android library with no counterpart elsewhere, so the tracking calls compile away
+ * to nothing on the desktop and on iOS.
  */
 @Composable
 actual fun rememberMetricsStateHolder(): JankMetricsState = remember {
-    object : JankMetricsState {
-        override fun putState(key: String, value: String) = Unit
-        override fun removeState(key: String) = Unit
-    }
+  object : JankMetricsState {
+    override fun putState(key: String, value: String) = Unit
+
+    override fun removeState(key: String) = Unit
+  }
 }

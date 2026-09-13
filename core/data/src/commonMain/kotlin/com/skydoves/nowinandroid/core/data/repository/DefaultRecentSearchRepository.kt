@@ -31,21 +31,22 @@ import kotlin.time.Clock
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultRecentSearchRepository(private val recentSearchQueryDao: RecentSearchQueryDao) : RecentSearchRepository {
+class DefaultRecentSearchRepository(private val recentSearchQueryDao: RecentSearchQueryDao) :
+  RecentSearchRepository {
 
-    override suspend fun insertOrReplaceRecentSearch(searchQuery: String) {
-        recentSearchQueryDao.insertOrReplaceRecentSearchQuery(
-            RecentSearchQueryEntity(
-                query = searchQuery,
-                queriedDate = Clock.System.now(),
-            ),
-        )
+  override suspend fun insertOrReplaceRecentSearch(searchQuery: String) {
+    recentSearchQueryDao.insertOrReplaceRecentSearchQuery(
+      RecentSearchQueryEntity(
+        query = searchQuery,
+        queriedDate = Clock.System.now(),
+      )
+    )
+  }
+
+  override fun getRecentSearchQueries(limit: Int): Flow<List<RecentSearchQuery>> =
+    recentSearchQueryDao.getRecentSearchQueryEntities(limit).map { searchQueries ->
+      searchQueries.map { it.asExternalModel() }
     }
 
-    override fun getRecentSearchQueries(limit: Int): Flow<List<RecentSearchQuery>> =
-        recentSearchQueryDao.getRecentSearchQueryEntities(limit).map { searchQueries ->
-            searchQueries.map { it.asExternalModel() }
-        }
-
-    override suspend fun clearRecentSearches() = recentSearchQueryDao.clearRecentSearchQueries()
+  override suspend fun clearRecentSearches() = recentSearchQueryDao.clearRecentSearchQueries()
 }

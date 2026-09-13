@@ -39,18 +39,19 @@ import kotlin.time.Duration.Companion.seconds
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class PollingTimeZoneMonitor(@ApplicationScope private val appScope: CoroutineScope) : TimeZoneMonitor {
+class PollingTimeZoneMonitor(@ApplicationScope private val appScope: CoroutineScope) :
+  TimeZoneMonitor {
 
-    override val currentTimeZone: Flow<TimeZone> = flow {
-        while (true) {
-            emit(TimeZone.currentSystemDefault())
-            delay(POLL_INTERVAL)
-        }
+  override val currentTimeZone: Flow<TimeZone> = flow {
+    while (true) {
+      emit(TimeZone.currentSystemDefault())
+      delay(POLL_INTERVAL)
     }
-        .distinctUntilChanged()
-        .shareIn(appScope, SharingStarted.WhileSubscribed(5_000), replay = 1)
+  }
+    .distinctUntilChanged()
+    .shareIn(appScope, SharingStarted.WhileSubscribed(5_000), replay = 1)
 
-    private companion object {
-        val POLL_INTERVAL = 30.seconds
-    }
+  private companion object {
+    val POLL_INTERVAL = 30.seconds
+  }
 }

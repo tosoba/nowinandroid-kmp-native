@@ -15,36 +15,36 @@
  */
 
 plugins {
-    id("nowinandroid.kmp.multiplatform")
-    alias(libs.plugins.metro)
+  id("nowinandroid.kmp.multiplatform")
+  alias(libs.plugins.metro)
 }
 
 kotlin {
-    sourceSets {
-        commonMain.dependencies {
-            api(projects.core.model)
-            api(projects.core.common)
-            api(projects.core.network)
-            api(projects.core.database)
-            api(projects.core.datastore)
-            api(projects.core.analytics)
-            api(projects.core.notifications)
-            api(libs.kotlinx.datetime)
-            implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.metro.runtime)
-        }
-        getByName("wasmJsMain").dependencies {
-            implementation(libs.kotlinx.browser)
-        }
-        androidMain.dependencies {
-            implementation(libs.androidx.core.ktx)
-            implementation(libs.androidx.work.runtime)
-        }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-            implementation(libs.kotlinx.coroutines.test)
-            implementation(libs.turbine)
-            implementation(projects.core.testing)
-        }
+  sourceSets {
+    commonMain.dependencies {
+      api(projects.core.model)
+      api(projects.core.common)
+      api(projects.core.network)
+      api(projects.core.database)
+      api(projects.core.datastore)
+      api(projects.core.analytics)
+      api(projects.core.notifications)
+      api(libs.kotlinx.datetime)
+      implementation(libs.kotlinx.coroutines.core)
+      implementation(libs.metro.runtime)
     }
+    getByName("wasmJsMain").dependencies {
+      implementation(libs.kotlinx.browser)
+    }
+    androidMain.dependencies {
+      implementation(libs.androidx.core.ktx)
+      implementation(libs.androidx.work.runtime)
+    }
+    commonTest.dependencies {
+      implementation(libs.kotlin.test)
+      implementation(libs.kotlinx.coroutines.test)
+      implementation(libs.turbine)
+      implementation(projects.core.testing)
+    }
+  }
 }

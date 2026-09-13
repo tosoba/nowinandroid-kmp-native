@@ -47,44 +47,46 @@ import java.time.ZoneId
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class TimeZoneBroadcastMonitor(
-    private val context: Context,
-    @ApplicationScope appScope: CoroutineScope,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+  private val context: Context,
+  @ApplicationScope appScope: CoroutineScope,
+  @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : TimeZoneMonitor {
 
-    override val currentTimeZone: SharedFlow<TimeZone> = callbackFlow {
-        // Send the default time zone first.
-        trySend(TimeZone.currentSystemDefault())
+  override val currentTimeZone: SharedFlow<TimeZone> = callbackFlow {
+    // Send the default time zone first.
+    trySend(TimeZone.currentSystemDefault())
 
-        val receiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context, intent: Intent) {
-                if (intent.action != Intent.ACTION_TIMEZONE_CHANGED) return
+    val receiver =
+      object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+          if (intent.action != Intent.ACTION_TIMEZONE_CHANGED) return
 
-                val zoneIdFromIntent = if (VERSION.SDK_INT < VERSION_CODES.R) {
-                    null
-                } else {
-                    // Starting Android R the intent carries the new zone id, which saves a
-                    // round trip through the (potentially stale) system default.
-                    intent.getStringExtra(Intent.EXTRA_TIMEZONE)?.let { zoneId ->
-                        runCatching { ZoneId.of(zoneId).toKotlinTimeZone() }.getOrNull()
-                    }
-                }
-
-                trySend(zoneIdFromIntent ?: TimeZone.currentSystemDefault())
+          val zoneIdFromIntent =
+            if (VERSION.SDK_INT < VERSION_CODES.R) {
+              null
+            } else {
+              // Starting Android R the intent carries the new zone id, which saves a
+              // round trip through the (potentially stale) system default.
+              intent.getStringExtra(Intent.EXTRA_TIMEZONE)?.let { zoneId ->
+                runCatching { ZoneId.of(zoneId).toKotlinTimeZone() }.getOrNull()
+              }
             }
+
+          trySend(zoneIdFromIntent ?: TimeZone.currentSystemDefault())
         }
+      }
 
-        ContextCompat.registerReceiver(
-            context,
-            receiver,
-            IntentFilter(Intent.ACTION_TIMEZONE_CHANGED),
-            ContextCompat.RECEIVER_NOT_EXPORTED,
-        )
+    ContextCompat.registerReceiver(
+      context,
+      receiver,
+      IntentFilter(Intent.ACTION_TIMEZONE_CHANGED),
+      ContextCompat.RECEIVER_NOT_EXPORTED,
+    )
 
-        awaitClose { context.unregisterReceiver(receiver) }
-    }
-        .distinctUntilChanged()
-        .conflate()
-        .flowOn(ioDispatcher)
-        .shareIn(appScope, SharingStarted.WhileSubscribed(5_000), replay = 1)
+    awaitClose { context.unregisterReceiver(receiver) }
+  }
+    .distinctUntilChanged()
+    .conflate()
+    .flowOn(ioDispatcher)
+    .shareIn(appScope, SharingStarted.WhileSubscribed(5_000), replay = 1)
 }

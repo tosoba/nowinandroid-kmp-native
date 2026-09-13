@@ -37,25 +37,25 @@ import kotlinx.coroutines.sync.withLock
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class CoroutineSyncManager(
-    @ApplicationScope private val appScope: CoroutineScope,
-    private val synchronizer: NiaSynchronizer,
+  @ApplicationScope private val appScope: CoroutineScope,
+  private val synchronizer: NiaSynchronizer,
 ) : SyncManager {
 
-    private val syncing = MutableStateFlow(false)
-    private val mutex = Mutex()
+  private val syncing = MutableStateFlow(false)
+  private val mutex = Mutex()
 
-    override val isSyncing: Flow<Boolean> = syncing.asStateFlow()
+  override val isSyncing: Flow<Boolean> = syncing.asStateFlow()
 
-    override fun requestSync() {
-        appScope.launch {
-            mutex.withLock {
-                syncing.value = true
-                try {
-                    synchronizer.sync()
-                } finally {
-                    syncing.value = false
-                }
-            }
+  override fun requestSync() {
+    appScope.launch {
+      mutex.withLock {
+        syncing.value = true
+        try {
+          synchronizer.sync()
+        } finally {
+          syncing.value = false
         }
+      }
     }
+  }
 }

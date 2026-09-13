@@ -72,300 +72,292 @@ import com.skydoves.nowinandroid.core.ui.userNewsResourceCardItems
 import com.skydoves.nowinandroid.feature.topic.api.feature_topic_api_error
 import com.skydoves.nowinandroid.feature.topic.api.feature_topic_api_loading
 import com.skydoves.nowinandroid.feature.topic.api.navigation.TopicNavKey
-import dev.zacsweers.metrox.viewmodel.metroViewModel
 import dev.icerock.moko.resources.compose.stringResource
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import com.skydoves.nowinandroid.core.ui.MR as CoreUiRes
 import com.skydoves.nowinandroid.feature.topic.api.MR as TopicApiRes
 
 @Composable
 fun TopicScreen(
-    showBackButton: Boolean,
-    onBackClick: () -> Unit,
-    onTopicClick: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    viewModel: TopicViewModel = metroViewModel(),
+  showBackButton: Boolean,
+  onBackClick: () -> Unit,
+  onTopicClick: (String) -> Unit,
+  modifier: Modifier = Modifier,
+  viewModel: TopicViewModel = metroViewModel(),
 ) {
-    val topicUiState: TopicUiState by viewModel.topicUiState.collectAsStateWithLifecycle()
-    val newsUiState: NewsUiState by viewModel.newsUiState.collectAsStateWithLifecycle()
+  val topicUiState: TopicUiState by viewModel.topicUiState.collectAsStateWithLifecycle()
+  val newsUiState: NewsUiState by viewModel.newsUiState.collectAsStateWithLifecycle()
 
-    TrackScreenViewEvent(screenName = "Topic: ${viewModel.topicId}")
-    TopicScreen(
-        topicUiState = topicUiState,
-        newsUiState = newsUiState,
-        modifier = modifier.testTag("topic:${viewModel.topicId}"),
-        showBackButton = showBackButton,
-        onBackClick = onBackClick,
-        onFollowClick = viewModel::followTopicToggle,
-        onBookmarkChanged = viewModel::bookmarkNews,
-        onNewsResourceViewed = { viewModel.setNewsResourceViewed(it, true) },
-        onTopicClick = onTopicClick,
-    )
+  TrackScreenViewEvent(screenName = "Topic: ${viewModel.topicId}")
+  TopicScreen(
+    topicUiState = topicUiState,
+    newsUiState = newsUiState,
+    modifier = modifier.testTag("topic:${viewModel.topicId}"),
+    showBackButton = showBackButton,
+    onBackClick = onBackClick,
+    onFollowClick = viewModel::followTopicToggle,
+    onBookmarkChanged = viewModel::bookmarkNews,
+    onNewsResourceViewed = { viewModel.setNewsResourceViewed(it, true) },
+    onTopicClick = onTopicClick,
+  )
 }
 
 @NavDestination(route = TopicNavKey::class)
 @NavEdge(to = TopicNavKey::class, label = "Related topic")
 @Composable
 internal fun TopicScreen(
-    topicUiState: TopicUiState,
-    newsUiState: NewsUiState,
-    showBackButton: Boolean,
-    onBackClick: () -> Unit,
-    onFollowClick: (Boolean) -> Unit,
-    onTopicClick: (String) -> Unit,
-    onBookmarkChanged: (String, Boolean) -> Unit,
-    onNewsResourceViewed: (String) -> Unit,
-    modifier: Modifier = Modifier,
+  topicUiState: TopicUiState,
+  newsUiState: NewsUiState,
+  showBackButton: Boolean,
+  onBackClick: () -> Unit,
+  onFollowClick: (Boolean) -> Unit,
+  onTopicClick: (String) -> Unit,
+  onBookmarkChanged: (String, Boolean) -> Unit,
+  onNewsResourceViewed: (String) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    val state = rememberLazyListState()
-    TrackScrollJank(scrollableState = state, stateName = "topic:screen")
+  val state = rememberLazyListState()
+  TrackScrollJank(scrollableState = state, stateName = "topic:screen")
 
-    Column(modifier = modifier) {
-        Spacer(Modifier.windowInsetsTopHeight(WindowInsets.safeDrawing))
+  Column(modifier = modifier) {
+    Spacer(Modifier.windowInsetsTopHeight(WindowInsets.safeDrawing))
 
-        Box {
-            LazyColumn(
-                state = state,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                when (topicUiState) {
-                    TopicUiState.Loading -> item {
-                        NiaLoadingWheel(
-                            modifier = modifier,
-                            contentDesc = stringResource(TopicApiRes.strings.feature_topic_api_loading),
-                        )
-                    }
-
-                    TopicUiState.Error -> item {
-                        Text(
-                            text = stringResource(TopicApiRes.strings.feature_topic_api_error),
-                            style = MaterialTheme.typography.bodyLarge,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 24.dp, vertical = 48.dp),
-                        )
-                    }
-
-                    is TopicUiState.Success -> {
-                        item {
-                            TopicToolbar(
-                                showBackButton = showBackButton,
-                                onBackClick = onBackClick,
-                                onFollowClick = onFollowClick,
-                                uiState = topicUiState.followableTopic,
-                            )
-                        }
-                        topicBody(
-                            name = topicUiState.followableTopic.topic.name,
-                            description = topicUiState.followableTopic.topic.longDescription,
-                            news = newsUiState,
-                            imageUrl = topicUiState.followableTopic.topic.imageUrl,
-                            onBookmarkChanged = onBookmarkChanged,
-                            onNewsResourceViewed = onNewsResourceViewed,
-                            onTopicClick = onTopicClick,
-                        )
-                    }
-                }
-                item {
-                    Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.safeDrawing))
-                }
+    Box {
+      LazyColumn(
+        state = state,
+        horizontalAlignment = Alignment.CenterHorizontally,
+      ) {
+        when (topicUiState) {
+          TopicUiState.Loading ->
+            item {
+              NiaLoadingWheel(
+                modifier = modifier,
+                contentDesc = stringResource(TopicApiRes.strings.feature_topic_api_loading),
+              )
             }
-            val itemsAvailable = topicItemsSize(topicUiState, newsUiState)
-            val scrollbarState = state.scrollbarState(
-                itemsAvailable = itemsAvailable,
+
+          TopicUiState.Error ->
+            item {
+              Text(
+                text = stringResource(TopicApiRes.strings.feature_topic_api_error),
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 48.dp),
+              )
+            }
+
+          is TopicUiState.Success -> {
+            item {
+              TopicToolbar(
+                showBackButton = showBackButton,
+                onBackClick = onBackClick,
+                onFollowClick = onFollowClick,
+                uiState = topicUiState.followableTopic,
+              )
+            }
+            topicBody(
+              name = topicUiState.followableTopic.topic.name,
+              description = topicUiState.followableTopic.topic.longDescription,
+              news = newsUiState,
+              imageUrl = topicUiState.followableTopic.topic.imageUrl,
+              onBookmarkChanged = onBookmarkChanged,
+              onNewsResourceViewed = onNewsResourceViewed,
+              onTopicClick = onTopicClick,
             )
-            state.DraggableScrollbar(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .windowInsetsPadding(WindowInsets.systemBars)
-                    .padding(horizontal = 2.dp)
-                    .align(Alignment.CenterEnd),
-                state = scrollbarState,
-                orientation = Orientation.Vertical,
-                onThumbMoved = state.rememberDraggableScroller(
-                    itemsAvailable = itemsAvailable,
-                ),
-            )
+          }
         }
+        item {
+          Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.safeDrawing))
+        }
+      }
+      val itemsAvailable = topicItemsSize(topicUiState, newsUiState)
+      val scrollbarState = state.scrollbarState(itemsAvailable = itemsAvailable)
+      state.DraggableScrollbar(
+        modifier =
+          Modifier.fillMaxHeight()
+            .windowInsetsPadding(WindowInsets.systemBars)
+            .padding(horizontal = 2.dp)
+            .align(Alignment.CenterEnd),
+        state = scrollbarState,
+        orientation = Orientation.Vertical,
+        onThumbMoved = state.rememberDraggableScroller(itemsAvailable = itemsAvailable),
+      )
     }
+  }
 }
 
 private fun topicItemsSize(topicUiState: TopicUiState, newsUiState: NewsUiState) =
-    when (topicUiState) {
-        TopicUiState.Error -> 1 // Error message
-        TopicUiState.Loading -> 1 // Loading bar
-        is TopicUiState.Success -> when (newsUiState) {
-            NewsUiState.Error -> 0 // Nothing
-            NewsUiState.Loading -> 1 // Loading bar
-            is NewsUiState.Success -> 2 + newsUiState.news.size // Toolbar, header
-        }
-    }
+  when (topicUiState) {
+    TopicUiState.Error -> 1 // Error message
+    TopicUiState.Loading -> 1 // Loading bar
+    is TopicUiState.Success ->
+      when (newsUiState) {
+        NewsUiState.Error -> 0 // Nothing
+        NewsUiState.Loading -> 1 // Loading bar
+        is NewsUiState.Success -> 2 + newsUiState.news.size // Toolbar, header
+      }
+  }
 
 private fun LazyListScope.topicBody(
-    name: String,
-    description: String,
-    news: NewsUiState,
-    imageUrl: String,
-    onBookmarkChanged: (String, Boolean) -> Unit,
-    onNewsResourceViewed: (String) -> Unit,
-    onTopicClick: (String) -> Unit,
+  name: String,
+  description: String,
+  news: NewsUiState,
+  imageUrl: String,
+  onBookmarkChanged: (String, Boolean) -> Unit,
+  onNewsResourceViewed: (String) -> Unit,
+  onTopicClick: (String) -> Unit,
 ) {
-    // TODO: Show icon if available
-    item {
-        TopicHeader(name, description, imageUrl)
-    }
+  // TODO: Show icon if available
+  item {
+    TopicHeader(name, description, imageUrl)
+  }
 
-    userNewsResourceCards(news, onBookmarkChanged, onNewsResourceViewed, onTopicClick)
+  userNewsResourceCards(news, onBookmarkChanged, onNewsResourceViewed, onTopicClick)
 }
 
 @Composable
 private fun TopicHeader(name: String, description: String, imageUrl: String) {
-    Column(
-        modifier = Modifier.padding(horizontal = 24.dp),
-    ) {
-        DynamicAsyncImage(
-            imageUrl = imageUrl,
-            contentDescription = null,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .size(132.dp)
-                .padding(bottom = 12.dp),
-        )
-        Text(name, style = MaterialTheme.typography.displayMedium)
-        if (description.isNotEmpty()) {
-            Text(
-                description,
-                modifier = Modifier.padding(top = 24.dp),
-                style = MaterialTheme.typography.bodyLarge,
-            )
-        }
+  Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+    DynamicAsyncImage(
+      imageUrl = imageUrl,
+      contentDescription = null,
+      modifier = Modifier.align(Alignment.CenterHorizontally).size(132.dp).padding(bottom = 12.dp),
+    )
+    Text(name, style = MaterialTheme.typography.displayMedium)
+    if (description.isNotEmpty()) {
+      Text(
+        description,
+        modifier = Modifier.padding(top = 24.dp),
+        style = MaterialTheme.typography.bodyLarge,
+      )
     }
+  }
 }
 
 // TODO: Could/should this be replaced with [LazyGridScope.newsFeed]?
 private fun LazyListScope.userNewsResourceCards(
-    news: NewsUiState,
-    onBookmarkChanged: (String, Boolean) -> Unit,
-    onNewsResourceViewed: (String) -> Unit,
-    onTopicClick: (String) -> Unit,
+  news: NewsUiState,
+  onBookmarkChanged: (String, Boolean) -> Unit,
+  onNewsResourceViewed: (String) -> Unit,
+  onTopicClick: (String) -> Unit,
 ) {
-    when (news) {
-        is NewsUiState.Success -> {
-            userNewsResourceCardItems(
-                items = news.news,
-                onToggleBookmark = { onBookmarkChanged(it.id, !it.isSaved) },
-                onNewsResourceViewed = onNewsResourceViewed,
-                onTopicClick = onTopicClick,
-                itemModifier = Modifier.padding(24.dp),
-            )
-        }
-
-        is NewsUiState.Loading -> item {
-            NiaLoadingWheel(contentDesc = "Loading news") // TODO
-        }
-
-        else -> item {
-            Text("Error") // TODO
-        }
+  when (news) {
+    is NewsUiState.Success -> {
+      userNewsResourceCardItems(
+        items = news.news,
+        onToggleBookmark = { onBookmarkChanged(it.id, !it.isSaved) },
+        onNewsResourceViewed = onNewsResourceViewed,
+        onTopicClick = onTopicClick,
+        itemModifier = Modifier.padding(24.dp),
+      )
     }
+
+    is NewsUiState.Loading ->
+      item {
+        NiaLoadingWheel(contentDesc = "Loading news") // TODO
+      }
+
+    else ->
+      item {
+        Text("Error") // TODO
+      }
+  }
 }
 
 @Preview
 @Composable
 private fun TopicBodyPreview() {
-    NiaTheme {
-        LazyColumn {
-            topicBody(
-                name = "Jetpack Compose",
-                description = "Lorem ipsum maximum",
-                news = NewsUiState.Success(emptyList()),
-                imageUrl = "",
-                onBookmarkChanged = { _, _ -> },
-                onNewsResourceViewed = {},
-                onTopicClick = {},
-            )
-        }
+  NiaTheme {
+    LazyColumn {
+      topicBody(
+        name = "Jetpack Compose",
+        description = "Lorem ipsum maximum",
+        news = NewsUiState.Success(emptyList()),
+        imageUrl = "",
+        onBookmarkChanged = { _, _ -> },
+        onNewsResourceViewed = {},
+        onTopicClick = {},
+      )
     }
+  }
 }
 
 @Composable
 private fun TopicToolbar(
-    uiState: FollowableTopic,
-    modifier: Modifier = Modifier,
-    showBackButton: Boolean = true,
-    onBackClick: () -> Unit = {},
-    onFollowClick: (Boolean) -> Unit = {},
+  uiState: FollowableTopic,
+  modifier: Modifier = Modifier,
+  showBackButton: Boolean = true,
+  onBackClick: () -> Unit = {},
+  onFollowClick: (Boolean) -> Unit = {},
 ) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(bottom = 32.dp),
-    ) {
-        if (showBackButton) {
-            IconButton(onClick = { onBackClick() }) {
-                Icon(
-                    imageVector = NiaIcons.ArrowBack,
-                    contentDescription = stringResource(CoreUiRes.strings.core_ui_back),
-                )
-            }
-        } else {
-            // Keeps the NiaFilterChip aligned to the end of the Row.
-            Spacer(modifier = Modifier.width(1.dp))
-        }
-        val selected = uiState.isFollowed
-        NiaFilterChip(
-            selected = selected,
-            onSelectedChange = onFollowClick,
-            modifier = Modifier.padding(end = 24.dp),
-        ) {
-            if (selected) {
-                Text("FOLLOWING")
-            } else {
-                Text("NOT FOLLOWING")
-            }
-        }
+  Row(
+    horizontalArrangement = Arrangement.SpaceBetween,
+    verticalAlignment = Alignment.CenterVertically,
+    modifier = modifier.fillMaxWidth().padding(bottom = 32.dp),
+  ) {
+    if (showBackButton) {
+      IconButton(onClick = { onBackClick() }) {
+        Icon(
+          imageVector = NiaIcons.ArrowBack,
+          contentDescription = stringResource(CoreUiRes.strings.core_ui_back),
+        )
+      }
+    } else {
+      // Keeps the NiaFilterChip aligned to the end of the Row.
+      Spacer(modifier = Modifier.width(1.dp))
     }
+    val selected = uiState.isFollowed
+    NiaFilterChip(
+      selected = selected,
+      onSelectedChange = onFollowClick,
+      modifier = Modifier.padding(end = 24.dp),
+    ) {
+      if (selected) {
+        Text("FOLLOWING")
+      } else {
+        Text("NOT FOLLOWING")
+      }
+    }
+  }
 }
 
 @DevicePreviews
 @Composable
 fun TopicScreenPopulated(
-    @PreviewParameter(UserNewsResourcePreviewParameterProvider::class)
-    userNewsResources: List<UserNewsResource>,
+  @PreviewParameter(UserNewsResourcePreviewParameterProvider::class)
+  userNewsResources: List<UserNewsResource>
 ) {
-    NiaTheme {
-        NiaBackground {
-            TopicScreen(
-                topicUiState = TopicUiState.Success(userNewsResources[0].followableTopics[0]),
-                newsUiState = NewsUiState.Success(userNewsResources),
-                showBackButton = true,
-                onBackClick = {},
-                onFollowClick = {},
-                onBookmarkChanged = { _, _ -> },
-                onNewsResourceViewed = {},
-                onTopicClick = {},
-            )
-        }
+  NiaTheme {
+    NiaBackground {
+      TopicScreen(
+        topicUiState = TopicUiState.Success(userNewsResources[0].followableTopics[0]),
+        newsUiState = NewsUiState.Success(userNewsResources),
+        showBackButton = true,
+        onBackClick = {},
+        onFollowClick = {},
+        onBookmarkChanged = { _, _ -> },
+        onNewsResourceViewed = {},
+        onTopicClick = {},
+      )
     }
+  }
 }
 
 @DevicePreviews
 @Composable
 fun TopicScreenLoading() {
-    NiaTheme {
-        NiaBackground {
-            TopicScreen(
-                topicUiState = TopicUiState.Loading,
-                newsUiState = NewsUiState.Loading,
-                showBackButton = true,
-                onBackClick = {},
-                onFollowClick = {},
-                onBookmarkChanged = { _, _ -> },
-                onNewsResourceViewed = {},
-                onTopicClick = {},
-            )
-        }
+  NiaTheme {
+    NiaBackground {
+      TopicScreen(
+        topicUiState = TopicUiState.Loading,
+        newsUiState = NewsUiState.Loading,
+        showBackButton = true,
+        onBackClick = {},
+        onFollowClick = {},
+        onBookmarkChanged = { _, _ -> },
+        onNewsResourceViewed = {},
+        onTopicClick = {},
+      )
     }
+  }
 }

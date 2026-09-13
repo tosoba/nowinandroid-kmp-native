@@ -64,256 +64,256 @@ import com.skydoves.nowinandroid.core.model.data.ThemeBrand.DEFAULT
 import com.skydoves.nowinandroid.core.ui.TrackScreenViewEvent
 import com.skydoves.nowinandroid.feature.settings.impl.SettingsUiState.Loading
 import com.skydoves.nowinandroid.feature.settings.impl.SettingsUiState.Success
-import com.skydoves.nowinandroid.feature.settings.impl.MR as Res
-import dev.zacsweers.metrox.viewmodel.metroViewModel
 import dev.icerock.moko.resources.compose.stringResource
+import dev.zacsweers.metrox.viewmodel.metroViewModel
+import com.skydoves.nowinandroid.feature.settings.impl.MR as Res
 
 @Composable
 fun SettingsDialog(onDismiss: () -> Unit, viewModel: SettingsViewModel = metroViewModel()) {
-    val settingsUiState by viewModel.settingsUiState.collectAsStateWithLifecycle()
-    SettingsDialog(
-        onDismiss = onDismiss,
-        settingsUiState = settingsUiState,
-        onChangeThemeBrand = viewModel::updateThemeBrand,
-        onChangeDynamicColorPreference = viewModel::updateDynamicColorPreference,
-        onChangeDarkThemeConfig = viewModel::updateDarkThemeConfig,
-    )
+  val settingsUiState by viewModel.settingsUiState.collectAsStateWithLifecycle()
+  SettingsDialog(
+    onDismiss = onDismiss,
+    settingsUiState = settingsUiState,
+    onChangeThemeBrand = viewModel::updateThemeBrand,
+    onChangeDynamicColorPreference = viewModel::updateDynamicColorPreference,
+    onChangeDarkThemeConfig = viewModel::updateDarkThemeConfig,
+  )
 }
 
 @Composable
 fun SettingsDialog(
-    settingsUiState: SettingsUiState,
-    supportDynamicColor: Boolean = supportsDynamicTheming(),
-    onDismiss: () -> Unit,
-    onChangeThemeBrand: (themeBrand: ThemeBrand) -> Unit,
-    onChangeDynamicColorPreference: (useDynamicColor: Boolean) -> Unit,
-    onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit,
+  settingsUiState: SettingsUiState,
+  supportDynamicColor: Boolean = supportsDynamicTheming(),
+  onDismiss: () -> Unit,
+  onChangeThemeBrand: (themeBrand: ThemeBrand) -> Unit,
+  onChangeDynamicColorPreference: (useDynamicColor: Boolean) -> Unit,
+  onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit,
 ) {
-    // `LocalConfiguration` is Android only; `LocalWindowInfo` reports the same container
-    // width on every target.
-    val density = LocalDensity.current
-    val containerWidth = with(density) { LocalWindowInfo.current.containerSize.width.toDp() }
+  // `LocalConfiguration` is Android only; `LocalWindowInfo` reports the same container
+  // width on every target.
+  val density = LocalDensity.current
+  val containerWidth = with(density) { LocalWindowInfo.current.containerSize.width.toDp() }
 
-    /**
-     * usePlatformDefaultWidth = false is use as a temporary fix to allow
-     * height recalculation during recomposition. This, however, causes
-     * Dialog's to occupy full width in Compact mode. Therefore max width
-     * is configured below. This should be removed when there's fix to
-     * https://issuetracker.google.com/issues/221643630
-     */
-    AlertDialog(
-        properties = DialogProperties(usePlatformDefaultWidth = false),
-        modifier = Modifier.widthIn(max = containerWidth - 80.dp),
-        onDismissRequest = { onDismiss() },
-        title = {
+  /**
+   * usePlatformDefaultWidth = false is use as a temporary fix to allow height recalculation during
+   * recomposition. This, however, causes Dialog's to occupy full width in Compact mode. Therefore
+   * max width is configured below. This should be removed when there's fix to
+   * https://issuetracker.google.com/issues/221643630
+   */
+  AlertDialog(
+    properties = DialogProperties(usePlatformDefaultWidth = false),
+    modifier = Modifier.widthIn(max = containerWidth - 80.dp),
+    onDismissRequest = { onDismiss() },
+    title = {
+      Text(
+        text = stringResource(Res.strings.feature_settings_title),
+        style = MaterialTheme.typography.titleLarge,
+      )
+    },
+    text = {
+      HorizontalDivider()
+      Column(Modifier.verticalScroll(rememberScrollState())) {
+        when (settingsUiState) {
+          Loading -> {
             Text(
-                text = stringResource(Res.strings.feature_settings_title),
-                style = MaterialTheme.typography.titleLarge,
+              text = stringResource(Res.strings.feature_settings_loading),
+              modifier = Modifier.padding(vertical = 16.dp),
             )
-        },
-        text = {
-            HorizontalDivider()
-            Column(Modifier.verticalScroll(rememberScrollState())) {
-                when (settingsUiState) {
-                    Loading -> {
-                        Text(
-                            text = stringResource(Res.strings.feature_settings_loading),
-                            modifier = Modifier.padding(vertical = 16.dp),
-                        )
-                    }
+          }
 
-                    is Success -> {
-                        SettingsPanel(
-                            settings = settingsUiState.settings,
-                            supportDynamicColor = supportDynamicColor,
-                            onChangeThemeBrand = onChangeThemeBrand,
-                            onChangeDynamicColorPreference = onChangeDynamicColorPreference,
-                            onChangeDarkThemeConfig = onChangeDarkThemeConfig,
-                        )
-                    }
-                }
-                HorizontalDivider(Modifier.padding(top = 8.dp))
-                LinksPanel()
-            }
-            TrackScreenViewEvent(screenName = "Settings")
-        },
-        confirmButton = {
-            NiaTextButton(
-                onClick = onDismiss,
-                modifier = Modifier.padding(horizontal = 8.dp),
-            ) {
-                Text(
-                    text = stringResource(Res.strings.feature_settings_dismiss_dialog_button_text),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-            }
-        },
-    )
+          is Success -> {
+            SettingsPanel(
+              settings = settingsUiState.settings,
+              supportDynamicColor = supportDynamicColor,
+              onChangeThemeBrand = onChangeThemeBrand,
+              onChangeDynamicColorPreference = onChangeDynamicColorPreference,
+              onChangeDarkThemeConfig = onChangeDarkThemeConfig,
+            )
+          }
+        }
+        HorizontalDivider(Modifier.padding(top = 8.dp))
+        LinksPanel()
+      }
+      TrackScreenViewEvent(screenName = "Settings")
+    },
+    confirmButton = {
+      NiaTextButton(
+        onClick = onDismiss,
+        modifier = Modifier.padding(horizontal = 8.dp),
+      ) {
+        Text(
+          text = stringResource(Res.strings.feature_settings_dismiss_dialog_button_text),
+          style = MaterialTheme.typography.labelLarge,
+          color = MaterialTheme.colorScheme.primary,
+        )
+      }
+    },
+  )
 }
 
-// [ColumnScope] is used for using the [ColumnScope.AnimatedVisibility] extension overload composable.
+// [ColumnScope] is used for using the [ColumnScope.AnimatedVisibility] extension overload
+// composable.
 @Composable
 private fun ColumnScope.SettingsPanel(
-    settings: UserEditableSettings,
-    supportDynamicColor: Boolean,
-    onChangeThemeBrand: (themeBrand: ThemeBrand) -> Unit,
-    onChangeDynamicColorPreference: (useDynamicColor: Boolean) -> Unit,
-    onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit,
+  settings: UserEditableSettings,
+  supportDynamicColor: Boolean,
+  onChangeThemeBrand: (themeBrand: ThemeBrand) -> Unit,
+  onChangeDynamicColorPreference: (useDynamicColor: Boolean) -> Unit,
+  onChangeDarkThemeConfig: (darkThemeConfig: DarkThemeConfig) -> Unit,
 ) {
-    SettingsDialogSectionTitle(text = stringResource(Res.strings.feature_settings_theme))
-    Column(Modifier.selectableGroup()) {
+  SettingsDialogSectionTitle(text = stringResource(Res.strings.feature_settings_theme))
+  Column(Modifier.selectableGroup()) {
+    SettingsDialogThemeChooserRow(
+      text = stringResource(Res.strings.feature_settings_brand_default),
+      selected = settings.brand == DEFAULT,
+      onClick = { onChangeThemeBrand(DEFAULT) },
+    )
+    SettingsDialogThemeChooserRow(
+      text = stringResource(Res.strings.feature_settings_brand_android),
+      selected = settings.brand == ANDROID,
+      onClick = { onChangeThemeBrand(ANDROID) },
+    )
+  }
+  AnimatedVisibility(visible = settings.brand == DEFAULT && supportDynamicColor) {
+    Column {
+      SettingsDialogSectionTitle(
+        text = stringResource(Res.strings.feature_settings_dynamic_color_preference)
+      )
+      Column(Modifier.selectableGroup()) {
         SettingsDialogThemeChooserRow(
-            text = stringResource(Res.strings.feature_settings_brand_default),
-            selected = settings.brand == DEFAULT,
-            onClick = { onChangeThemeBrand(DEFAULT) },
+          text = stringResource(Res.strings.feature_settings_dynamic_color_yes),
+          selected = settings.useDynamicColor,
+          onClick = { onChangeDynamicColorPreference(true) },
         )
         SettingsDialogThemeChooserRow(
-            text = stringResource(Res.strings.feature_settings_brand_android),
-            selected = settings.brand == ANDROID,
-            onClick = { onChangeThemeBrand(ANDROID) },
+          text = stringResource(Res.strings.feature_settings_dynamic_color_no),
+          selected = !settings.useDynamicColor,
+          onClick = { onChangeDynamicColorPreference(false) },
         )
+      }
     }
-    AnimatedVisibility(visible = settings.brand == DEFAULT && supportDynamicColor) {
-        Column {
-            SettingsDialogSectionTitle(text = stringResource(Res.strings.feature_settings_dynamic_color_preference))
-            Column(Modifier.selectableGroup()) {
-                SettingsDialogThemeChooserRow(
-                    text = stringResource(Res.strings.feature_settings_dynamic_color_yes),
-                    selected = settings.useDynamicColor,
-                    onClick = { onChangeDynamicColorPreference(true) },
-                )
-                SettingsDialogThemeChooserRow(
-                    text = stringResource(Res.strings.feature_settings_dynamic_color_no),
-                    selected = !settings.useDynamicColor,
-                    onClick = { onChangeDynamicColorPreference(false) },
-                )
-            }
-        }
-    }
-    SettingsDialogSectionTitle(text = stringResource(Res.strings.feature_settings_dark_mode_preference))
-    Column(Modifier.selectableGroup()) {
-        SettingsDialogThemeChooserRow(
-            text = stringResource(Res.strings.feature_settings_dark_mode_config_system_default),
-            selected = settings.darkThemeConfig == FOLLOW_SYSTEM,
-            onClick = { onChangeDarkThemeConfig(FOLLOW_SYSTEM) },
-        )
-        SettingsDialogThemeChooserRow(
-            text = stringResource(Res.strings.feature_settings_dark_mode_config_light),
-            selected = settings.darkThemeConfig == LIGHT,
-            onClick = { onChangeDarkThemeConfig(LIGHT) },
-        )
-        SettingsDialogThemeChooserRow(
-            text = stringResource(Res.strings.feature_settings_dark_mode_config_dark),
-            selected = settings.darkThemeConfig == DARK,
-            onClick = { onChangeDarkThemeConfig(DARK) },
-        )
-    }
+  }
+  SettingsDialogSectionTitle(
+    text = stringResource(Res.strings.feature_settings_dark_mode_preference)
+  )
+  Column(Modifier.selectableGroup()) {
+    SettingsDialogThemeChooserRow(
+      text = stringResource(Res.strings.feature_settings_dark_mode_config_system_default),
+      selected = settings.darkThemeConfig == FOLLOW_SYSTEM,
+      onClick = { onChangeDarkThemeConfig(FOLLOW_SYSTEM) },
+    )
+    SettingsDialogThemeChooserRow(
+      text = stringResource(Res.strings.feature_settings_dark_mode_config_light),
+      selected = settings.darkThemeConfig == LIGHT,
+      onClick = { onChangeDarkThemeConfig(LIGHT) },
+    )
+    SettingsDialogThemeChooserRow(
+      text = stringResource(Res.strings.feature_settings_dark_mode_config_dark),
+      selected = settings.darkThemeConfig == DARK,
+      onClick = { onChangeDarkThemeConfig(DARK) },
+    )
+  }
 }
 
 @Composable
 private fun SettingsDialogSectionTitle(text: String) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.titleMedium,
-        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
-    )
+  Text(
+    text = text,
+    style = MaterialTheme.typography.titleMedium,
+    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
+  )
 }
 
 @Composable
 fun SettingsDialogThemeChooserRow(text: String, selected: Boolean, onClick: () -> Unit) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .selectable(
-                selected = selected,
-                role = Role.RadioButton,
-                onClick = onClick,
-            )
-            .padding(12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        RadioButton(
-            selected = selected,
-            onClick = null,
-        )
-        Spacer(Modifier.width(8.dp))
-        Text(text)
-    }
+  Row(
+    Modifier.fillMaxWidth()
+      .selectable(
+        selected = selected,
+        role = Role.RadioButton,
+        onClick = onClick,
+      )
+      .padding(12.dp),
+    verticalAlignment = Alignment.CenterVertically,
+  ) {
+    RadioButton(
+      selected = selected,
+      onClick = null,
+    )
+    Spacer(Modifier.width(8.dp))
+    Text(text)
+  }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun LinksPanel() {
-    FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(
-            space = 16.dp,
-            alignment = Alignment.CenterHorizontally,
-        ),
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        val uriHandler = LocalUriHandler.current
-        NiaTextButton(
-            onClick = { uriHandler.openUri(PRIVACY_POLICY_URL) },
-        ) {
-            Text(text = stringResource(Res.strings.feature_settings_privacy_policy))
-        }
-        NiaTextButton(
-            // The Android original opened Play Services' `OssLicensesMenuActivity`, which has no
-            // counterpart on iOS or the desktop, so every platform opens the hosted list instead.
-            onClick = { uriHandler.openUri(LICENSES_URL) },
-        ) {
-            Text(text = stringResource(Res.strings.feature_settings_licenses))
-        }
-        NiaTextButton(
-            onClick = { uriHandler.openUri(BRAND_GUIDELINES_URL) },
-        ) {
-            Text(text = stringResource(Res.strings.feature_settings_brand_guidelines))
-        }
-        NiaTextButton(
-            onClick = { uriHandler.openUri(FEEDBACK_URL) },
-        ) {
-            Text(text = stringResource(Res.strings.feature_settings_feedback))
-        }
+  FlowRow(
+    horizontalArrangement =
+      Arrangement.spacedBy(
+        space = 16.dp,
+        alignment = Alignment.CenterHorizontally,
+      ),
+    modifier = Modifier.fillMaxWidth(),
+  ) {
+    val uriHandler = LocalUriHandler.current
+    NiaTextButton(onClick = { uriHandler.openUri(PRIVACY_POLICY_URL) }) {
+      Text(text = stringResource(Res.strings.feature_settings_privacy_policy))
     }
+    NiaTextButton(
+      // The Android original opened Play Services' `OssLicensesMenuActivity`, which has no
+      // counterpart on iOS or the desktop, so every platform opens the hosted list instead.
+      onClick = { uriHandler.openUri(LICENSES_URL) }
+    ) {
+      Text(text = stringResource(Res.strings.feature_settings_licenses))
+    }
+    NiaTextButton(onClick = { uriHandler.openUri(BRAND_GUIDELINES_URL) }) {
+      Text(text = stringResource(Res.strings.feature_settings_brand_guidelines))
+    }
+    NiaTextButton(onClick = { uriHandler.openUri(FEEDBACK_URL) }) {
+      Text(text = stringResource(Res.strings.feature_settings_feedback))
+    }
+  }
 }
 
 @Preview
 @Composable
 private fun PreviewSettingsDialog() {
-    NiaTheme {
-        SettingsDialog(
-            onDismiss = {},
-            settingsUiState = Success(
-                UserEditableSettings(
-                    brand = DEFAULT,
-                    darkThemeConfig = FOLLOW_SYSTEM,
-                    useDynamicColor = false,
-                ),
-            ),
-            onChangeThemeBrand = {},
-            onChangeDynamicColorPreference = {},
-            onChangeDarkThemeConfig = {},
-        )
-    }
+  NiaTheme {
+    SettingsDialog(
+      onDismiss = {},
+      settingsUiState =
+        Success(
+          UserEditableSettings(
+            brand = DEFAULT,
+            darkThemeConfig = FOLLOW_SYSTEM,
+            useDynamicColor = false,
+          )
+        ),
+      onChangeThemeBrand = {},
+      onChangeDynamicColorPreference = {},
+      onChangeDarkThemeConfig = {},
+    )
+  }
 }
 
 @Preview
 @Composable
 private fun PreviewSettingsDialogLoading() {
-    NiaTheme {
-        SettingsDialog(
-            onDismiss = {},
-            settingsUiState = Loading,
-            onChangeThemeBrand = {},
-            onChangeDynamicColorPreference = {},
-            onChangeDarkThemeConfig = {},
-        )
-    }
+  NiaTheme {
+    SettingsDialog(
+      onDismiss = {},
+      settingsUiState = Loading,
+      onChangeThemeBrand = {},
+      onChangeDynamicColorPreference = {},
+      onChangeDarkThemeConfig = {},
+    )
+  }
 }
 
 private const val LICENSES_URL =
-    "https://github.com/android/nowinandroid/blob/main/app/src/main/res/raw/third_party_licenses.txt"
+  "https://github.com/android/nowinandroid/blob/main/app/src/main/res/raw/third_party_licenses.txt"
 private const val PRIVACY_POLICY_URL = "https://policies.google.com/privacy"
-private const val BRAND_GUIDELINES_URL = "https://developer.android.com/distribute/marketing-tools/brand-guidelines"
+private const val BRAND_GUIDELINES_URL =
+  "https://developer.android.com/distribute/marketing-tools/brand-guidelines"
 private const val FEEDBACK_URL = "https://goo.gle/nia-app-feedback"

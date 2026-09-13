@@ -18,16 +18,14 @@ package com.skydoves.nowinandroid.core.model.data
 
 import androidx.compose.runtime.Immutable
 
-/**
- * Class summarizing user interest data
- */
+/** Class summarizing user interest data */
 @Immutable
 data class UserData(
-    val bookmarkedNewsResources: Set<String>,
-    val viewedNewsResources: Set<String>,
-    val followedTopics: Set<String>,
-    val themeBrand: ThemeBrand,
-    val darkThemeConfig: DarkThemeConfig,
-    val useDynamicColor: Boolean,
-    val shouldHideOnboarding: Boolean,
+  val bookmarkedNewsResources: Set<String>,
+  val viewedNewsResources: Set<String>,
+  val followedTopics: Set<String>,
+  val themeBrand: ThemeBrand,
+  val darkThemeConfig: DarkThemeConfig,
+  val useDynamicColor: Boolean,
+  val shouldHideOnboarding: Boolean,
 )

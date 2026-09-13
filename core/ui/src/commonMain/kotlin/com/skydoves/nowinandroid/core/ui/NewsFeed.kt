@@ -35,107 +35,95 @@ import com.skydoves.nowinandroid.core.model.data.UserNewsResource
 import com.skydoves.nowinandroid.core.ui.platform.rememberUrlLauncher
 
 /**
- * An extension on [LazyListScope] defining a feed with news resources.
- * Depending on the [feedState], this might emit no items.
+ * An extension on [LazyListScope] defining a feed with news resources. Depending on the
+ * [feedState], this might emit no items.
  */
 fun LazyStaggeredGridScope.newsFeed(
-    feedState: NewsFeedUiState,
-    onNewsResourcesCheckedChanged: (String, Boolean) -> Unit,
-    onNewsResourceViewed: (String) -> Unit,
-    onTopicClick: (String) -> Unit,
-    onExpandedCardClick: () -> Unit = {},
+  feedState: NewsFeedUiState,
+  onNewsResourcesCheckedChanged: (String, Boolean) -> Unit,
+  onNewsResourceViewed: (String) -> Unit,
+  onTopicClick: (String) -> Unit,
+  onExpandedCardClick: () -> Unit = {},
 ) {
-    when (feedState) {
-        NewsFeedUiState.Loading -> Unit
-        is NewsFeedUiState.Success -> {
-            items(
-                items = feedState.feed,
-                key = { it.id },
-                contentType = { "newsFeedItem" },
-            ) { userNewsResource ->
-                val urlLauncher = rememberUrlLauncher()
-                val analyticsHelper = LocalAnalyticsHelper.current
-                val backgroundColor = MaterialTheme.colorScheme.background
+  when (feedState) {
+    NewsFeedUiState.Loading -> Unit
+    is NewsFeedUiState.Success -> {
+      items(
+        items = feedState.feed,
+        key = { it.id },
+        contentType = { "newsFeedItem" },
+      ) { userNewsResource ->
+        val urlLauncher = rememberUrlLauncher()
+        val analyticsHelper = LocalAnalyticsHelper.current
+        val backgroundColor = MaterialTheme.colorScheme.background
 
-                NewsResourceCardExpanded(
-                    userNewsResource = userNewsResource,
-                    isBookmarked = userNewsResource.isSaved,
-                    onClick = {
-                        onExpandedCardClick()
-                        analyticsHelper.logNewsResourceOpened(
-                            newsResourceId = userNewsResource.id,
-                        )
-                        urlLauncher.launch(userNewsResource.url, backgroundColor)
+        NewsResourceCardExpanded(
+          userNewsResource = userNewsResource,
+          isBookmarked = userNewsResource.isSaved,
+          onClick = {
+            onExpandedCardClick()
+            analyticsHelper.logNewsResourceOpened(newsResourceId = userNewsResource.id)
+            urlLauncher.launch(userNewsResource.url, backgroundColor)
 
-                        onNewsResourceViewed(userNewsResource.id)
-                    },
-                    hasBeenViewed = userNewsResource.hasBeenViewed,
-                    onToggleBookmark = {
-                        onNewsResourcesCheckedChanged(
-                            userNewsResource.id,
-                            !userNewsResource.isSaved,
-                        )
-                    },
-                    onTopicClick = onTopicClick,
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .animateItem(),
-                )
-            }
-        }
+            onNewsResourceViewed(userNewsResource.id)
+          },
+          hasBeenViewed = userNewsResource.hasBeenViewed,
+          onToggleBookmark = {
+            onNewsResourcesCheckedChanged(
+              userNewsResource.id,
+              !userNewsResource.isSaved,
+            )
+          },
+          onTopicClick = onTopicClick,
+          modifier = Modifier.padding(horizontal = 8.dp).animateItem(),
+        )
+      }
     }
+  }
 }
 
-/**
- * A sealed hierarchy describing the state of the feed of news resources.
- */
+/** A sealed hierarchy describing the state of the feed of news resources. */
 sealed interface NewsFeedUiState {
-    /**
-     * The feed is still loading.
-     */
-    data object Loading : NewsFeedUiState
+  /** The feed is still loading. */
+  data object Loading : NewsFeedUiState
 
-    /**
-     * The feed is loaded with the given list of news resources.
-     */
-    data class Success(
-        /**
-         * The list of news resources contained in this feed.
-         */
-        val feed: List<UserNewsResource>,
-    ) : NewsFeedUiState
+  /** The feed is loaded with the given list of news resources. */
+  data class Success(
+    /** The list of news resources contained in this feed. */
+    val feed: List<UserNewsResource>
+  ) : NewsFeedUiState
 }
 
 @Preview
 @Composable
 private fun NewsFeedLoadingPreview() {
-    NiaTheme {
-        LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Adaptive(300.dp)) {
-            newsFeed(
-                feedState = NewsFeedUiState.Loading,
-                onNewsResourcesCheckedChanged = { _, _ -> },
-                onNewsResourceViewed = {},
-                onTopicClick = {},
-            )
-        }
+  NiaTheme {
+    LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Adaptive(300.dp)) {
+      newsFeed(
+        feedState = NewsFeedUiState.Loading,
+        onNewsResourcesCheckedChanged = { _, _ -> },
+        onNewsResourceViewed = {},
+        onTopicClick = {},
+      )
     }
+  }
 }
 
 @Preview
 @Preview(device = Devices.TABLET)
 @Composable
 private fun NewsFeedContentPreview(
-    @PreviewParameter(UserNewsResourcePreviewParameterProvider::class)
-    userNewsResources: List<UserNewsResource>,
+  @PreviewParameter(UserNewsResourcePreviewParameterProvider::class)
+  userNewsResources: List<UserNewsResource>
 ) {
-    NiaTheme {
-        LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Adaptive(300.dp)) {
-            newsFeed(
-                feedState = NewsFeedUiState.Success(userNewsResources),
-                onNewsResourcesCheckedChanged = { _, _ -> },
-                onNewsResourceViewed = {},
-                onTopicClick = {},
-            )
-        }
+  NiaTheme {
+    LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Adaptive(300.dp)) {
+      newsFeed(
+        feedState = NewsFeedUiState.Success(userNewsResources),
+        onNewsResourcesCheckedChanged = { _, _ -> },
+        onNewsResourceViewed = {},
+        onTopicClick = {},
+      )
     }
+  }
 }

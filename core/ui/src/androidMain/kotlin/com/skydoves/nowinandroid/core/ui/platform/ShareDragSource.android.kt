@@ -27,11 +27,11 @@ import androidx.compose.ui.draganddrop.DragAndDropTransferData
 
 @Composable
 actual fun Modifier.newsResourceDragAndDropSource(label: String, content: String): Modifier {
-    val dragAndDropFlags = if (VERSION.SDK_INT >= VERSION_CODES.N) View.DRAG_FLAG_GLOBAL else 0
-    return dragAndDropSource { _ ->
-        DragAndDropTransferData(
-            ClipData.newPlainText(label, content),
-            flags = dragAndDropFlags,
-        )
-    }
+  val dragAndDropFlags = if (VERSION.SDK_INT >= VERSION_CODES.N) View.DRAG_FLAG_GLOBAL else 0
+  return dragAndDropSource { _ ->
+    DragAndDropTransferData(
+      ClipData.newPlainText(label, content),
+      flags = dragAndDropFlags,
+    )
+  }
 }

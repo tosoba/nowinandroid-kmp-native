@@ -41,86 +41,85 @@ import kotlinx.datetime.TimeZone
 
 @Composable
 fun rememberNiaAppState(
-    networkMonitor: NetworkMonitor,
-    userNewsResourceRepository: UserNewsResourceRepository,
-    timeZoneMonitor: TimeZoneMonitor,
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+  networkMonitor: NetworkMonitor,
+  userNewsResourceRepository: UserNewsResourceRepository,
+  timeZoneMonitor: TimeZoneMonitor,
+  coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ): NiaAppState {
-    val navigationState = rememberNavigationState(
-        configuration = NiaSavedStateConfiguration,
-        startKey = ForYouNavKey,
-        topLevelKeys = TOP_LEVEL_NAV_ITEMS.keys,
+  val navigationState =
+    rememberNavigationState(
+      configuration = NiaSavedStateConfiguration,
+      startKey = ForYouNavKey,
+      topLevelKeys = TOP_LEVEL_NAV_ITEMS.keys,
     )
 
-    NavigationTrackingSideEffect(navigationState)
+  NavigationTrackingSideEffect(navigationState)
 
-    return remember(
-        navigationState,
-        coroutineScope,
-        networkMonitor,
-        userNewsResourceRepository,
-        timeZoneMonitor,
-    ) {
-        NiaAppState(
-            navigationState = navigationState,
-            coroutineScope = coroutineScope,
-            networkMonitor = networkMonitor,
-            userNewsResourceRepository = userNewsResourceRepository,
-            timeZoneMonitor = timeZoneMonitor,
-        )
-    }
+  return remember(
+    navigationState,
+    coroutineScope,
+    networkMonitor,
+    userNewsResourceRepository,
+    timeZoneMonitor,
+  ) {
+    NiaAppState(
+      navigationState = navigationState,
+      coroutineScope = coroutineScope,
+      networkMonitor = networkMonitor,
+      userNewsResourceRepository = userNewsResourceRepository,
+      timeZoneMonitor = timeZoneMonitor,
+    )
+  }
 }
 
 @Stable
 class NiaAppState(
-    val navigationState: NavigationState,
-    coroutineScope: CoroutineScope,
-    networkMonitor: NetworkMonitor,
-    userNewsResourceRepository: UserNewsResourceRepository,
-    timeZoneMonitor: TimeZoneMonitor,
+  val navigationState: NavigationState,
+  coroutineScope: CoroutineScope,
+  networkMonitor: NetworkMonitor,
+  userNewsResourceRepository: UserNewsResourceRepository,
+  timeZoneMonitor: TimeZoneMonitor,
 ) {
-    val isOffline = networkMonitor.isOnline
-        .map(Boolean::not)
-        .stateIn(
-            scope = coroutineScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = false,
-        )
+  val isOffline =
+    networkMonitor.isOnline
+      .map(Boolean::not)
+      .stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = false,
+      )
 
-    /**
-     * The top level nav keys that have unread news resources.
-     */
-    val topLevelNavKeysWithUnreadResources: StateFlow<Set<NavKey>> =
-        userNewsResourceRepository.observeAllForFollowedTopics()
-            .combine(
-                userNewsResourceRepository.observeAllBookmarked(),
-            ) { forYouNewsResources, bookmarkedNewsResources ->
-                setOfNotNull(
-                    ForYouNavKey.takeIf { forYouNewsResources.any { !it.hasBeenViewed } },
-                    BookmarksNavKey.takeIf { bookmarkedNewsResources.any { !it.hasBeenViewed } },
-                )
-            }
-            .stateIn(
-                coroutineScope,
-                SharingStarted.WhileSubscribed(5_000),
-                initialValue = emptySet(),
-            )
-
-    val currentTimeZone = timeZoneMonitor.currentTimeZone
-        .stateIn(
-            coroutineScope,
-            SharingStarted.WhileSubscribed(5_000),
-            TimeZone.currentSystemDefault(),
+  /** The top level nav keys that have unread news resources. */
+  val topLevelNavKeysWithUnreadResources: StateFlow<Set<NavKey>> =
+    userNewsResourceRepository
+      .observeAllForFollowedTopics()
+      .combine(userNewsResourceRepository.observeAllBookmarked()) {
+        forYouNewsResources,
+        bookmarkedNewsResources ->
+        setOfNotNull(
+          ForYouNavKey.takeIf { forYouNewsResources.any { !it.hasBeenViewed } },
+          BookmarksNavKey.takeIf { bookmarkedNewsResources.any { !it.hasBeenViewed } },
         )
+      }
+      .stateIn(
+        coroutineScope,
+        SharingStarted.WhileSubscribed(5_000),
+        initialValue = emptySet(),
+      )
+
+  val currentTimeZone =
+    timeZoneMonitor.currentTimeZone.stateIn(
+      coroutineScope,
+      SharingStarted.WhileSubscribed(5_000),
+      TimeZone.currentSystemDefault(),
+    )
 }
 
-/**
- * Stores information about navigation events to be used with JankStats
- */
+/** Stores information about navigation events to be used with JankStats */
 @Composable
 private fun NavigationTrackingSideEffect(navigationState: NavigationState) {
-    TrackDisposableJank(navigationState.currentKey) { metricsHolder ->
-        metricsHolder.putState("Navigation", navigationState.currentKey.toString())
-        onDispose {}
-    }
+  TrackDisposableJank(navigationState.currentKey) { metricsHolder ->
+    metricsHolder.putState("Navigation", navigationState.currentKey.toString())
+    onDispose {}
+  }
 }

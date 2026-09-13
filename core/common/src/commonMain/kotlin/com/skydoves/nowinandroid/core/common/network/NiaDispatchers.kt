@@ -26,19 +26,13 @@ import kotlinx.coroutines.CoroutineDispatcher
  * qualifiers structurally, so two marker annotations read more clearly at the injection site and
  * avoid depending on qualifier-argument equality.
  */
-@Qualifier
-@Retention(AnnotationRetention.RUNTIME)
-annotation class IoDispatcher
+@Qualifier @Retention(AnnotationRetention.RUNTIME) annotation class IoDispatcher
 
 /** The dispatcher used for CPU bound work. */
-@Qualifier
-@Retention(AnnotationRetention.RUNTIME)
-annotation class DefaultDispatcher
+@Qualifier @Retention(AnnotationRetention.RUNTIME) annotation class DefaultDispatcher
 
 /** A [kotlinx.coroutines.CoroutineScope] that lives as long as the application process. */
-@Qualifier
-@Retention(AnnotationRetention.RUNTIME)
-annotation class ApplicationScope
+@Qualifier @Retention(AnnotationRetention.RUNTIME) annotation class ApplicationScope
 
 /**
  * `Dispatchers.IO` only exists on the JVM, so each platform contributes its own definition of

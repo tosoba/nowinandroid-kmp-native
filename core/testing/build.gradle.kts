@@ -15,16 +15,16 @@
  */
 
 plugins {
-    id("nowinandroid.kmp.multiplatform")
+  id("nowinandroid.kmp.multiplatform")
 }
 
 kotlin {
-    sourceSets {
-        commonMain.dependencies {
-            api(projects.core.data)
-            api(projects.core.model)
-            api(libs.kotlinx.coroutines.test)
-            implementation(libs.kotlinx.coroutines.core)
-        }
+  sourceSets {
+    commonMain.dependencies {
+      api(projects.core.data)
+      api(projects.core.model)
+      api(libs.kotlinx.coroutines.test)
+      implementation(libs.kotlinx.coroutines.core)
     }
+  }
 }

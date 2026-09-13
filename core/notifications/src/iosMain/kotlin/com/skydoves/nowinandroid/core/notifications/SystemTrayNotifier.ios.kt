@@ -38,35 +38,39 @@ import platform.UserNotifications.UNUserNotificationCenter
 @ContributesBinding(AppScope::class)
 class SystemTrayNotifier : Notifier {
 
-    override fun postNewsNotifications(newsResources: List<NewsResource>) {
-        val center = UNUserNotificationCenter.currentNotificationCenter()
-        center.requestAuthorizationWithOptions(
-            options = UNAuthorizationOptionAlert or
-                UNAuthorizationOptionSound or
-                UNAuthorizationOptionBadge,
-        ) { granted, _ ->
-            if (!granted) return@requestAuthorizationWithOptions
-            newsResources.take(MAX_NUM_NOTIFICATIONS).forEach { newsResource ->
-                val content = UNMutableNotificationContent().apply {
-                    setTitle(newsResource.title)
-                    setBody(newsResource.content)
-                    setThreadIdentifier(NEWS_THREAD_IDENTIFIER)
-                    setUserInfo(mapOf(DEEP_LINK_NEWS_RESOURCE_ID_KEY to newsResource.id))
-                }
-                center.addNotificationRequest(
-                    request = UNNotificationRequest.requestWithIdentifier(
-                        identifier = newsResource.id,
-                        content = content,
-                        trigger = UNTimeIntervalNotificationTrigger
-                            .triggerWithTimeInterval(timeInterval = 1.0, repeats = false),
-                    ),
-                    withCompletionHandler = null,
-                )
-            }
-        }
+  override fun postNewsNotifications(newsResources: List<NewsResource>) {
+    val center = UNUserNotificationCenter.currentNotificationCenter()
+    center.requestAuthorizationWithOptions(
+      options =
+        UNAuthorizationOptionAlert or UNAuthorizationOptionSound or UNAuthorizationOptionBadge
+    ) { granted, _ ->
+      if (!granted) return@requestAuthorizationWithOptions
+      newsResources.take(MAX_NUM_NOTIFICATIONS).forEach { newsResource ->
+        val content =
+          UNMutableNotificationContent().apply {
+            setTitle(newsResource.title)
+            setBody(newsResource.content)
+            setThreadIdentifier(NEWS_THREAD_IDENTIFIER)
+            setUserInfo(mapOf(DEEP_LINK_NEWS_RESOURCE_ID_KEY to newsResource.id))
+          }
+        center.addNotificationRequest(
+          request =
+            UNNotificationRequest.requestWithIdentifier(
+              identifier = newsResource.id,
+              content = content,
+              trigger =
+                UNTimeIntervalNotificationTrigger.triggerWithTimeInterval(
+                  timeInterval = 1.0,
+                  repeats = false,
+                ),
+            ),
+          withCompletionHandler = null,
+        )
+      }
     }
+  }
 
-    private companion object {
-        const val NEWS_THREAD_IDENTIFIER = "NEWS_NOTIFICATIONS"
-    }
+  private companion object {
+    const val NEWS_THREAD_IDENTIFIER = "NEWS_NOTIFICATIONS"
+  }
 }

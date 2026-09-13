@@ -25,11 +25,11 @@ import com.skydoves.nowinandroid.feature.search.impl.SearchScreen
 import com.skydoves.nowinandroid.feature.topic.api.navigation.navigateToTopic
 
 fun EntryProviderScope<NavKey>.searchEntry(navigator: Navigator) {
-    entry<SearchNavKey> {
-        SearchScreen(
-            onBackClick = { navigator.goBack() },
-            onInterestsClick = { navigator.navigate(InterestsNavKey()) },
-            onTopicClick = navigator::navigateToTopic,
-        )
-    }
+  entry<SearchNavKey> {
+    SearchScreen(
+      onBackClick = { navigator.goBack() },
+      onInterestsClick = { navigator.navigate(InterestsNavKey()) },
+      onTopicClick = navigator::navigateToTopic,
+    )
+  }
 }

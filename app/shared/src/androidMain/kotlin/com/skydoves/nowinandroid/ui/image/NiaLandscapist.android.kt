@@ -29,18 +29,20 @@ import java.io.File
 
 @Composable
 internal actual fun rememberLandscapist(httpClient: HttpClient): Landscapist {
-    // Landscapist's default disk cache is null on Android, because it has no way to reach a Context, so
-    // the cache directory is supplied here, the same place the framework would put it.
-    val context = LocalContext.current.applicationContext
-    return remember(httpClient, context) {
-        val cacheDirectory = File(context.cacheDir, "landscapist_cache")
-        buildNiaLandscapist(
-            httpClient = httpClient,
-            diskCache = DiskLruCache.create(
-                directory = cacheDirectory.toOkioPath(),
-                maxSize = LandscapistConfig().diskCacheSize,
-                fileSystem = FileSystem.SYSTEM,
-            ),
-        )
-    }
+  // Landscapist's default disk cache is null on Android, because it has no way to reach a Context,
+  // so
+  // the cache directory is supplied here, the same place the framework would put it.
+  val context = LocalContext.current.applicationContext
+  return remember(httpClient, context) {
+    val cacheDirectory = File(context.cacheDir, "landscapist_cache")
+    buildNiaLandscapist(
+      httpClient = httpClient,
+      diskCache =
+        DiskLruCache.create(
+          directory = cacheDirectory.toOkioPath(),
+          maxSize = LandscapistConfig().diskCacheSize,
+          fileSystem = FileSystem.SYSTEM,
+        ),
+    )
+  }
 }

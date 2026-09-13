@@ -30,7 +30,7 @@ import okio.Path.Companion.toPath
  * that is, so each one contributes its own implementation.
  */
 fun interface DataStorePathProducer {
-    fun producePath(fileName: String): String
+  fun producePath(fileName: String): String
 }
 
 internal const val USER_PREFERENCES_FILE_NAME = "user_preferences.json"
@@ -38,23 +38,25 @@ internal const val USER_PREFERENCES_FILE_NAME = "user_preferences.json"
 /**
  * The preferences store for a platform that has a real filesystem.
  *
- * `DataStoreFactory` is deliberately not called from common code. Its wasm actual is
- * `TODO("Not yet implemented")` in DataStore 1.2.1, so a browser build reaching this would compile
- * and then throw on first use. Each platform names its own store instead, and the browser supplies
- * one that does not go through the factory at all.
+ * `DataStoreFactory` is deliberately not called from common code. Its wasm actual is `TODO("Not yet
+ * implemented")` in DataStore 1.2.1, so a browser build reaching this would compile and then throw
+ * on first use. Each platform names its own store instead, and the browser supplies one that does
+ * not go through the factory at all.
  *
  * The [FileSystem] is a parameter rather than `FileSystem.SYSTEM` because okio declares no `SYSTEM`
  * on a platform without files.
  */
 fun okioUserPreferencesDataStore(
-    fileSystem: FileSystem,
-    pathProducer: DataStorePathProducer,
-    scope: CoroutineScope,
-): DataStore<UserPreferences> = DataStoreFactory.create(
-    storage = OkioStorage(
+  fileSystem: FileSystem,
+  pathProducer: DataStorePathProducer,
+  scope: CoroutineScope,
+): DataStore<UserPreferences> =
+  DataStoreFactory.create(
+    storage =
+      OkioStorage(
         fileSystem = fileSystem,
         serializer = UserPreferencesSerializer,
         producePath = { pathProducer.producePath(USER_PREFERENCES_FILE_NAME).toPath() },
-    ),
+      ),
     scope = scope,
-)
+  )

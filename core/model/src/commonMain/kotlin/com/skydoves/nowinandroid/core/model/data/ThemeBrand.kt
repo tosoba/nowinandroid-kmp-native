@@ -17,6 +17,6 @@
 package com.skydoves.nowinandroid.core.model.data
 
 enum class ThemeBrand {
-    DEFAULT,
-    ANDROID,
+  DEFAULT,
+  ANDROID,
 }

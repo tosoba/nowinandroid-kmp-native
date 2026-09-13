@@ -25,54 +25,49 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.datetime.TimeZone
 
 class TestNetworkMonitor : NetworkMonitor {
-    private val connectivityFlow = MutableStateFlow(true)
+  private val connectivityFlow = MutableStateFlow(true)
 
-    override val isOnline: Flow<Boolean> = connectivityFlow.asStateFlow()
+  override val isOnline: Flow<Boolean> = connectivityFlow.asStateFlow()
 
-    /**
-     * A test-only API to set the connectivity state from tests.
-     */
-    fun setConnected(isConnected: Boolean) {
-        connectivityFlow.value = isConnected
-    }
+  /** A test-only API to set the connectivity state from tests. */
+  fun setConnected(isConnected: Boolean) {
+    connectivityFlow.value = isConnected
+  }
 }
 
 class TestTimeZoneMonitor : TimeZoneMonitor {
-    private val timeZoneFlow = MutableStateFlow(defaultTimeZone)
+  private val timeZoneFlow = MutableStateFlow(defaultTimeZone)
 
-    override val currentTimeZone: Flow<TimeZone> = timeZoneFlow.asStateFlow()
+  override val currentTimeZone: Flow<TimeZone> = timeZoneFlow.asStateFlow()
 
-    /**
-     * A test-only API to set the time zone from tests.
-     */
-    fun setTimeZone(zoneId: TimeZone) {
-        timeZoneFlow.value = zoneId
-    }
+  /** A test-only API to set the time zone from tests. */
+  fun setTimeZone(zoneId: TimeZone) {
+    timeZoneFlow.value = zoneId
+  }
 
-    companion object {
-        val defaultTimeZone: TimeZone = TimeZone.of("Europe/Warsaw")
-    }
+  companion object {
+    val defaultTimeZone: TimeZone = TimeZone.of("Europe/Warsaw")
+  }
 }
 
 class NeverSyncingSyncManager : SyncManager {
-    override val isSyncing: Flow<Boolean> = MutableStateFlow(false)
-    override fun requestSync() = Unit
+  override val isSyncing: Flow<Boolean> = MutableStateFlow(false)
+
+  override fun requestSync() = Unit
 }
 
 class TestSyncManager : SyncManager {
 
-    private val syncStatusFlow = MutableStateFlow(false)
+  private val syncStatusFlow = MutableStateFlow(false)
 
-    override val isSyncing: Flow<Boolean> = syncStatusFlow
+  override val isSyncing: Flow<Boolean> = syncStatusFlow
 
-    override fun requestSync() {
-        syncStatusFlow.value = true
-    }
+  override fun requestSync() {
+    syncStatusFlow.value = true
+  }
 
-    /**
-     * A test-only API to set the sync status from tests.
-     */
-    fun setSyncing(isSyncing: Boolean) {
-        syncStatusFlow.value = isSyncing
-    }
+  /** A test-only API to set the sync status from tests. */
+  fun setSyncing(isSyncing: Boolean) {
+    syncStatusFlow.value = isSyncing
+  }
 }

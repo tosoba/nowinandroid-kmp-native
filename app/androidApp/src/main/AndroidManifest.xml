@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
     Designed and developed by 2026 skydoves (Jaewoong Eum)
 
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,8 +41,10 @@
             </intent-filter>
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
                     android:host="www.nowinandroid.apps.samples.google.com"
                     android:pathPrefix="/foryou"

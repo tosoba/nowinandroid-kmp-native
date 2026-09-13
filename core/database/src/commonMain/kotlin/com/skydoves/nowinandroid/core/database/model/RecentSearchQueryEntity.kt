@@ -21,15 +21,9 @@ import androidx.room3.Entity
 import androidx.room3.PrimaryKey
 import kotlin.time.Instant
 
-/**
- * Defines a database entity that stores recent search queries.
- */
-@Entity(
-    tableName = "recentSearchQueries",
-)
+/** Defines a database entity that stores recent search queries. */
+@Entity(tableName = "recentSearchQueries")
 data class RecentSearchQueryEntity(
-    @PrimaryKey
-    val query: String,
-    @ColumnInfo
-    val queriedDate: Instant,
+  @PrimaryKey val query: String,
+  @ColumnInfo val queriedDate: Instant,
 )

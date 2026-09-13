@@ -43,27 +43,26 @@ import kotlin.time.Duration.Companion.seconds
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DesktopNetworkMonitor(
-    @ApplicationScope appScope: CoroutineScope,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+  @ApplicationScope appScope: CoroutineScope,
+  @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : NetworkMonitor {
 
-    override val isOnline: Flow<Boolean> = flow {
-        while (true) {
-            emit(hasUsableInterface())
-            delay(POLL_INTERVAL)
-        }
+  override val isOnline: Flow<Boolean> = flow {
+    while (true) {
+      emit(hasUsableInterface())
+      delay(POLL_INTERVAL)
     }
-        .distinctUntilChanged()
-        .flowOn(ioDispatcher)
-        .shareIn(appScope, SharingStarted.WhileSubscribed(5_000), replay = 1)
+  }
+    .distinctUntilChanged()
+    .flowOn(ioDispatcher)
+    .shareIn(appScope, SharingStarted.WhileSubscribed(5_000), replay = 1)
 
-    private fun hasUsableInterface(): Boolean = runCatching {
-        NetworkInterface.getNetworkInterfaces()
-            .asSequence()
-            .any { it.isUp && !it.isLoopback }
-    }.getOrDefault(true)
+  private fun hasUsableInterface(): Boolean = runCatching {
+    NetworkInterface.getNetworkInterfaces().asSequence().any { it.isUp && !it.isLoopback }
+  }
+    .getOrDefault(true)
 
-    private companion object {
-        val POLL_INTERVAL = 10.seconds
-    }
+  private companion object {
+    val POLL_INTERVAL = 10.seconds
+  }
 }

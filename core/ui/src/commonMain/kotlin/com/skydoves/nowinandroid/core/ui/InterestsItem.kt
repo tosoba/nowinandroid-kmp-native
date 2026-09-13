@@ -37,171 +37,170 @@ import com.skydoves.nowinandroid.core.designsystem.component.DynamicAsyncImage
 import com.skydoves.nowinandroid.core.designsystem.component.NiaIconToggleButton
 import com.skydoves.nowinandroid.core.designsystem.icon.NiaIcons
 import com.skydoves.nowinandroid.core.designsystem.theme.NiaTheme
-import com.skydoves.nowinandroid.core.ui.MR as Res
 import dev.icerock.moko.resources.compose.stringResource
+import com.skydoves.nowinandroid.core.ui.MR as Res
 
 @Composable
 fun InterestsItem(
-    name: String,
-    following: Boolean,
-    topicImageUrl: String,
-    onClick: () -> Unit,
-    onFollowButtonClick: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-    iconModifier: Modifier = Modifier,
-    description: String = "",
-    isSelected: Boolean = false,
+  name: String,
+  following: Boolean,
+  topicImageUrl: String,
+  onClick: () -> Unit,
+  onFollowButtonClick: (Boolean) -> Unit,
+  modifier: Modifier = Modifier,
+  iconModifier: Modifier = Modifier,
+  description: String = "",
+  isSelected: Boolean = false,
 ) {
-    ListItem(
-        leadingContent = {
-            InterestsIcon(topicImageUrl, iconModifier.size(48.dp))
+  ListItem(
+    leadingContent = {
+      InterestsIcon(topicImageUrl, iconModifier.size(48.dp))
+    },
+    headlineContent = {
+      Text(text = name)
+    },
+    supportingContent = {
+      Text(text = description)
+    },
+    trailingContent = {
+      NiaIconToggleButton(
+        checked = following,
+        onCheckedChange = onFollowButtonClick,
+        icon = {
+          Icon(
+            imageVector = NiaIcons.Add,
+            contentDescription =
+              stringResource(Res.strings.core_ui_interests_card_follow_button_content_desc),
+          )
         },
-        headlineContent = {
-            Text(text = name)
+        checkedIcon = {
+          Icon(
+            imageVector = NiaIcons.Check,
+            contentDescription =
+              stringResource(Res.strings.core_ui_interests_card_unfollow_button_content_desc),
+          )
         },
-        supportingContent = {
-            Text(text = description)
-        },
-        trailingContent = {
-            NiaIconToggleButton(
-                checked = following,
-                onCheckedChange = onFollowButtonClick,
-                icon = {
-                    Icon(
-                        imageVector = NiaIcons.Add,
-                        contentDescription = stringResource(
-                            Res.strings.core_ui_interests_card_follow_button_content_desc,
-                        ),
-                    )
-                },
-                checkedIcon = {
-                    Icon(
-                        imageVector = NiaIcons.Check,
-                        contentDescription = stringResource(
-                            Res.strings.core_ui_interests_card_unfollow_button_content_desc,
-                        ),
-                    )
-                },
-            )
-        },
-        colors = ListItemDefaults.colors(
-            containerColor = if (isSelected) {
-                MaterialTheme.colorScheme.surfaceVariant
-            } else {
-                Color.Transparent
-            },
-        ),
-        modifier = modifier
-            .semantics(mergeDescendants = true) {
-                selected = isSelected
-            }
-            .clickable(enabled = true, onClick = onClick),
-    )
+      )
+    },
+    colors =
+      ListItemDefaults.colors(
+        containerColor =
+          if (isSelected) {
+            MaterialTheme.colorScheme.surfaceVariant
+          } else {
+            Color.Transparent
+          }
+      ),
+    modifier =
+      modifier
+        .semantics(mergeDescendants = true) {
+          selected = isSelected
+        }
+        .clickable(enabled = true, onClick = onClick),
+  )
 }
 
 @Composable
 private fun InterestsIcon(topicImageUrl: String, modifier: Modifier = Modifier) {
-    if (topicImageUrl.isEmpty()) {
-        Icon(
-            modifier = modifier
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(4.dp),
-            imageVector = NiaIcons.Person,
-            // decorative image
-            contentDescription = null,
-        )
-    } else {
-        DynamicAsyncImage(
-            imageUrl = topicImageUrl,
-            contentDescription = null,
-            modifier = modifier,
-        )
-    }
+  if (topicImageUrl.isEmpty()) {
+    Icon(
+      modifier = modifier.background(MaterialTheme.colorScheme.surface).padding(4.dp),
+      imageVector = NiaIcons.Person,
+      // decorative image
+      contentDescription = null,
+    )
+  } else {
+    DynamicAsyncImage(
+      imageUrl = topicImageUrl,
+      contentDescription = null,
+      modifier = modifier,
+    )
+  }
 }
 
 @Preview
 @Composable
 private fun InterestsCardPreview() {
-    NiaTheme {
-        Surface {
-            InterestsItem(
-                name = "Compose",
-                description = "Description",
-                following = false,
-                topicImageUrl = "",
-                onClick = { },
-                onFollowButtonClick = { },
-            )
-        }
+  NiaTheme {
+    Surface {
+      InterestsItem(
+        name = "Compose",
+        description = "Description",
+        following = false,
+        topicImageUrl = "",
+        onClick = {},
+        onFollowButtonClick = {},
+      )
     }
+  }
 }
 
 @Preview
 @Composable
 private fun InterestsCardLongNamePreview() {
-    NiaTheme {
-        Surface {
-            InterestsItem(
-                name = "This is a very very very very long name",
-                description = "Description",
-                following = true,
-                topicImageUrl = "",
-                onClick = { },
-                onFollowButtonClick = { },
-            )
-        }
+  NiaTheme {
+    Surface {
+      InterestsItem(
+        name = "This is a very very very very long name",
+        description = "Description",
+        following = true,
+        topicImageUrl = "",
+        onClick = {},
+        onFollowButtonClick = {},
+      )
     }
+  }
 }
 
 @Preview
 @Composable
 private fun InterestsCardLongDescriptionPreview() {
-    NiaTheme {
-        Surface {
-            InterestsItem(
-                name = "Compose",
-                description = "This is a very very very very very very very " +
-                    "very very very long description",
-                following = false,
-                topicImageUrl = "",
-                onClick = { },
-                onFollowButtonClick = { },
-            )
-        }
+  NiaTheme {
+    Surface {
+      InterestsItem(
+        name = "Compose",
+        description =
+          "This is a very very very very very very very " + "very very very long description",
+        following = false,
+        topicImageUrl = "",
+        onClick = {},
+        onFollowButtonClick = {},
+      )
     }
+  }
 }
 
 @Preview
 @Composable
 private fun InterestsCardWithEmptyDescriptionPreview() {
-    NiaTheme {
-        Surface {
-            InterestsItem(
-                name = "Compose",
-                description = "",
-                following = true,
-                topicImageUrl = "",
-                onClick = { },
-                onFollowButtonClick = { },
-            )
-        }
+  NiaTheme {
+    Surface {
+      InterestsItem(
+        name = "Compose",
+        description = "",
+        following = true,
+        topicImageUrl = "",
+        onClick = {},
+        onFollowButtonClick = {},
+      )
     }
+  }
 }
 
 @Preview
 @Composable
 private fun InterestsCardSelectedPreview() {
-    NiaTheme {
-        Surface {
-            InterestsItem(
-                name = "Compose",
-                description = "",
-                following = true,
-                topicImageUrl = "",
-                onClick = { },
-                onFollowButtonClick = { },
-                isSelected = true,
-            )
-        }
+  NiaTheme {
+    Surface {
+      InterestsItem(
+        name = "Compose",
+        description = "",
+        following = true,
+        topicImageUrl = "",
+        onClick = {},
+        onFollowButtonClick = {},
+        isSelected = true,
+      )
     }
+  }
 }

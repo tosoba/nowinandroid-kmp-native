@@ -15,18 +15,18 @@
  */
 
 plugins {
-    id("nowinandroid.kmp.multiplatform")
-    alias(libs.plugins.metro)
+  id("nowinandroid.kmp.multiplatform")
+  alias(libs.plugins.metro)
 }
 
 kotlin {
-    sourceSets {
-        commonMain.dependencies {
-            // Only the runtime: this module declares a CompositionLocal but no composables, so it
-            // does not need the Compose compiler plugin.
-            api(projects.core.common)
-            api(libs.compose.runtime)
-            implementation(libs.metro.runtime)
-        }
+  sourceSets {
+    commonMain.dependencies {
+      // Only the runtime: this module declares a CompositionLocal but no composables, so it
+      // does not need the Compose compiler plugin.
+      api(projects.core.common)
+      api(libs.compose.runtime)
+      implementation(libs.metro.runtime)
     }
+  }
 }

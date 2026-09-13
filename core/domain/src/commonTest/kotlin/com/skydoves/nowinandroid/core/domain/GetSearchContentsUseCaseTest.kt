@@ -30,43 +30,43 @@ import kotlin.test.assertTrue
 
 class GetSearchContentsUseCaseTest {
 
-    private val searchContentsRepository = TestSearchContentsRepository()
-    private val userDataRepository = TestUserDataRepository()
-    private val useCase = GetSearchContentsUseCase(searchContentsRepository, userDataRepository)
+  private val searchContentsRepository = TestSearchContentsRepository()
+  private val userDataRepository = TestUserDataRepository()
+  private val useCase = GetSearchContentsUseCase(searchContentsRepository, userDataRepository)
 
-    @BeforeTest
-    fun setup() {
-        searchContentsRepository.addTopics(topicsTestData)
-        searchContentsRepository.addNewsResources(newsResourcesTestData)
-        userDataRepository.setUserData(emptyUserData)
-    }
+  @BeforeTest
+  fun setup() {
+    searchContentsRepository.addTopics(topicsTestData)
+    searchContentsRepository.addNewsResources(newsResourcesTestData)
+    userDataRepository.setUserData(emptyUserData)
+  }
 
-    @Test
-    fun searchResultsAreJoinedWithUserData() = runTest {
-        userDataRepository.setFollowedTopicIds(setOf(topicsTestData.first().id))
+  @Test
+  fun searchResultsAreJoinedWithUserData() = runTest {
+    userDataRepository.setFollowedTopicIds(setOf(topicsTestData.first().id))
 
-        val result = useCase("Headlines").first()
+    val result = useCase("Headlines").first()
 
-        assertEquals(listOf("Headlines"), result.topics.map { it.topic.name })
-        assertTrue(result.topics.single().isFollowed)
-    }
+    assertEquals(listOf("Headlines"), result.topics.map { it.topic.name })
+    assertTrue(result.topics.single().isFollowed)
+  }
 
-    @Test
-    fun newsResourcesCarryBookmarkState() = runTest {
-        val bookmarked = newsResourcesTestData.first()
-        userDataRepository.setNewsResourceBookmarked(bookmarked.id, true)
+  @Test
+  fun newsResourcesCarryBookmarkState() = runTest {
+    val bookmarked = newsResourcesTestData.first()
+    userDataRepository.setNewsResourceBookmarked(bookmarked.id, true)
 
-        val result = useCase(bookmarked.title).first()
+    val result = useCase(bookmarked.title).first()
 
-        assertEquals(listOf(bookmarked.id), result.newsResources.map { it.id })
-        assertTrue(result.newsResources.single().isSaved)
-    }
+    assertEquals(listOf(bookmarked.id), result.newsResources.map { it.id })
+    assertTrue(result.newsResources.single().isSaved)
+  }
 
-    @Test
-    fun aQueryThatMatchesNothingReturnsEmptyResults() = runTest {
-        val result = useCase("no such content anywhere").first()
+  @Test
+  fun aQueryThatMatchesNothingReturnsEmptyResults() = runTest {
+    val result = useCase("no such content anywhere").first()
 
-        assertTrue(result.topics.isEmpty())
-        assertTrue(result.newsResources.isEmpty())
-    }
+    assertTrue(result.topics.isEmpty())
+    assertTrue(result.newsResources.isEmpty())
+  }
 }

@@ -29,20 +29,21 @@ import okio.BufferedSource
  */
 internal object UserPreferencesSerializer : OkioSerializer<UserPreferences> {
 
-    private val json = Json {
-        ignoreUnknownKeys = true
-        encodeDefaults = true
-    }
+  private val json = Json {
+    ignoreUnknownKeys = true
+    encodeDefaults = true
+  }
 
-    override val defaultValue: UserPreferences = UserPreferences()
+  override val defaultValue: UserPreferences = UserPreferences()
 
-    override suspend fun readFrom(source: BufferedSource): UserPreferences = try {
-        json.decodeFromString(UserPreferences.serializer(), source.readUtf8())
+  override suspend fun readFrom(source: BufferedSource): UserPreferences =
+    try {
+      json.decodeFromString(UserPreferences.serializer(), source.readUtf8())
     } catch (exception: SerializationException) {
-        throw CorruptionException("Cannot read user preferences.", exception)
+      throw CorruptionException("Cannot read user preferences.", exception)
     }
 
-    override suspend fun writeTo(t: UserPreferences, sink: BufferedSink) {
-        sink.writeUtf8(json.encodeToString(UserPreferences.serializer(), t))
-    }
+  override suspend fun writeTo(t: UserPreferences, sink: BufferedSink) {
+    sink.writeUtf8(json.encodeToString(UserPreferences.serializer(), t))
+  }
 }

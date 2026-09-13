@@ -29,55 +29,56 @@ import com.skydoves.nowinandroid.core.designsystem.theme.NiaTheme
 
 @Composable
 fun NiaTopicTag(
-    modifier: Modifier = Modifier,
-    followed: Boolean,
-    onClick: () -> Unit,
-    enabled: Boolean = true,
-    text: @Composable () -> Unit,
+  modifier: Modifier = Modifier,
+  followed: Boolean,
+  onClick: () -> Unit,
+  enabled: Boolean = true,
+  text: @Composable () -> Unit,
 ) {
-    Box(modifier = modifier) {
-        val containerColor = if (followed) {
-            MaterialTheme.colorScheme.primaryContainer
-        } else {
-            MaterialTheme.colorScheme.surfaceVariant.copy(
-                alpha = NiaTagDefaults.UNFOLLOWED_TOPIC_TAG_CONTAINER_ALPHA,
-            )
-        }
-        TextButton(
-            onClick = onClick,
-            enabled = enabled,
-            colors = ButtonDefaults.textButtonColors(
-                containerColor = containerColor,
-                contentColor = contentColorFor(backgroundColor = containerColor),
-                disabledContainerColor = MaterialTheme.colorScheme.onSurface.copy(
-                    alpha = NiaTagDefaults.DISABLED_TOPIC_TAG_CONTAINER_ALPHA,
-                ),
+  Box(modifier = modifier) {
+    val containerColor =
+      if (followed) {
+        MaterialTheme.colorScheme.primaryContainer
+      } else {
+        MaterialTheme.colorScheme.surfaceVariant.copy(
+          alpha = NiaTagDefaults.UNFOLLOWED_TOPIC_TAG_CONTAINER_ALPHA
+        )
+      }
+    TextButton(
+      onClick = onClick,
+      enabled = enabled,
+      colors =
+        ButtonDefaults.textButtonColors(
+          containerColor = containerColor,
+          contentColor = contentColorFor(backgroundColor = containerColor),
+          disabledContainerColor =
+            MaterialTheme.colorScheme.onSurface.copy(
+              alpha = NiaTagDefaults.DISABLED_TOPIC_TAG_CONTAINER_ALPHA
             ),
-        ) {
-            ProvideTextStyle(value = MaterialTheme.typography.labelSmall) {
-                text()
-            }
-        }
+        ),
+    ) {
+      ProvideTextStyle(value = MaterialTheme.typography.labelSmall) {
+        text()
+      }
     }
+  }
 }
 
 @ThemePreviews
 @Composable
 fun TagPreview() {
-    NiaTheme {
-        NiaTopicTag(followed = true, onClick = {}) {
-            Text("Topic".uppercase())
-        }
+  NiaTheme {
+    NiaTopicTag(followed = true, onClick = {}) {
+      Text("Topic".uppercase())
     }
+  }
 }
 
-/**
- * Now in Android tag default values.
- */
+/** Now in Android tag default values. */
 object NiaTagDefaults {
-    const val UNFOLLOWED_TOPIC_TAG_CONTAINER_ALPHA = 0.5f
+  const val UNFOLLOWED_TOPIC_TAG_CONTAINER_ALPHA = 0.5f
 
-    // TODO: File bug
-    // Button disabled container alpha value not exposed by ButtonDefaults
-    const val DISABLED_TOPIC_TAG_CONTAINER_ALPHA = 0.12f
+  // TODO: File bug
+  // Button disabled container alpha value not exposed by ButtonDefaults
+  const val DISABLED_TOPIC_TAG_CONTAINER_ALPHA = 0.12f
 }

@@ -31,13 +31,13 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class UserPreferences(
-    val followedTopicIds: Set<String> = emptySet(),
-    val bookmarkedNewsResourceIds: Set<String> = emptySet(),
-    val viewedNewsResourceIds: Set<String> = emptySet(),
-    val themeBrand: ThemeBrand = ThemeBrand.DEFAULT,
-    val darkThemeConfig: DarkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
-    val useDynamicColor: Boolean = false,
-    val shouldHideOnboarding: Boolean = false,
-    val topicChangeListVersion: Int = 0,
-    val newsResourceChangeListVersion: Int = 0,
+  val followedTopicIds: Set<String> = emptySet(),
+  val bookmarkedNewsResourceIds: Set<String> = emptySet(),
+  val viewedNewsResourceIds: Set<String> = emptySet(),
+  val themeBrand: ThemeBrand = ThemeBrand.DEFAULT,
+  val darkThemeConfig: DarkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
+  val useDynamicColor: Boolean = false,
+  val shouldHideOnboarding: Boolean = false,
+  val topicChangeListVersion: Int = 0,
+  val newsResourceChangeListVersion: Int = 0,
 )

@@ -15,57 +15,57 @@
  */
 
 plugins {
-    id("nowinandroid.android.application")
-    alias(libs.plugins.metro)
-    // Compose HotSwan hot-reloads the running app on a real device. It rewrites Compose call
-    // sites, so it is opt in: `./gradlew -Photswan.enabled=true :app:androidApp:installDebug`.
-    alias(libs.plugins.hotswan.compiler) apply false
+  id("nowinandroid.android.application")
+  alias(libs.plugins.metro)
+  // Compose HotSwan hot-reloads the running app on a real device. It rewrites Compose call
+  // sites, so it is opt in: `./gradlew -Photswan.enabled=true :app:androidApp:installDebug`.
+  alias(libs.plugins.hotswan.compiler) apply false
 }
 
 val hotSwanEnabled = providers.gradleProperty("hotswan.enabled").orNull == "true"
 
 if (hotSwanEnabled) {
-    apply(plugin = "com.github.skydoves.compose.hotswan.compiler")
+  apply(plugin = "com.github.skydoves.compose.hotswan.compiler")
 }
 
 android {
-    namespace = "com.skydoves.nowinandroid"
+  namespace = "com.skydoves.nowinandroid"
 
-    defaultConfig {
-        applicationId = "com.skydoves.nowinandroid"
-        versionCode = 1
-        versionName = "1.0.0"
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
+  defaultConfig {
+    applicationId = "com.skydoves.nowinandroid"
+    versionCode = 1
+    versionName = "1.0.0"
+    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+  }
 
-    buildTypes {
-        debug {
-            applicationIdSuffix = ".debug"
-        }
-        release {
-            isMinifyEnabled = true
-            isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
-            // Signed with the debug key so `assembleRelease` produces an installable APK.
-            signingConfig = signingConfigs.getByName("debug")
-        }
+  buildTypes {
+    debug {
+      applicationIdSuffix = ".debug"
     }
+    release {
+      isMinifyEnabled = true
+      isShrinkResources = true
+      proguardFiles(
+        getDefaultProguardFile("proguard-android-optimize.txt"),
+        "proguard-rules.pro",
+      )
+      // Signed with the debug key so `assembleRelease` produces an installable APK.
+      signingConfig = signingConfigs.getByName("debug")
+    }
+  }
 
-    packaging {
-        resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
-    }
+  packaging {
+    resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
+  }
 }
 
 dependencies {
-    implementation(projects.app.shared)
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.core.splashscreen)
-    implementation(libs.androidx.work.runtime)
-    implementation(libs.kotlinx.coroutines.android)
-    if (hotSwanEnabled) {
-        debugImplementation(libs.hotswan.preview)
-    }
+  implementation(projects.app.shared)
+  implementation(libs.androidx.activity.compose)
+  implementation(libs.androidx.core.splashscreen)
+  implementation(libs.androidx.work.runtime)
+  implementation(libs.kotlinx.coroutines.android)
+  if (hotSwanEnabled) {
+    debugImplementation(libs.hotswan.preview)
+  }
 }

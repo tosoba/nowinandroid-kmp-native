@@ -19,11 +19,12 @@ package com.skydoves.nowinandroid.core.data.model
 import com.skydoves.nowinandroid.core.database.model.TopicEntity
 import com.skydoves.nowinandroid.core.network.model.NetworkTopic
 
-fun NetworkTopic.asEntity() = TopicEntity(
+fun NetworkTopic.asEntity() =
+  TopicEntity(
     id = id,
     name = name,
     shortDescription = shortDescription,
     longDescription = longDescription,
     url = url,
     imageUrl = imageUrl,
-)
+  )

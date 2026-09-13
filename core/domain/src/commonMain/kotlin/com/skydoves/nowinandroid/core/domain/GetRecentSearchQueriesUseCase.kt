@@ -21,11 +21,9 @@ import com.skydoves.nowinandroid.core.data.repository.RecentSearchRepository
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
 
-/**
- * A use case which returns the recent search queries.
- */
+/** A use case which returns the recent search queries. */
 @Inject
 class GetRecentSearchQueriesUseCase(private val recentSearchRepository: RecentSearchRepository) {
-    operator fun invoke(limit: Int = 10): Flow<List<RecentSearchQuery>> =
-        recentSearchRepository.getRecentSearchQueries(limit)
+  operator fun invoke(limit: Int = 10): Flow<List<RecentSearchQuery>> =
+    recentSearchRepository.getRecentSearchQueries(limit)
 }

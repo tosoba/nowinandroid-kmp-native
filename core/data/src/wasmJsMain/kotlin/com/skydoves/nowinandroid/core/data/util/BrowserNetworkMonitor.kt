@@ -42,19 +42,19 @@ import kotlinx.coroutines.flow.shareIn
 @ContributesBinding(AppScope::class)
 class BrowserNetworkMonitor(@ApplicationScope appScope: CoroutineScope) : NetworkMonitor {
 
-    override val isOnline: Flow<Boolean> = callbackFlow {
-        trySend(window.navigator.onLine)
+  override val isOnline: Flow<Boolean> = callbackFlow {
+    trySend(window.navigator.onLine)
 
-        val onOnline: (org.w3c.dom.events.Event) -> Unit = { trySend(true) }
-        val onOffline: (org.w3c.dom.events.Event) -> Unit = { trySend(false) }
-        window.addEventListener("online", onOnline)
-        window.addEventListener("offline", onOffline)
+    val onOnline: (org.w3c.dom.events.Event) -> Unit = { trySend(true) }
+    val onOffline: (org.w3c.dom.events.Event) -> Unit = { trySend(false) }
+    window.addEventListener("online", onOnline)
+    window.addEventListener("offline", onOffline)
 
-        awaitClose {
-            window.removeEventListener("online", onOnline)
-            window.removeEventListener("offline", onOffline)
-        }
+    awaitClose {
+      window.removeEventListener("online", onOnline)
+      window.removeEventListener("offline", onOffline)
     }
-        .distinctUntilChanged()
-        .shareIn(appScope, SharingStarted.WhileSubscribed(5_000), replay = 1)
+  }
+    .distinctUntilChanged()
+    .shareIn(appScope, SharingStarted.WhileSubscribed(5_000), replay = 1)
 }

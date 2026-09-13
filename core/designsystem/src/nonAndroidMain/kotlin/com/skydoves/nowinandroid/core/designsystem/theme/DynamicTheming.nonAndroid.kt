@@ -27,4 +27,4 @@ actual fun supportsDynamicTheming(): Boolean = false
  */
 @Composable
 actual fun dynamicNiaColorScheme(darkTheme: Boolean): ColorScheme =
-    if (darkTheme) DarkDefaultColorScheme else LightDefaultColorScheme
+  if (darkTheme) DarkDefaultColorScheme else LightDefaultColorScheme

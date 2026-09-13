@@ -39,25 +39,30 @@ import com.skydoves.nowinandroid.core.database.util.InstantConverter
  * upgrade installs of the Android app, and no such install can be upgraded into this one.
  */
 @Database(
-    entities = [
-        NewsResourceEntity::class,
-        NewsResourceTopicCrossRef::class,
-        NewsResourceFtsEntity::class,
-        TopicEntity::class,
-        TopicFtsEntity::class,
-        RecentSearchQueryEntity::class,
+  entities =
+    [
+      NewsResourceEntity::class,
+      NewsResourceTopicCrossRef::class,
+      NewsResourceFtsEntity::class,
+      TopicEntity::class,
+      TopicFtsEntity::class,
+      RecentSearchQueryEntity::class,
     ],
-    version = 1,
-    exportSchema = true,
+  version = 1,
+  exportSchema = true,
 )
 @ColumnTypeConverters(value = [InstantConverter::class])
 @ConstructedBy(NiaDatabaseConstructor::class)
 abstract class NiaDatabase : RoomDatabase() {
-    abstract fun topicDao(): TopicDao
-    abstract fun newsResourceDao(): NewsResourceDao
-    abstract fun topicFtsDao(): TopicFtsDao
-    abstract fun newsResourceFtsDao(): NewsResourceFtsDao
-    abstract fun recentSearchQueryDao(): RecentSearchQueryDao
+  abstract fun topicDao(): TopicDao
+
+  abstract fun newsResourceDao(): NewsResourceDao
+
+  abstract fun topicFtsDao(): TopicFtsDao
+
+  abstract fun newsResourceFtsDao(): NewsResourceFtsDao
+
+  abstract fun recentSearchQueryDao(): RecentSearchQueryDao
 }
 
 /**
@@ -66,7 +71,7 @@ abstract class NiaDatabase : RoomDatabase() {
  */
 @Suppress("KotlinNoActualForExpect", "EXPECT_ACTUAL_IR_INCOMPATIBILITY")
 expect object NiaDatabaseConstructor : RoomDatabaseConstructor<NiaDatabase> {
-    override fun initialize(): NiaDatabase
+  override fun initialize(): NiaDatabase
 }
 
 const val NIA_DATABASE_NAME: String = "nia-database.db"

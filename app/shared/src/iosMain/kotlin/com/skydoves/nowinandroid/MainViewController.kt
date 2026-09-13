@@ -24,7 +24,7 @@ import dev.zacsweers.metro.createGraph
 import platform.UIKit.UIViewController
 
 private val appGraph: IosAppGraph by lazy {
-    createGraph<IosAppGraph>().also { it.syncManager.initializeSync() }
+  createGraph<IosAppGraph>().also { it.syncManager.initializeSync() }
 }
 
 /**
@@ -33,12 +33,10 @@ private val appGraph: IosAppGraph by lazy {
  */
 @Suppress("ktlint:standard:function-naming")
 fun MainViewController(): UIViewController = ComposeUIViewController {
-    NiaAppRoot(appGraph)
+  NiaAppRoot(appGraph)
 }
 
-/**
- * Called from `AppDelegate.swift` when the user taps a news notification.
- */
+/** Called from `AppDelegate.swift` when the user taps a news notification. */
 fun submitDeepLink(newsResourceId: String) {
-    appGraph.deepLinkStore.submit(newsResourceId)
+  appGraph.deepLinkStore.submit(newsResourceId)
 }

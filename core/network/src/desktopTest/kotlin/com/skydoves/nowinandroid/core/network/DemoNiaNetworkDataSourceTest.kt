@@ -31,31 +31,32 @@ import kotlin.test.assertTrue
  */
 class DemoNiaNetworkDataSourceTest {
 
-    private val subject = DemoNiaNetworkDataSource(
-        ioDispatcher = Dispatchers.Default,
-        networkJson = Json { ignoreUnknownKeys = true },
+  private val subject =
+    DemoNiaNetworkDataSource(
+      ioDispatcher = Dispatchers.Default,
+      networkJson = Json { ignoreUnknownKeys = true },
     )
 
-    @Test
-    fun topicsAreParsed() = runTest {
-        val topics = subject.getTopics().getOrThrow()
-        assertEquals(19, topics.size)
-        assertEquals("Headlines", topics.first().name)
-    }
+  @Test
+  fun topicsAreParsed() = runTest {
+    val topics = subject.getTopics().getOrThrow()
+    assertEquals(19, topics.size)
+    assertEquals("Headlines", topics.first().name)
+  }
 
-    @Test
-    fun newsResourcesAreParsed() = runTest {
-        val news = subject.getNewsResources().getOrThrow()
-        assertEquals(311, news.size)
-        assertTrue(news.all { it.id.isNotEmpty() })
-    }
+  @Test
+  fun newsResourcesAreParsed() = runTest {
+    val news = subject.getNewsResources().getOrThrow()
+    assertEquals(311, news.size)
+    assertTrue(news.all { it.id.isNotEmpty() })
+  }
 
-    @Test
-    fun changeListsAreSynthesisedInOrder() = runTest {
-        val changeList = subject.getTopicChangeList().getOrThrow()
-        assertEquals(19, changeList.size)
-        assertEquals(0, changeList.first().changeListVersion)
-        assertEquals(18, changeList.last().changeListVersion)
-        assertTrue(changeList.none { it.isDelete })
-    }
+  @Test
+  fun changeListsAreSynthesisedInOrder() = runTest {
+    val changeList = subject.getTopicChangeList().getOrThrow()
+    assertEquals(19, changeList.size)
+    assertEquals(0, changeList.first().changeListVersion)
+    assertEquals(18, changeList.last().changeListVersion)
+    assertTrue(changeList.none { it.isDelete })
+  }
 }

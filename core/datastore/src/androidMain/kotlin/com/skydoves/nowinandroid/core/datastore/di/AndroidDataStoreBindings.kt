@@ -35,23 +35,25 @@ import java.io.File
 @ContributesTo(AppScope::class)
 object AndroidDataStoreBindings {
 
-    @Provides
-    fun providesDataStorePathProducer(context: Context): DataStorePathProducer = DataStorePathProducer { fileName ->
-        File(context.applicationContext.filesDir, "datastore")
-            .apply { mkdirs() }
-            .resolve(fileName)
-            .absolutePath
+  @Provides
+  fun providesDataStorePathProducer(context: Context): DataStorePathProducer =
+    DataStorePathProducer { fileName ->
+      File(context.applicationContext.filesDir, "datastore")
+        .apply { mkdirs() }
+        .resolve(fileName)
+        .absolutePath
     }
 
-    @Provides
-    @SingleIn(AppScope::class)
-    fun providesUserPreferencesDataStore(
-        pathProducer: DataStorePathProducer,
-        @ApplicationScope scope: CoroutineScope,
-        @IoDispatcher ioDispatcher: CoroutineDispatcher,
-    ): DataStore<UserPreferences> = okioUserPreferencesDataStore(
-        fileSystem = FileSystem.SYSTEM,
-        pathProducer = pathProducer,
-        scope = CoroutineScope(scope.coroutineContext + ioDispatcher),
+  @Provides
+  @SingleIn(AppScope::class)
+  fun providesUserPreferencesDataStore(
+    pathProducer: DataStorePathProducer,
+    @ApplicationScope scope: CoroutineScope,
+    @IoDispatcher ioDispatcher: CoroutineDispatcher,
+  ): DataStore<UserPreferences> =
+    okioUserPreferencesDataStore(
+      fileSystem = FileSystem.SYSTEM,
+      pathProducer = pathProducer,
+      scope = CoroutineScope(scope.coroutineContext + ioDispatcher),
     )
 }

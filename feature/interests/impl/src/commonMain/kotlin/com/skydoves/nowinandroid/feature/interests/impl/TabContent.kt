@@ -43,65 +43,56 @@ import com.skydoves.nowinandroid.core.ui.InterestsItem
 
 @Composable
 fun TopicsTabContent(
-    topics: List<FollowableTopic>,
-    onTopicClick: (String) -> Unit,
-    onFollowButtonClick: (String, Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-    withBottomSpacer: Boolean = true,
-    selectedTopicId: String? = null,
-    shouldHighlightSelectedTopic: Boolean = false,
+  topics: List<FollowableTopic>,
+  onTopicClick: (String) -> Unit,
+  onFollowButtonClick: (String, Boolean) -> Unit,
+  modifier: Modifier = Modifier,
+  withBottomSpacer: Boolean = true,
+  selectedTopicId: String? = null,
+  shouldHighlightSelectedTopic: Boolean = false,
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth(),
+  Box(modifier = modifier.fillMaxWidth()) {
+    val scrollableState = rememberLazyListState()
+    LazyColumn(
+      modifier = Modifier.padding(horizontal = 24.dp).testTag(LIST_PANE_TEST_TAG),
+      contentPadding = PaddingValues(vertical = 16.dp),
+      state = scrollableState,
     ) {
-        val scrollableState = rememberLazyListState()
-        LazyColumn(
-            modifier = Modifier
-                .padding(horizontal = 24.dp)
-                .testTag(LIST_PANE_TEST_TAG),
-            contentPadding = PaddingValues(vertical = 16.dp),
-            state = scrollableState,
-        ) {
-            topics.forEach { followableTopic ->
-                val topicId = followableTopic.topic.id
-                item(key = topicId) {
-                    val isSelected = shouldHighlightSelectedTopic && topicId == selectedTopicId
-                    InterestsItem(
-                        name = followableTopic.topic.name,
-                        following = followableTopic.isFollowed,
-                        description = followableTopic.topic.shortDescription,
-                        topicImageUrl = followableTopic.topic.imageUrl,
-                        onClick = { onTopicClick(topicId) },
-                        onFollowButtonClick = { onFollowButtonClick(topicId, it) },
-                        isSelected = isSelected,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
-            }
-
-            if (withBottomSpacer) {
-                item {
-                    Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.safeDrawing))
-                }
-            }
+      topics.forEach { followableTopic ->
+        val topicId = followableTopic.topic.id
+        item(key = topicId) {
+          val isSelected = shouldHighlightSelectedTopic && topicId == selectedTopicId
+          InterestsItem(
+            name = followableTopic.topic.name,
+            following = followableTopic.isFollowed,
+            description = followableTopic.topic.shortDescription,
+            topicImageUrl = followableTopic.topic.imageUrl,
+            onClick = { onTopicClick(topicId) },
+            onFollowButtonClick = { onFollowButtonClick(topicId, it) },
+            isSelected = isSelected,
+            modifier = Modifier.fillMaxWidth(),
+          )
         }
-        val scrollbarState = scrollableState.scrollbarState(
-            itemsAvailable = topics.size,
-        )
-        scrollableState.DraggableScrollbar(
-            modifier = Modifier
-                .fillMaxHeight()
-                .windowInsetsPadding(WindowInsets.systemBars)
-                .padding(horizontal = 2.dp)
-                .align(Alignment.CenterEnd),
-            state = scrollbarState,
-            orientation = Orientation.Vertical,
-            onThumbMoved = scrollableState.rememberDraggableScroller(
-                itemsAvailable = topics.size,
-            ),
-        )
+      }
+
+      if (withBottomSpacer) {
+        item {
+          Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.safeDrawing))
+        }
+      }
     }
+    val scrollbarState = scrollableState.scrollbarState(itemsAvailable = topics.size)
+    scrollableState.DraggableScrollbar(
+      modifier =
+        Modifier.fillMaxHeight()
+          .windowInsetsPadding(WindowInsets.systemBars)
+          .padding(horizontal = 2.dp)
+          .align(Alignment.CenterEnd),
+      state = scrollbarState,
+      orientation = Orientation.Vertical,
+      onThumbMoved = scrollableState.rememberDraggableScroller(itemsAvailable = topics.size),
+    )
+  }
 }
 
 val LIST_PANE_TEST_TAG = "interests:topics"

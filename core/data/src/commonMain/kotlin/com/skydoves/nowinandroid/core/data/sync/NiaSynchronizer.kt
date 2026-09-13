@@ -38,30 +38,34 @@ import kotlinx.coroutines.coroutineScope
 @Inject
 @SingleIn(AppScope::class)
 class NiaSynchronizer(
-    private val niaPreferences: NiaPreferencesDataSource,
-    private val topicRepository: TopicsRepository,
-    private val newsRepository: NewsRepository,
-    private val searchContentsRepository: SearchContentsRepository,
+  private val niaPreferences: NiaPreferencesDataSource,
+  private val topicRepository: TopicsRepository,
+  private val newsRepository: NewsRepository,
+  private val searchContentsRepository: SearchContentsRepository,
 ) : Synchronizer {
 
-    /**
-     * Syncs topics and news in parallel, then rebuilds the search index. Returns whether both
-     * halves succeeded, so a caller that can retry (WorkManager) knows to.
-     */
-    suspend fun sync(): Boolean = coroutineScope {
-        val syncedSuccessfully = awaitAll(
-            async { topicRepository.sync() },
-            async { newsRepository.sync() },
-        ).all { it }
+  /**
+   * Syncs topics and news in parallel, then rebuilds the search index. Returns whether both halves
+   * succeeded, so a caller that can retry (WorkManager) knows to.
+   */
+  suspend fun sync(): Boolean = coroutineScope {
+    val syncedSuccessfully =
+      awaitAll(
+          async { topicRepository.sync() },
+          async { newsRepository.sync() },
+        )
+        .all { it }
 
-        if (syncedSuccessfully) {
-            searchContentsRepository.populateFtsData()
-        }
-        syncedSuccessfully
+    if (syncedSuccessfully) {
+      searchContentsRepository.populateFtsData()
     }
+    syncedSuccessfully
+  }
 
-    override suspend fun getChangeListVersions(): ChangeListVersions = niaPreferences.getChangeListVersions()
+  override suspend fun getChangeListVersions(): ChangeListVersions =
+    niaPreferences.getChangeListVersions()
 
-    override suspend fun updateChangeListVersions(update: ChangeListVersions.() -> ChangeListVersions) =
-        niaPreferences.updateChangeListVersion(update)
+  override suspend fun updateChangeListVersions(
+    update: ChangeListVersions.() -> ChangeListVersions
+  ) = niaPreferences.updateChangeListVersion(update)
 }

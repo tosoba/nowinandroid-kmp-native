@@ -24,8 +24,7 @@ import androidx.compose.ui.graphics.Color
  * platform has its own idea of "open this link", so it becomes a seam.
  */
 fun interface UrlLauncher {
-    fun launch(url: String, toolbarColor: Color)
+  fun launch(url: String, toolbarColor: Color)
 }
 
-@Composable
-expect fun rememberUrlLauncher(): UrlLauncher
+@Composable expect fun rememberUrlLauncher(): UrlLauncher

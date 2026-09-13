@@ -23,12 +23,12 @@ import platform.UIKit.UIApplication
 
 @Composable
 actual fun rememberUrlLauncher(): UrlLauncher = remember {
-    UrlLauncher { url, _ ->
-        val nsUrl = NSURL.URLWithString(url) ?: return@UrlLauncher
-        UIApplication.sharedApplication.openURL(
-            url = nsUrl,
-            options = emptyMap<Any?, Any?>(),
-            completionHandler = null,
-        )
-    }
+  UrlLauncher { url, _ ->
+    val nsUrl = NSURL.URLWithString(url) ?: return@UrlLauncher
+    UIApplication.sharedApplication.openURL(
+      url = nsUrl,
+      options = emptyMap<Any?, Any?>(),
+      completionHandler = null,
+    )
+  }
 }

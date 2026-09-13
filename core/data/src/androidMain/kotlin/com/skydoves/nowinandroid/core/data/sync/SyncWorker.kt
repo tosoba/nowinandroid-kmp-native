@@ -28,9 +28,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 
 internal val SyncConstraints
-    get() = Constraints.Builder()
-        .setRequiredNetworkType(NetworkType.CONNECTED)
-        .build()
+  get() = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
 
 /**
  * Syncs the data layer by delegating to the shared [NiaSynchronizer].
@@ -39,26 +37,25 @@ internal val SyncConstraints
  * no worker integration, so the graph is reached through [SyncWorkerEntryPoint], which the
  * application installs once at start-up.
  */
-class SyncWorker(appContext: Context, workerParams: WorkerParameters) : CoroutineWorker(appContext, workerParams) {
+class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
+  CoroutineWorker(appContext, workerParams) {
 
-    override suspend fun getForegroundInfo(): ForegroundInfo = applicationContext.syncForegroundInfo()
+  override suspend fun getForegroundInfo(): ForegroundInfo = applicationContext.syncForegroundInfo()
 
-    override suspend fun doWork(): Result {
-        val synchronizer = SyncWorkerEntryPoint.synchronizer
-            ?: return Result.retry()
+  override suspend fun doWork(): Result {
+    val synchronizer = SyncWorkerEntryPoint.synchronizer ?: return Result.retry()
 
-        return if (synchronizer.sync()) Result.success() else Result.retry()
-    }
+    return if (synchronizer.sync()) Result.success() else Result.retry()
+  }
 
-    companion object {
-        /**
-         * Expedited one time work to sync data on app startup
-         */
-        fun startUpSyncWork() = OneTimeWorkRequestBuilder<SyncWorker>()
-            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-            .setConstraints(SyncConstraints)
-            .build()
-    }
+  companion object {
+    /** Expedited one time work to sync data on app startup */
+    fun startUpSyncWork() =
+      OneTimeWorkRequestBuilder<SyncWorker>()
+        .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+        .setConstraints(SyncConstraints)
+        .build()
+  }
 }
 
 /**
@@ -66,21 +63,19 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
  * dependency is a process-wide handle set during `Application.onCreate`.
  */
 object SyncWorkerEntryPoint {
-    @Volatile
-    var synchronizer: NiaSynchronizer? = null
+  @Volatile var synchronizer: NiaSynchronizer? = null
 }
 
 internal const val SYNC_WORK_NAME = "SyncWorkName"
 
-/**
- * Enqueues the one-off start-up sync, deduplicated by [SYNC_WORK_NAME].
- */
+/** Enqueues the one-off start-up sync, deduplicated by [SYNC_WORK_NAME]. */
 fun SyncManager.initializeSync() = requestSync()
 
 internal fun Context.enqueueStartUpSync() {
-    WorkManager.getInstance(this).enqueueUniqueWork(
-        SYNC_WORK_NAME,
-        ExistingWorkPolicy.KEEP,
-        SyncWorker.startUpSyncWork(),
+  WorkManager.getInstance(this)
+    .enqueueUniqueWork(
+      SYNC_WORK_NAME,
+      ExistingWorkPolicy.KEEP,
+      SyncWorker.startUpSyncWork(),
     )
 }

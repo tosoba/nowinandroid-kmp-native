@@ -23,5 +23,5 @@ import androidx.compose.ui.semantics.testTagsAsResourceId
 
 @OptIn(ExperimentalComposeUiApi::class)
 actual fun Modifier.enableTestTagsAsResourceId(): Modifier = semantics {
-    testTagsAsResourceId = true
+  testTagsAsResourceId = true
 }

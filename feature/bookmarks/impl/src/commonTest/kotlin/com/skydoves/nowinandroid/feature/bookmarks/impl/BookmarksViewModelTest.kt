@@ -41,109 +41,110 @@ import kotlin.test.assertTrue
  */
 class BookmarksViewModelTest {
 
-    private val dispatcherRule = MainDispatcherRule()
-    private val userDataRepository = TestUserDataRepository()
-    private val newsRepository = TestNewsRepository()
-    private val userNewsResourceRepository = CompositeUserNewsResourceRepository(
-        newsRepository = newsRepository,
-        userDataRepository = userDataRepository,
+  private val dispatcherRule = MainDispatcherRule()
+  private val userDataRepository = TestUserDataRepository()
+  private val newsRepository = TestNewsRepository()
+  private val userNewsResourceRepository =
+    CompositeUserNewsResourceRepository(
+      newsRepository = newsRepository,
+      userDataRepository = userDataRepository,
     )
-    private lateinit var viewModel: BookmarksViewModel
+  private lateinit var viewModel: BookmarksViewModel
 
-    @BeforeTest
-    fun setup() {
-        dispatcherRule.setUp()
-        viewModel = BookmarksViewModel(
-            userDataRepository = userDataRepository,
-            userNewsResourceRepository = userNewsResourceRepository,
-        )
-    }
+  @BeforeTest
+  fun setup() {
+    dispatcherRule.setUp()
+    viewModel =
+      BookmarksViewModel(
+        userDataRepository = userDataRepository,
+        userNewsResourceRepository = userNewsResourceRepository,
+      )
+  }
 
-    @AfterTest
-    fun tearDown() = dispatcherRule.tearDown()
+  @AfterTest fun tearDown() = dispatcherRule.tearDown()
 
-    @Test
-    fun stateIsInitiallyLoading() = runTest {
-        assertEquals(Loading, viewModel.feedUiState.value)
-    }
+  @Test
+  fun stateIsInitiallyLoading() = runTest {
+    assertEquals(Loading, viewModel.feedUiState.value)
+  }
 
-    @Test
-    fun oneBookmark_showsInFeed() = runTest {
-        backgroundScope.launch(UnconfinedTestDispatcher()) { viewModel.feedUiState.collect() }
+  @Test
+  fun oneBookmark_showsInFeed() = runTest {
+    backgroundScope.launch(UnconfinedTestDispatcher()) { viewModel.feedUiState.collect() }
 
-        newsRepository.sendNewsResources(newsResourcesTestData)
-        userDataRepository.setNewsResourceBookmarked(newsResourcesTestData[0].id, true)
+    newsRepository.sendNewsResources(newsResourcesTestData)
+    userDataRepository.setNewsResourceBookmarked(newsResourcesTestData[0].id, true)
 
-        val item = viewModel.feedUiState.value
-        assertIs<Success>(item)
-        assertEquals(1, item.feed.size)
-    }
+    val item = viewModel.feedUiState.value
+    assertIs<Success>(item)
+    assertEquals(1, item.feed.size)
+  }
 
-    @Test
-    fun oneBookmark_whenRemoving_removesFromFeed() = runTest {
-        backgroundScope.launch(UnconfinedTestDispatcher()) { viewModel.feedUiState.collect() }
+  @Test
+  fun oneBookmark_whenRemoving_removesFromFeed() = runTest {
+    backgroundScope.launch(UnconfinedTestDispatcher()) { viewModel.feedUiState.collect() }
 
-        newsRepository.sendNewsResources(newsResourcesTestData)
-        userDataRepository.setNewsResourceBookmarked(newsResourcesTestData[0].id, true)
+    newsRepository.sendNewsResources(newsResourcesTestData)
+    userDataRepository.setNewsResourceBookmarked(newsResourcesTestData[0].id, true)
 
-        viewModel.removeFromSavedResources(newsResourcesTestData[0].id)
+    viewModel.removeFromSavedResources(newsResourcesTestData[0].id)
 
-        val item = viewModel.feedUiState.value
-        assertIs<Success>(item)
-        assertEquals(0, item.feed.size)
-        assertTrue(viewModel.shouldDisplayUndoBookmark)
-    }
+    val item = viewModel.feedUiState.value
+    assertIs<Success>(item)
+    assertEquals(0, item.feed.size)
+    assertTrue(viewModel.shouldDisplayUndoBookmark)
+  }
 
-    @Test
-    fun feedUiState_resourceIsViewed_setResourcesViewed() = runTest {
-        backgroundScope.launch(UnconfinedTestDispatcher()) { viewModel.feedUiState.collect() }
+  @Test
+  fun feedUiState_resourceIsViewed_setResourcesViewed() = runTest {
+    backgroundScope.launch(UnconfinedTestDispatcher()) { viewModel.feedUiState.collect() }
 
-        newsRepository.sendNewsResources(newsResourcesTestData)
-        userDataRepository.setNewsResourceBookmarked(newsResourcesTestData[0].id, true)
-        val itemBeforeViewed = viewModel.feedUiState.value
-        assertIs<Success>(itemBeforeViewed)
-        assertFalse(itemBeforeViewed.feed.first().hasBeenViewed)
+    newsRepository.sendNewsResources(newsResourcesTestData)
+    userDataRepository.setNewsResourceBookmarked(newsResourcesTestData[0].id, true)
+    val itemBeforeViewed = viewModel.feedUiState.value
+    assertIs<Success>(itemBeforeViewed)
+    assertFalse(itemBeforeViewed.feed.first().hasBeenViewed)
 
-        viewModel.setNewsResourceViewed(newsResourcesTestData[0].id, true)
+    viewModel.setNewsResourceViewed(newsResourcesTestData[0].id, true)
 
-        val item = viewModel.feedUiState.value
-        assertIs<Success>(item)
-        assertTrue(item.feed.first().hasBeenViewed)
-    }
+    val item = viewModel.feedUiState.value
+    assertIs<Success>(item)
+    assertTrue(item.feed.first().hasBeenViewed)
+  }
 
-    @Test
-    fun feedUiState_undoneBookmarkRemoval_bookmarkIsRestored() = runTest {
-        backgroundScope.launch(UnconfinedTestDispatcher()) { viewModel.feedUiState.collect() }
+  @Test
+  fun feedUiState_undoneBookmarkRemoval_bookmarkIsRestored() = runTest {
+    backgroundScope.launch(UnconfinedTestDispatcher()) { viewModel.feedUiState.collect() }
 
-        newsRepository.sendNewsResources(newsResourcesTestData)
-        userDataRepository.setNewsResourceBookmarked(newsResourcesTestData[0].id, true)
-        viewModel.removeFromSavedResources(newsResourcesTestData[0].id)
-        assertTrue(viewModel.shouldDisplayUndoBookmark)
-        val itemBeforeUndo = viewModel.feedUiState.value
-        assertIs<Success>(itemBeforeUndo)
-        assertEquals(0, itemBeforeUndo.feed.size)
+    newsRepository.sendNewsResources(newsResourcesTestData)
+    userDataRepository.setNewsResourceBookmarked(newsResourcesTestData[0].id, true)
+    viewModel.removeFromSavedResources(newsResourcesTestData[0].id)
+    assertTrue(viewModel.shouldDisplayUndoBookmark)
+    val itemBeforeUndo = viewModel.feedUiState.value
+    assertIs<Success>(itemBeforeUndo)
+    assertEquals(0, itemBeforeUndo.feed.size)
 
-        viewModel.undoBookmarkRemoval()
+    viewModel.undoBookmarkRemoval()
 
-        assertFalse(viewModel.shouldDisplayUndoBookmark)
-        val item = viewModel.feedUiState.value
-        assertIs<Success>(item)
-        assertEquals(1, item.feed.size)
-    }
+    assertFalse(viewModel.shouldDisplayUndoBookmark)
+    val item = viewModel.feedUiState.value
+    assertIs<Success>(item)
+    assertEquals(1, item.feed.size)
+  }
 
-    @Test
-    fun clearingUndoStateDropsTheRestoreOffer() = runTest {
-        backgroundScope.launch(UnconfinedTestDispatcher()) { viewModel.feedUiState.collect() }
+  @Test
+  fun clearingUndoStateDropsTheRestoreOffer() = runTest {
+    backgroundScope.launch(UnconfinedTestDispatcher()) { viewModel.feedUiState.collect() }
 
-        newsRepository.sendNewsResources(newsResourcesTestData)
-        userDataRepository.setNewsResourceBookmarked(newsResourcesTestData[0].id, true)
-        viewModel.removeFromSavedResources(newsResourcesTestData[0].id)
+    newsRepository.sendNewsResources(newsResourcesTestData)
+    userDataRepository.setNewsResourceBookmarked(newsResourcesTestData[0].id, true)
+    viewModel.removeFromSavedResources(newsResourcesTestData[0].id)
 
-        viewModel.clearUndoState()
+    viewModel.clearUndoState()
 
-        assertFalse(viewModel.shouldDisplayUndoBookmark)
-        val item = viewModel.feedUiState.value
-        assertIs<Success>(item)
-        assertEquals(0, item.feed.size)
-    }
+    assertFalse(viewModel.shouldDisplayUndoBookmark)
+    val item = viewModel.feedUiState.value
+    assertIs<Success>(item)
+    assertEquals(0, item.feed.size)
+  }
 }

@@ -23,11 +23,11 @@ import io.ktor.client.HttpClient
 
 @Composable
 internal actual fun rememberLandscapist(httpClient: HttpClient): Landscapist =
-    // iOS resolves NSCachesDirectory and desktop the user cache directory on their own, so passing
-    // no disk cache here lets Landscapist install its platform default rather than override it.
-    remember(httpClient) {
-        buildNiaLandscapist(httpClient = imageHttpClient(httpClient), diskCache = null)
-    }
+  // iOS resolves NSCachesDirectory and desktop the user cache directory on their own, so passing
+  // no disk cache here lets Landscapist install its platform default rather than override it.
+  remember(httpClient) {
+    buildNiaLandscapist(httpClient = imageHttpClient(httpClient), diskCache = null)
+  }
 
 /**
  * The client image requests go out on.

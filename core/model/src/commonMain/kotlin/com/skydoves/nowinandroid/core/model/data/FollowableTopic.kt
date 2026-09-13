@@ -18,8 +18,5 @@ package com.skydoves.nowinandroid.core.model.data
 
 import androidx.compose.runtime.Immutable
 
-/**
- * A [topic] with the additional information for whether or not it is followed.
- */
-@Immutable
-data class FollowableTopic(val topic: Topic, val isFollowed: Boolean)
+/** A [topic] with the additional information for whether or not it is followed. */
+@Immutable data class FollowableTopic(val topic: Topic, val isFollowed: Boolean)

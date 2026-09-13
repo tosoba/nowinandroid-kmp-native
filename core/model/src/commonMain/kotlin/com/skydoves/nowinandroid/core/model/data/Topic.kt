@@ -18,15 +18,13 @@ package com.skydoves.nowinandroid.core.model.data
 
 import androidx.compose.runtime.Immutable
 
-/**
- * External data layer representation of a NiA Topic
- */
+/** External data layer representation of a NiA Topic */
 @Immutable
 data class Topic(
-    val id: String,
-    val name: String,
-    val shortDescription: String,
-    val longDescription: String,
-    val url: String,
-    val imageUrl: String,
+  val id: String,
+  val name: String,
+  val shortDescription: String,
+  val longDescription: String,
+  val url: String,
+  val imageUrl: String,
 )

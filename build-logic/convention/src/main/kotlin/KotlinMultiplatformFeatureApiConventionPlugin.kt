@@ -25,17 +25,17 @@ import org.gradle.kotlin.dsl.dependencies
  * so any feature can depend on any other feature's `api` without pulling in its implementation.
  */
 class KotlinMultiplatformFeatureApiConventionPlugin : Plugin<Project> {
-    override fun apply(target: Project) {
-        with(target) {
-            pluginManager.apply("nowinandroid.kmp.multiplatform.compose")
-            pluginManager.apply("org.jetbrains.kotlin.plugin.serialization")
+  override fun apply(target: Project) {
+    with(target) {
+      pluginManager.apply("nowinandroid.kmp.multiplatform.compose")
+      pluginManager.apply("org.jetbrains.kotlin.plugin.serialization")
 
-            dependencies {
-                add("commonMainApi", project(":core:navigation"))
-                add("commonMainApi", libs.findLibrary("androidx-navigation3-runtime").get())
-                add("commonMainApi", libs.findLibrary("compose-runtime").get())
-                add("commonMainApi", libs.findLibrary("kotlinx-serialization-json").get())
-            }
-        }
+      dependencies {
+        add("commonMainApi", project(":core:navigation"))
+        add("commonMainApi", libs.findLibrary("androidx-navigation3-runtime").get())
+        add("commonMainApi", libs.findLibrary("compose-runtime").get())
+        add("commonMainApi", libs.findLibrary("kotlinx-serialization-json").get())
+      }
     }
+  }
 }

@@ -32,60 +32,61 @@ import kotlin.test.assertFailsWith
  */
 class UserPreferencesSerializerTest {
 
-    private val subject = UserPreferencesSerializer
+  private val subject = UserPreferencesSerializer
 
-    @Test
-    fun defaultUserPreferencesIsEmpty() {
-        assertEquals(
-            UserPreferences(
-                followedTopicIds = emptySet(),
-                bookmarkedNewsResourceIds = emptySet(),
-                viewedNewsResourceIds = emptySet(),
-                themeBrand = ThemeBrand.DEFAULT,
-                darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
-                useDynamicColor = false,
-                shouldHideOnboarding = false,
-                topicChangeListVersion = 0,
-                newsResourceChangeListVersion = 0,
-            ),
-            subject.defaultValue,
-        )
+  @Test
+  fun defaultUserPreferencesIsEmpty() {
+    assertEquals(
+      UserPreferences(
+        followedTopicIds = emptySet(),
+        bookmarkedNewsResourceIds = emptySet(),
+        viewedNewsResourceIds = emptySet(),
+        themeBrand = ThemeBrand.DEFAULT,
+        darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
+        useDynamicColor = false,
+        shouldHideOnboarding = false,
+        topicChangeListVersion = 0,
+        newsResourceChangeListVersion = 0,
+      ),
+      subject.defaultValue,
+    )
+  }
+
+  @Test
+  fun writingAndReadingUserPreferencesOutputsCorrectValue() = runTest {
+    val expected =
+      UserPreferences(
+        followedTopicIds = setOf("1", "2"),
+        bookmarkedNewsResourceIds = setOf("3"),
+        viewedNewsResourceIds = setOf("3", "4"),
+        themeBrand = ThemeBrand.ANDROID,
+        darkThemeConfig = DarkThemeConfig.DARK,
+        useDynamicColor = true,
+        shouldHideOnboarding = true,
+        topicChangeListVersion = 5,
+        newsResourceChangeListVersion = 9,
+      )
+
+    val buffer = Buffer()
+    subject.writeTo(expected, buffer)
+
+    assertEquals(expected, subject.readFrom(buffer))
+  }
+
+  @Test
+  fun readingInvalidUserPreferencesThrowsCorruptionException() = runTest {
+    assertFailsWith<CorruptionException> {
+      subject.readFrom(Buffer().apply { writeUtf8("not json") })
     }
+  }
 
-    @Test
-    fun writingAndReadingUserPreferencesOutputsCorrectValue() = runTest {
-        val expected = UserPreferences(
-            followedTopicIds = setOf("1", "2"),
-            bookmarkedNewsResourceIds = setOf("3"),
-            viewedNewsResourceIds = setOf("3", "4"),
-            themeBrand = ThemeBrand.ANDROID,
-            darkThemeConfig = DarkThemeConfig.DARK,
-            useDynamicColor = true,
-            shouldHideOnboarding = true,
-            topicChangeListVersion = 5,
-            newsResourceChangeListVersion = 9,
-        )
+  @Test
+  fun unknownFieldsAreIgnoredSoOlderInstallsStillLoad() = runTest {
+    val json = """{"followedTopicIds":["1"],"someFieldFromTheFuture":42}"""
 
-        val buffer = Buffer()
-        subject.writeTo(expected, buffer)
+    val read = subject.readFrom(Buffer().apply { writeUtf8(json) })
 
-        assertEquals(expected, subject.readFrom(buffer))
-    }
-
-    @Test
-    fun readingInvalidUserPreferencesThrowsCorruptionException() = runTest {
-        assertFailsWith<CorruptionException> {
-            subject.readFrom(Buffer().apply { writeUtf8("not json") })
-        }
-    }
-
-    @Test
-    fun unknownFieldsAreIgnoredSoOlderInstallsStillLoad() = runTest {
-        val json = """{"followedTopicIds":["1"],"someFieldFromTheFuture":42}"""
-
-        val read = subject.readFrom(Buffer().apply { writeUtf8(json) })
-
-        assertEquals(setOf("1"), read.followedTopicIds)
-        assertEquals(ThemeBrand.DEFAULT, read.themeBrand)
-    }
+    assertEquals(setOf("1"), read.followedTopicIds)
+    assertEquals(ThemeBrand.DEFAULT, read.themeBrand)
+  }
 }

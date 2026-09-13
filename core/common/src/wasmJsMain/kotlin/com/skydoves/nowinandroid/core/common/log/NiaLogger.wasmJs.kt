@@ -22,17 +22,17 @@ package com.skydoves.nowinandroid.core.common.log
  * depends on, which is not worth it for a log line.
  */
 actual object NiaLogger {
-    actual fun debug(tag: String, message: String) {
-        println("D/$tag: $message")
-    }
+  actual fun debug(tag: String, message: String) {
+    println("D/$tag: $message")
+  }
 
-    actual fun info(tag: String, message: String, throwable: Throwable?) {
-        println("I/$tag: $message")
-        throwable?.let { println(it.stackTraceToString()) }
-    }
+  actual fun info(tag: String, message: String, throwable: Throwable?) {
+    println("I/$tag: $message")
+    throwable?.let { println(it.stackTraceToString()) }
+  }
 
-    actual fun error(tag: String, message: String, throwable: Throwable?) {
-        println("E/$tag: $message")
-        throwable?.let { println(it.stackTraceToString()) }
-    }
+  actual fun error(tag: String, message: String, throwable: Throwable?) {
+    println("E/$tag: $message")
+    throwable?.let { println(it.stackTraceToString()) }
+  }
 }

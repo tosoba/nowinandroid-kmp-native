@@ -42,25 +42,25 @@ import kotlin.math.PI
 import kotlin.math.tan
 
 /**
- * The main background for the app.
- * Uses [LocalBackgroundTheme] to set the color and tonal elevation of a [Surface].
+ * The main background for the app. Uses [LocalBackgroundTheme] to set the color and tonal elevation
+ * of a [Surface].
  *
  * @param modifier Modifier to be applied to the background.
  * @param content The background content.
  */
 @Composable
 fun NiaBackground(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-    val color = LocalBackgroundTheme.current.color
-    val tonalElevation = LocalBackgroundTheme.current.tonalElevation
-    Surface(
-        color = if (color == Color.Unspecified) Color.Transparent else color,
-        tonalElevation = if (tonalElevation == Dp.Unspecified) 0.dp else tonalElevation,
-        modifier = modifier.fillMaxSize(),
-    ) {
-        CompositionLocalProvider(LocalAbsoluteTonalElevation provides 0.dp) {
-            content()
-        }
+  val color = LocalBackgroundTheme.current.color
+  val tonalElevation = LocalBackgroundTheme.current.tonalElevation
+  Surface(
+    color = if (color == Color.Unspecified) Color.Transparent else color,
+    tonalElevation = if (tonalElevation == Dp.Unspecified) 0.dp else tonalElevation,
+    modifier = modifier.fillMaxSize(),
+  ) {
+    CompositionLocalProvider(LocalAbsoluteTonalElevation provides 0.dp) {
+      content()
     }
+  }
 }
 
 /**
@@ -73,64 +73,67 @@ fun NiaBackground(modifier: Modifier = Modifier, content: @Composable () -> Unit
  */
 @Composable
 fun NiaGradientBackground(
-    modifier: Modifier = Modifier,
-    gradientColors: GradientColors = LocalGradientColors.current,
-    content: @Composable () -> Unit,
+  modifier: Modifier = Modifier,
+  gradientColors: GradientColors = LocalGradientColors.current,
+  content: @Composable () -> Unit,
 ) {
-    val currentTopColor by rememberUpdatedState(gradientColors.top)
-    val currentBottomColor by rememberUpdatedState(gradientColors.bottom)
-    Surface(
-        color = if (gradientColors.container == Color.Unspecified) {
-            Color.Transparent
-        } else {
-            gradientColors.container
-        },
-        modifier = modifier.fillMaxSize(),
-    ) {
-        Box(
-            Modifier
-                .fillMaxSize()
-                .drawWithCache {
-                    // Compute the start and end coordinates such that the gradients are angled 11.06
-                    // degrees off the vertical axis
-                    val offset = size.height * tan(GRADIENT_ANGLE_RADIANS)
+  val currentTopColor by rememberUpdatedState(gradientColors.top)
+  val currentBottomColor by rememberUpdatedState(gradientColors.bottom)
+  Surface(
+    color =
+      if (gradientColors.container == Color.Unspecified) {
+        Color.Transparent
+      } else {
+        gradientColors.container
+      },
+    modifier = modifier.fillMaxSize(),
+  ) {
+    Box(
+      Modifier.fillMaxSize().drawWithCache {
+        // Compute the start and end coordinates such that the gradients are angled 11.06
+        // degrees off the vertical axis
+        val offset = size.height * tan(GRADIENT_ANGLE_RADIANS)
 
-                    val start = Offset(size.width / 2 + offset / 2, 0f)
-                    val end = Offset(size.width / 2 - offset / 2, size.height)
+        val start = Offset(size.width / 2 + offset / 2, 0f)
+        val end = Offset(size.width / 2 - offset / 2, size.height)
 
-                    // Create the top gradient that fades out after the halfway point vertically
-                    val topGradient = Brush.linearGradient(
-                        0f to if (currentTopColor == Color.Unspecified) {
-                            Color.Transparent
-                        } else {
-                            currentTopColor
-                        },
-                        0.724f to Color.Transparent,
-                        start = start,
-                        end = end,
-                    )
-                    // Create the bottom gradient that fades in before the halfway point vertically
-                    val bottomGradient = Brush.linearGradient(
-                        0.2552f to Color.Transparent,
-                        1f to if (currentBottomColor == Color.Unspecified) {
-                            Color.Transparent
-                        } else {
-                            currentBottomColor
-                        },
-                        start = start,
-                        end = end,
-                    )
+        // Create the top gradient that fades out after the halfway point vertically
+        val topGradient =
+          Brush.linearGradient(
+            0f to
+              if (currentTopColor == Color.Unspecified) {
+                Color.Transparent
+              } else {
+                currentTopColor
+              },
+            0.724f to Color.Transparent,
+            start = start,
+            end = end,
+          )
+        // Create the bottom gradient that fades in before the halfway point vertically
+        val bottomGradient =
+          Brush.linearGradient(
+            0.2552f to Color.Transparent,
+            1f to
+              if (currentBottomColor == Color.Unspecified) {
+                Color.Transparent
+              } else {
+                currentBottomColor
+              },
+            start = start,
+            end = end,
+          )
 
-                    onDrawBehind {
-                        // There is overlap here, so order is important
-                        drawRect(topGradient)
-                        drawRect(bottomGradient)
-                    }
-                },
-        ) {
-            content()
+        onDrawBehind {
+          // There is overlap here, so order is important
+          drawRect(topGradient)
+          drawRect(bottomGradient)
         }
+      }
+    ) {
+      content()
     }
+  }
 }
 
 /**
@@ -144,49 +147,49 @@ annotation class ThemePreviews
 @ThemePreviews
 @Composable
 fun BackgroundDefault() {
-    NiaTheme(disableDynamicTheming = true) {
-        NiaBackground(Modifier.size(100.dp), content = {})
-    }
+  NiaTheme(disableDynamicTheming = true) {
+    NiaBackground(Modifier.size(100.dp), content = {})
+  }
 }
 
 @ThemePreviews
 @Composable
 fun BackgroundDynamic() {
-    NiaTheme(disableDynamicTheming = false) {
-        NiaBackground(Modifier.size(100.dp), content = {})
-    }
+  NiaTheme(disableDynamicTheming = false) {
+    NiaBackground(Modifier.size(100.dp), content = {})
+  }
 }
 
 @ThemePreviews
 @Composable
 fun BackgroundAndroid() {
-    NiaTheme(androidTheme = true) {
-        NiaBackground(Modifier.size(100.dp), content = {})
-    }
+  NiaTheme(androidTheme = true) {
+    NiaBackground(Modifier.size(100.dp), content = {})
+  }
 }
 
 @ThemePreviews
 @Composable
 fun GradientBackgroundDefault() {
-    NiaTheme(disableDynamicTheming = true) {
-        NiaGradientBackground(Modifier.size(100.dp), content = {})
-    }
+  NiaTheme(disableDynamicTheming = true) {
+    NiaGradientBackground(Modifier.size(100.dp), content = {})
+  }
 }
 
 @ThemePreviews
 @Composable
 fun GradientBackgroundDynamic() {
-    NiaTheme(disableDynamicTheming = false) {
-        NiaGradientBackground(Modifier.size(100.dp), content = {})
-    }
+  NiaTheme(disableDynamicTheming = false) {
+    NiaGradientBackground(Modifier.size(100.dp), content = {})
+  }
 }
 
 @ThemePreviews
 @Composable
 fun GradientBackgroundAndroid() {
-    NiaTheme(androidTheme = true) {
-        NiaGradientBackground(Modifier.size(100.dp), content = {})
-    }
+  NiaTheme(androidTheme = true) {
+    NiaGradientBackground(Modifier.size(100.dp), content = {})
+  }
 }
 
 /** 11.06 degrees off the vertical axis, in radians; `java.lang.Math` is JVM only. */

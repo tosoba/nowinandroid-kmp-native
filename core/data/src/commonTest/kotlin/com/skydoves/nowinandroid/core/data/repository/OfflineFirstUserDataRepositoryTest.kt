@@ -36,116 +36,116 @@ import kotlin.test.assertTrue
 
 class OfflineFirstUserDataRepositoryTest {
 
-    private val testScope = TestScope(UnconfinedTestDispatcher())
+  private val testScope = TestScope(UnconfinedTestDispatcher())
 
-    private lateinit var subject: OfflineFirstUserDataRepository
-    private lateinit var niaPreferencesDataSource: NiaPreferencesDataSource
-    private val analyticsHelper = NoOpAnalyticsHelper()
+  private lateinit var subject: OfflineFirstUserDataRepository
+  private lateinit var niaPreferencesDataSource: NiaPreferencesDataSource
+  private val analyticsHelper = NoOpAnalyticsHelper()
 
-    @BeforeTest
-    fun setup() {
-        niaPreferencesDataSource = NiaPreferencesDataSource(InMemoryDataStore(UserPreferences()))
-        subject = OfflineFirstUserDataRepository(niaPreferencesDataSource, analyticsHelper)
-    }
+  @BeforeTest
+  fun setup() {
+    niaPreferencesDataSource = NiaPreferencesDataSource(InMemoryDataStore(UserPreferences()))
+    subject = OfflineFirstUserDataRepository(niaPreferencesDataSource, analyticsHelper)
+  }
 
-    @Test
-    fun defaultUserDataIsCorrect() = testScope.runTest {
-        assertEquals(
-            UserData(
-                bookmarkedNewsResources = emptySet(),
-                viewedNewsResources = emptySet(),
-                followedTopics = emptySet(),
-                themeBrand = ThemeBrand.DEFAULT,
-                darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
-                useDynamicColor = false,
-                shouldHideOnboarding = false,
-            ),
-            subject.userData.first(),
-        )
-    }
+  @Test
+  fun defaultUserDataIsCorrect() = testScope.runTest {
+    assertEquals(
+      UserData(
+        bookmarkedNewsResources = emptySet(),
+        viewedNewsResources = emptySet(),
+        followedTopics = emptySet(),
+        themeBrand = ThemeBrand.DEFAULT,
+        darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
+        useDynamicColor = false,
+        shouldHideOnboarding = false,
+      ),
+      subject.userData.first(),
+    )
+  }
 
-    @Test
-    fun toggleFollowedTopicsDelegatesToNiaPreferences() = testScope.runTest {
-        subject.setTopicIdFollowed(followedTopicId = "0", followed = true)
-        assertEquals(setOf("0"), subject.userData.map { it.followedTopics }.first())
+  @Test
+  fun toggleFollowedTopicsDelegatesToNiaPreferences() = testScope.runTest {
+    subject.setTopicIdFollowed(followedTopicId = "0", followed = true)
+    assertEquals(setOf("0"), subject.userData.map { it.followedTopics }.first())
 
-        subject.setTopicIdFollowed(followedTopicId = "1", followed = true)
-        assertEquals(setOf("0", "1"), subject.userData.map { it.followedTopics }.first())
+    subject.setTopicIdFollowed(followedTopicId = "1", followed = true)
+    assertEquals(setOf("0", "1"), subject.userData.map { it.followedTopics }.first())
 
-        assertEquals(
-            niaPreferencesDataSource.userData.map { it.followedTopics }.first(),
-            subject.userData.map { it.followedTopics }.first(),
-        )
-    }
+    assertEquals(
+      niaPreferencesDataSource.userData.map { it.followedTopics }.first(),
+      subject.userData.map { it.followedTopics }.first(),
+    )
+  }
 
-    @Test
-    fun setFollowedTopicsDelegatesToNiaPreferences() = testScope.runTest {
-        subject.setFollowedTopicIds(followedTopicIds = setOf("1", "2"))
+  @Test
+  fun setFollowedTopicsDelegatesToNiaPreferences() = testScope.runTest {
+    subject.setFollowedTopicIds(followedTopicIds = setOf("1", "2"))
 
-        assertEquals(setOf("1", "2"), subject.userData.map { it.followedTopics }.first())
-        assertEquals(
-            niaPreferencesDataSource.userData.map { it.followedTopics }.first(),
-            subject.userData.map { it.followedTopics }.first(),
-        )
-    }
+    assertEquals(setOf("1", "2"), subject.userData.map { it.followedTopics }.first())
+    assertEquals(
+      niaPreferencesDataSource.userData.map { it.followedTopics }.first(),
+      subject.userData.map { it.followedTopics }.first(),
+    )
+  }
 
-    @Test
-    fun bookmarkNewsResourceDelegatesToNiaPreferences() = testScope.runTest {
-        subject.setNewsResourceBookmarked(newsResourceId = "0", bookmarked = true)
-        assertEquals(setOf("0"), subject.userData.map { it.bookmarkedNewsResources }.first())
+  @Test
+  fun bookmarkNewsResourceDelegatesToNiaPreferences() = testScope.runTest {
+    subject.setNewsResourceBookmarked(newsResourceId = "0", bookmarked = true)
+    assertEquals(setOf("0"), subject.userData.map { it.bookmarkedNewsResources }.first())
 
-        subject.setNewsResourceBookmarked(newsResourceId = "1", bookmarked = true)
-        assertEquals(setOf("0", "1"), subject.userData.map { it.bookmarkedNewsResources }.first())
+    subject.setNewsResourceBookmarked(newsResourceId = "1", bookmarked = true)
+    assertEquals(setOf("0", "1"), subject.userData.map { it.bookmarkedNewsResources }.first())
 
-        subject.setNewsResourceBookmarked(newsResourceId = "0", bookmarked = false)
-        assertEquals(setOf("1"), subject.userData.map { it.bookmarkedNewsResources }.first())
-    }
+    subject.setNewsResourceBookmarked(newsResourceId = "0", bookmarked = false)
+    assertEquals(setOf("1"), subject.userData.map { it.bookmarkedNewsResources }.first())
+  }
 
-    @Test
-    fun updateViewedNewsResourcesDelegatesToNiaPreferences() = testScope.runTest {
-        subject.setNewsResourceViewed(newsResourceId = "0", viewed = true)
-        assertEquals(setOf("0"), subject.userData.map { it.viewedNewsResources }.first())
+  @Test
+  fun updateViewedNewsResourcesDelegatesToNiaPreferences() = testScope.runTest {
+    subject.setNewsResourceViewed(newsResourceId = "0", viewed = true)
+    assertEquals(setOf("0"), subject.userData.map { it.viewedNewsResources }.first())
 
-        subject.setNewsResourceViewed(newsResourceId = "1", viewed = true)
-        assertEquals(setOf("0", "1"), subject.userData.map { it.viewedNewsResources }.first())
-    }
+    subject.setNewsResourceViewed(newsResourceId = "1", viewed = true)
+    assertEquals(setOf("0", "1"), subject.userData.map { it.viewedNewsResources }.first())
+  }
 
-    @Test
-    fun setThemeBrandDelegatesToNiaPreferences() = testScope.runTest {
-        subject.setThemeBrand(ThemeBrand.ANDROID)
+  @Test
+  fun setThemeBrandDelegatesToNiaPreferences() = testScope.runTest {
+    subject.setThemeBrand(ThemeBrand.ANDROID)
 
-        assertEquals(ThemeBrand.ANDROID, subject.userData.map { it.themeBrand }.first())
-        assertEquals(
-            ThemeBrand.ANDROID,
-            niaPreferencesDataSource.userData.map { it.themeBrand }.first(),
-        )
-    }
+    assertEquals(ThemeBrand.ANDROID, subject.userData.map { it.themeBrand }.first())
+    assertEquals(
+      ThemeBrand.ANDROID,
+      niaPreferencesDataSource.userData.map { it.themeBrand }.first(),
+    )
+  }
 
-    @Test
-    fun setDynamicColorDelegatesToNiaPreferences() = testScope.runTest {
-        subject.setDynamicColorPreference(true)
+  @Test
+  fun setDynamicColorDelegatesToNiaPreferences() = testScope.runTest {
+    subject.setDynamicColorPreference(true)
 
-        assertTrue(subject.userData.map { it.useDynamicColor }.first())
-        assertTrue(niaPreferencesDataSource.userData.map { it.useDynamicColor }.first())
-    }
+    assertTrue(subject.userData.map { it.useDynamicColor }.first())
+    assertTrue(niaPreferencesDataSource.userData.map { it.useDynamicColor }.first())
+  }
 
-    @Test
-    fun setDarkThemeConfigDelegatesToNiaPreferences() = testScope.runTest {
-        subject.setDarkThemeConfig(DarkThemeConfig.DARK)
+  @Test
+  fun setDarkThemeConfigDelegatesToNiaPreferences() = testScope.runTest {
+    subject.setDarkThemeConfig(DarkThemeConfig.DARK)
 
-        assertEquals(DarkThemeConfig.DARK, subject.userData.map { it.darkThemeConfig }.first())
-        assertEquals(
-            DarkThemeConfig.DARK,
-            niaPreferencesDataSource.userData.map { it.darkThemeConfig }.first(),
-        )
-    }
+    assertEquals(DarkThemeConfig.DARK, subject.userData.map { it.darkThemeConfig }.first())
+    assertEquals(
+      DarkThemeConfig.DARK,
+      niaPreferencesDataSource.userData.map { it.darkThemeConfig }.first(),
+    )
+  }
 
-    @Test
-    fun setShouldHideOnboardingDelegatesToNiaPreferences() = testScope.runTest {
-        subject.setShouldHideOnboarding(true)
-        assertTrue(subject.userData.map { it.shouldHideOnboarding }.first())
+  @Test
+  fun setShouldHideOnboardingDelegatesToNiaPreferences() = testScope.runTest {
+    subject.setShouldHideOnboarding(true)
+    assertTrue(subject.userData.map { it.shouldHideOnboarding }.first())
 
-        subject.setShouldHideOnboarding(false)
-        assertFalse(subject.userData.map { it.shouldHideOnboarding }.first())
-    }
+    subject.setShouldHideOnboarding(false)
+    assertFalse(subject.userData.map { it.shouldHideOnboarding }.first())
+  }
 }

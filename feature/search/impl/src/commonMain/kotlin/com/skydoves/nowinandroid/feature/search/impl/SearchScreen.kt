@@ -107,8 +107,8 @@ import com.skydoves.nowinandroid.feature.search.api.feature_search_api_try_anoth
 import com.skydoves.nowinandroid.feature.search.api.feature_search_api_updates
 import com.skydoves.nowinandroid.feature.search.api.navigation.SearchNavKey
 import com.skydoves.nowinandroid.feature.topic.api.navigation.TopicNavKey
-import dev.zacsweers.metrox.viewmodel.metroViewModel
 import dev.icerock.moko.resources.compose.stringResource
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import com.skydoves.nowinandroid.core.ui.MR as CoreUiRes
 import com.skydoves.nowinandroid.feature.search.api.MR as SearchApiRes
 
@@ -117,506 +117,497 @@ import com.skydoves.nowinandroid.feature.search.api.MR as SearchApiRes
 @NavEdge(to = TopicNavKey::class, label = "Topic result")
 @Composable
 internal fun SearchScreen(
-    onBackClick: () -> Unit,
-    onInterestsClick: () -> Unit,
-    onTopicClick: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    searchViewModel: SearchViewModel = metroViewModel(),
+  onBackClick: () -> Unit,
+  onInterestsClick: () -> Unit,
+  onTopicClick: (String) -> Unit,
+  modifier: Modifier = Modifier,
+  searchViewModel: SearchViewModel = metroViewModel(),
 ) {
-    val recentSearchQueriesUiState by searchViewModel.recentSearchQueriesUiState.collectAsStateWithLifecycle()
-    val searchResultUiState by searchViewModel.searchResultUiState.collectAsStateWithLifecycle()
-    val searchQuery by searchViewModel.searchQuery.collectAsStateWithLifecycle()
-    SearchScreen(
-        modifier = modifier,
-        searchQuery = searchQuery,
-        recentSearchesUiState = recentSearchQueriesUiState,
-        searchResultUiState = searchResultUiState,
-        onSearchQueryChanged = searchViewModel::onSearchQueryChanged,
-        onSearchTriggered = searchViewModel::onSearchTriggered,
-        onClearRecentSearches = searchViewModel::clearRecentSearches,
-        onNewsResourcesCheckedChanged = searchViewModel::setNewsResourceBookmarked,
-        onNewsResourceViewed = { searchViewModel.setNewsResourceViewed(it, true) },
-        onFollowButtonClick = searchViewModel::followTopic,
-        onBackClick = onBackClick,
-        onInterestsClick = onInterestsClick,
-        onTopicClick = onTopicClick,
-    )
+  val recentSearchQueriesUiState by
+    searchViewModel.recentSearchQueriesUiState.collectAsStateWithLifecycle()
+  val searchResultUiState by searchViewModel.searchResultUiState.collectAsStateWithLifecycle()
+  val searchQuery by searchViewModel.searchQuery.collectAsStateWithLifecycle()
+  SearchScreen(
+    modifier = modifier,
+    searchQuery = searchQuery,
+    recentSearchesUiState = recentSearchQueriesUiState,
+    searchResultUiState = searchResultUiState,
+    onSearchQueryChanged = searchViewModel::onSearchQueryChanged,
+    onSearchTriggered = searchViewModel::onSearchTriggered,
+    onClearRecentSearches = searchViewModel::clearRecentSearches,
+    onNewsResourcesCheckedChanged = searchViewModel::setNewsResourceBookmarked,
+    onNewsResourceViewed = { searchViewModel.setNewsResourceViewed(it, true) },
+    onFollowButtonClick = searchViewModel::followTopic,
+    onBackClick = onBackClick,
+    onInterestsClick = onInterestsClick,
+    onTopicClick = onTopicClick,
+  )
 }
 
 @Composable
 internal fun SearchScreen(
-    modifier: Modifier = Modifier,
-    searchQuery: String = "",
-    recentSearchesUiState: RecentSearchQueriesUiState = RecentSearchQueriesUiState.Loading,
-    searchResultUiState: SearchResultUiState = SearchResultUiState.Loading,
-    onSearchQueryChanged: (String) -> Unit = {},
-    onSearchTriggered: (String) -> Unit = {},
-    onClearRecentSearches: () -> Unit = {},
-    onNewsResourcesCheckedChanged: (String, Boolean) -> Unit = { _, _ -> },
-    onNewsResourceViewed: (String) -> Unit = {},
-    onFollowButtonClick: (String, Boolean) -> Unit = { _, _ -> },
-    onBackClick: () -> Unit = {},
-    onInterestsClick: () -> Unit = {},
-    onTopicClick: (String) -> Unit = {},
+  modifier: Modifier = Modifier,
+  searchQuery: String = "",
+  recentSearchesUiState: RecentSearchQueriesUiState = RecentSearchQueriesUiState.Loading,
+  searchResultUiState: SearchResultUiState = SearchResultUiState.Loading,
+  onSearchQueryChanged: (String) -> Unit = {},
+  onSearchTriggered: (String) -> Unit = {},
+  onClearRecentSearches: () -> Unit = {},
+  onNewsResourcesCheckedChanged: (String, Boolean) -> Unit = { _, _ -> },
+  onNewsResourceViewed: (String) -> Unit = {},
+  onFollowButtonClick: (String, Boolean) -> Unit = { _, _ -> },
+  onBackClick: () -> Unit = {},
+  onInterestsClick: () -> Unit = {},
+  onTopicClick: (String) -> Unit = {},
 ) {
-    TrackScreenViewEvent(screenName = "Search")
-    Column(modifier = modifier) {
-        Spacer(Modifier.windowInsetsTopHeight(WindowInsets.safeDrawing))
-        SearchToolbar(
-            onBackClick = onBackClick,
-            onSearchQueryChanged = onSearchQueryChanged,
-            onSearchTriggered = onSearchTriggered,
-            searchQuery = searchQuery,
-        )
-        when (searchResultUiState) {
-            SearchResultUiState.Loading,
-            SearchResultUiState.LoadFailed,
-            -> Unit
+  TrackScreenViewEvent(screenName = "Search")
+  Column(modifier = modifier) {
+    Spacer(Modifier.windowInsetsTopHeight(WindowInsets.safeDrawing))
+    SearchToolbar(
+      onBackClick = onBackClick,
+      onSearchQueryChanged = onSearchQueryChanged,
+      onSearchTriggered = onSearchTriggered,
+      searchQuery = searchQuery,
+    )
+    when (searchResultUiState) {
+      SearchResultUiState.Loading,
+      SearchResultUiState.LoadFailed -> Unit
 
-            SearchResultUiState.SearchNotReady -> SearchNotReadyBody()
-            SearchResultUiState.EmptyQuery,
-            -> {
-                if (recentSearchesUiState is RecentSearchQueriesUiState.Success) {
-                    RecentSearchesBody(
-                        onClearRecentSearches = onClearRecentSearches,
-                        onRecentSearchClicked = {
-                            onSearchQueryChanged(it)
-                            onSearchTriggered(it)
-                        },
-                        recentSearchQueries = recentSearchesUiState.recentQueries.map { it.query },
-                    )
-                }
-            }
-
-            is SearchResultUiState.Success -> {
-                if (searchResultUiState.isEmpty()) {
-                    EmptySearchResultBody(
-                        searchQuery = searchQuery,
-                        onInterestsClick = onInterestsClick,
-                    )
-                    if (recentSearchesUiState is RecentSearchQueriesUiState.Success) {
-                        RecentSearchesBody(
-                            onClearRecentSearches = onClearRecentSearches,
-                            onRecentSearchClicked = {
-                                onSearchQueryChanged(it)
-                                onSearchTriggered(it)
-                            },
-                            recentSearchQueries = recentSearchesUiState.recentQueries.map { it.query },
-                        )
-                    }
-                } else {
-                    SearchResultBody(
-                        searchQuery = searchQuery,
-                        topics = searchResultUiState.topics,
-                        newsResources = searchResultUiState.newsResources,
-                        onSearchTriggered = onSearchTriggered,
-                        onTopicClick = onTopicClick,
-                        onNewsResourcesCheckedChanged = onNewsResourcesCheckedChanged,
-                        onNewsResourceViewed = onNewsResourceViewed,
-                        onFollowButtonClick = onFollowButtonClick,
-                    )
-                }
-            }
+      SearchResultUiState.SearchNotReady -> SearchNotReadyBody()
+      SearchResultUiState.EmptyQuery -> {
+        if (recentSearchesUiState is RecentSearchQueriesUiState.Success) {
+          RecentSearchesBody(
+            onClearRecentSearches = onClearRecentSearches,
+            onRecentSearchClicked = {
+              onSearchQueryChanged(it)
+              onSearchTriggered(it)
+            },
+            recentSearchQueries = recentSearchesUiState.recentQueries.map { it.query },
+          )
         }
-        Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.safeDrawing))
+      }
+
+      is SearchResultUiState.Success -> {
+        if (searchResultUiState.isEmpty()) {
+          EmptySearchResultBody(
+            searchQuery = searchQuery,
+            onInterestsClick = onInterestsClick,
+          )
+          if (recentSearchesUiState is RecentSearchQueriesUiState.Success) {
+            RecentSearchesBody(
+              onClearRecentSearches = onClearRecentSearches,
+              onRecentSearchClicked = {
+                onSearchQueryChanged(it)
+                onSearchTriggered(it)
+              },
+              recentSearchQueries = recentSearchesUiState.recentQueries.map { it.query },
+            )
+          }
+        } else {
+          SearchResultBody(
+            searchQuery = searchQuery,
+            topics = searchResultUiState.topics,
+            newsResources = searchResultUiState.newsResources,
+            onSearchTriggered = onSearchTriggered,
+            onTopicClick = onTopicClick,
+            onNewsResourcesCheckedChanged = onNewsResourcesCheckedChanged,
+            onNewsResourceViewed = onNewsResourceViewed,
+            onFollowButtonClick = onFollowButtonClick,
+          )
+        }
+      }
     }
+    Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.safeDrawing))
+  }
 }
 
 @Composable
 fun EmptySearchResultBody(searchQuery: String, onInterestsClick: () -> Unit) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(horizontal = 48.dp),
-    ) {
-        val message = stringResource(SearchApiRes.strings.feature_search_api_result_not_found, searchQuery)
-        val start = message.indexOf(searchQuery)
-        Text(
-            text = AnnotatedString(
-                text = message,
-                spanStyles = listOf(
-                    AnnotatedString.Range(
-                        SpanStyle(fontWeight = FontWeight.Bold),
-                        start = start,
-                        end = start + searchQuery.length,
-                    ),
-                ),
+  Column(
+    horizontalAlignment = Alignment.CenterHorizontally,
+    modifier = Modifier.padding(horizontal = 48.dp),
+  ) {
+    val message =
+      stringResource(SearchApiRes.strings.feature_search_api_result_not_found, searchQuery)
+    val start = message.indexOf(searchQuery)
+    Text(
+      text =
+        AnnotatedString(
+          text = message,
+          spanStyles =
+            listOf(
+              AnnotatedString.Range(
+                SpanStyle(fontWeight = FontWeight.Bold),
+                start = start,
+                end = start + searchQuery.length,
+              )
             ),
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(vertical = 24.dp),
+        ),
+      style = MaterialTheme.typography.bodyLarge,
+      textAlign = TextAlign.Center,
+      modifier = Modifier.padding(vertical = 24.dp),
+    )
+    val tryAnotherSearchString = buildAnnotatedString {
+      append(stringResource(SearchApiRes.strings.feature_search_api_try_another_search))
+      append(" ")
+      withLink(
+        LinkAnnotation.Clickable(
+          tag = "",
+          linkInteractionListener = {
+            onInterestsClick()
+          },
         )
-        val tryAnotherSearchString = buildAnnotatedString {
-            append(stringResource(SearchApiRes.strings.feature_search_api_try_another_search))
-            append(" ")
-            withLink(
-                LinkAnnotation.Clickable(
-                    tag = "",
-                    linkInteractionListener = {
-                        onInterestsClick()
-                    },
-                ),
-            ) {
-                withStyle(
-                    style = SpanStyle(
-                        textDecoration = TextDecoration.Underline,
-                        fontWeight = FontWeight.Bold,
-                    ),
-                ) {
-                    append(stringResource(SearchApiRes.strings.feature_search_api_interests))
-                }
-            }
-
-            append(" ")
-            append(stringResource(SearchApiRes.strings.feature_search_api_to_browse_topics))
+      ) {
+        withStyle(
+          style =
+            SpanStyle(
+              textDecoration = TextDecoration.Underline,
+              fontWeight = FontWeight.Bold,
+            )
+        ) {
+          append(stringResource(SearchApiRes.strings.feature_search_api_interests))
         }
-        Text(
-            text = tryAnotherSearchString,
-            style = MaterialTheme.typography.bodyLarge.merge(
-                TextStyle(
-                    color = MaterialTheme.colorScheme.secondary,
-                    textAlign = TextAlign.Center,
-                ),
-            ),
-            modifier = Modifier
-                .padding(start = 36.dp, end = 36.dp, bottom = 24.dp),
-        )
+      }
+
+      append(" ")
+      append(stringResource(SearchApiRes.strings.feature_search_api_to_browse_topics))
     }
+    Text(
+      text = tryAnotherSearchString,
+      style =
+        MaterialTheme.typography.bodyLarge.merge(
+          TextStyle(
+            color = MaterialTheme.colorScheme.secondary,
+            textAlign = TextAlign.Center,
+          )
+        ),
+      modifier = Modifier.padding(start = 36.dp, end = 36.dp, bottom = 24.dp),
+    )
+  }
 }
 
 @Composable
 private fun SearchNotReadyBody() {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(horizontal = 48.dp),
-    ) {
-        Text(
-            text = stringResource(SearchApiRes.strings.feature_search_api_not_ready),
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(vertical = 24.dp),
-        )
-    }
+  Column(
+    horizontalAlignment = Alignment.CenterHorizontally,
+    modifier = Modifier.padding(horizontal = 48.dp),
+  ) {
+    Text(
+      text = stringResource(SearchApiRes.strings.feature_search_api_not_ready),
+      style = MaterialTheme.typography.bodyLarge,
+      textAlign = TextAlign.Center,
+      modifier = Modifier.padding(vertical = 24.dp),
+    )
+  }
 }
 
 @Composable
 private fun SearchResultBody(
-    searchQuery: String,
-    topics: List<FollowableTopic>,
-    newsResources: List<UserNewsResource>,
-    onSearchTriggered: (String) -> Unit,
-    onTopicClick: (String) -> Unit,
-    onNewsResourcesCheckedChanged: (String, Boolean) -> Unit,
-    onNewsResourceViewed: (String) -> Unit,
-    onFollowButtonClick: (String, Boolean) -> Unit,
+  searchQuery: String,
+  topics: List<FollowableTopic>,
+  newsResources: List<UserNewsResource>,
+  onSearchTriggered: (String) -> Unit,
+  onTopicClick: (String) -> Unit,
+  onNewsResourcesCheckedChanged: (String, Boolean) -> Unit,
+  onNewsResourceViewed: (String) -> Unit,
+  onFollowButtonClick: (String, Boolean) -> Unit,
 ) {
-    val state = rememberLazyStaggeredGridState()
-    Box(
-        modifier = Modifier
-            .fillMaxSize(),
+  val state = rememberLazyStaggeredGridState()
+  Box(modifier = Modifier.fillMaxSize()) {
+    LazyVerticalStaggeredGrid(
+      columns = StaggeredGridCells.Adaptive(300.dp),
+      contentPadding = PaddingValues(16.dp),
+      horizontalArrangement = Arrangement.spacedBy(16.dp),
+      verticalItemSpacing = 24.dp,
+      modifier = Modifier.fillMaxSize().testTag("search:newsResources"),
+      state = state,
     ) {
-        LazyVerticalStaggeredGrid(
-            columns = StaggeredGridCells.Adaptive(300.dp),
-            contentPadding = PaddingValues(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalItemSpacing = 24.dp,
-            modifier = Modifier
-                .fillMaxSize()
-                .testTag("search:newsResources"),
-            state = state,
-        ) {
-            if (topics.isNotEmpty()) {
-                item(
-                    span = StaggeredGridItemSpan.FullLine,
-                ) {
-                    Text(
-                        text = buildAnnotatedString {
-                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append(stringResource(SearchApiRes.strings.feature_search_api_topics))
-                            }
-                        },
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                    )
+      if (topics.isNotEmpty()) {
+        item(span = StaggeredGridItemSpan.FullLine) {
+          Text(
+            text =
+              buildAnnotatedString {
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                  append(stringResource(SearchApiRes.strings.feature_search_api_topics))
                 }
-                topics.forEach { followableTopic ->
-                    val topicId = followableTopic.topic.id
-                    item(
-                        // Append a prefix to distinguish a key for news resources
-                        key = "topic-$topicId",
-                        span = StaggeredGridItemSpan.FullLine,
-                    ) {
-                        InterestsItem(
-                            name = followableTopic.topic.name,
-                            following = followableTopic.isFollowed,
-                            description = followableTopic.topic.shortDescription,
-                            topicImageUrl = followableTopic.topic.imageUrl,
-                            onClick = {
-                                // Pass the current search query to ViewModel to save it as recent searches
-                                onSearchTriggered(searchQuery)
-                                onTopicClick(topicId)
-                            },
-                            onFollowButtonClick = { onFollowButtonClick(topicId, it) },
-                        )
-                    }
-                }
-            }
-
-            if (newsResources.isNotEmpty()) {
-                item(
-                    span = StaggeredGridItemSpan.FullLine,
-                ) {
-                    Text(
-                        text = buildAnnotatedString {
-                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append(stringResource(SearchApiRes.strings.feature_search_api_updates))
-                            }
-                        },
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                    )
-                }
-
-                newsFeed(
-                    feedState = Success(feed = newsResources),
-                    onNewsResourcesCheckedChanged = onNewsResourcesCheckedChanged,
-                    onNewsResourceViewed = onNewsResourceViewed,
-                    onTopicClick = onTopicClick,
-                    onExpandedCardClick = {
-                        onSearchTriggered(searchQuery)
-                    },
-                )
-            }
+              },
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+          )
         }
-        val itemsAvailable = topics.size + newsResources.size
-        val scrollbarState = state.scrollbarState(
-            itemsAvailable = itemsAvailable,
+        topics.forEach { followableTopic ->
+          val topicId = followableTopic.topic.id
+          item(
+            // Append a prefix to distinguish a key for news resources
+            key = "topic-$topicId",
+            span = StaggeredGridItemSpan.FullLine,
+          ) {
+            InterestsItem(
+              name = followableTopic.topic.name,
+              following = followableTopic.isFollowed,
+              description = followableTopic.topic.shortDescription,
+              topicImageUrl = followableTopic.topic.imageUrl,
+              onClick = {
+                // Pass the current search query to ViewModel to save it as recent searches
+                onSearchTriggered(searchQuery)
+                onTopicClick(topicId)
+              },
+              onFollowButtonClick = { onFollowButtonClick(topicId, it) },
+            )
+          }
+        }
+      }
+
+      if (newsResources.isNotEmpty()) {
+        item(span = StaggeredGridItemSpan.FullLine) {
+          Text(
+            text =
+              buildAnnotatedString {
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                  append(stringResource(SearchApiRes.strings.feature_search_api_updates))
+                }
+              },
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+          )
+        }
+
+        newsFeed(
+          feedState = Success(feed = newsResources),
+          onNewsResourcesCheckedChanged = onNewsResourcesCheckedChanged,
+          onNewsResourceViewed = onNewsResourceViewed,
+          onTopicClick = onTopicClick,
+          onExpandedCardClick = {
+            onSearchTriggered(searchQuery)
+          },
         )
-        state.DraggableScrollbar(
-            modifier = Modifier
-                .fillMaxHeight()
-                .windowInsetsPadding(WindowInsets.systemBars)
-                .padding(horizontal = 2.dp)
-                .align(Alignment.CenterEnd),
-            state = scrollbarState,
-            orientation = Orientation.Vertical,
-            onThumbMoved = state.rememberDraggableScroller(
-                itemsAvailable = itemsAvailable,
-            ),
-        )
+      }
     }
+    val itemsAvailable = topics.size + newsResources.size
+    val scrollbarState = state.scrollbarState(itemsAvailable = itemsAvailable)
+    state.DraggableScrollbar(
+      modifier =
+        Modifier.fillMaxHeight()
+          .windowInsetsPadding(WindowInsets.systemBars)
+          .padding(horizontal = 2.dp)
+          .align(Alignment.CenterEnd),
+      state = scrollbarState,
+      orientation = Orientation.Vertical,
+      onThumbMoved = state.rememberDraggableScroller(itemsAvailable = itemsAvailable),
+    )
+  }
 }
 
 @Composable
 private fun RecentSearchesBody(
-    recentSearchQueries: List<String>,
-    onClearRecentSearches: () -> Unit,
-    onRecentSearchClicked: (String) -> Unit,
+  recentSearchQueries: List<String>,
+  onClearRecentSearches: () -> Unit,
+  onRecentSearchClicked: (String) -> Unit,
 ) {
-    Column {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth(),
+  Column {
+    Row(
+      horizontalArrangement = Arrangement.SpaceBetween,
+      verticalAlignment = Alignment.CenterVertically,
+      modifier = Modifier.fillMaxWidth(),
+    ) {
+      Text(
+        text =
+          buildAnnotatedString {
+            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+              append(stringResource(SearchApiRes.strings.feature_search_api_recent_searches))
+            }
+          },
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+      )
+      if (recentSearchQueries.isNotEmpty()) {
+        IconButton(
+          onClick = {
+            onClearRecentSearches()
+          },
+          modifier = Modifier.padding(horizontal = 16.dp),
         ) {
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append(stringResource(SearchApiRes.strings.feature_search_api_recent_searches))
-                    }
-                },
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            )
-            if (recentSearchQueries.isNotEmpty()) {
-                IconButton(
-                    onClick = {
-                        onClearRecentSearches()
-                    },
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                ) {
-                    Icon(
-                        imageVector = NiaIcons.Close,
-                        contentDescription = stringResource(
-                            SearchApiRes.strings.feature_search_api_clear_recent_searches_content_desc,
-                        ),
-                        tint = MaterialTheme.colorScheme.onSurface,
-                    )
-                }
-            }
+          Icon(
+            imageVector = NiaIcons.Close,
+            contentDescription =
+              stringResource(
+                SearchApiRes.strings.feature_search_api_clear_recent_searches_content_desc
+              ),
+            tint = MaterialTheme.colorScheme.onSurface,
+          )
         }
-        LazyColumn(modifier = Modifier.padding(horizontal = 16.dp)) {
-            items(recentSearchQueries) { recentSearch ->
-                Text(
-                    text = recentSearch,
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier
-                        .padding(vertical = 16.dp)
-                        .clickable { onRecentSearchClicked(recentSearch) }
-                        .fillMaxWidth(),
-                )
-            }
-        }
+      }
     }
+    LazyColumn(modifier = Modifier.padding(horizontal = 16.dp)) {
+      items(recentSearchQueries) { recentSearch ->
+        Text(
+          text = recentSearch,
+          style = MaterialTheme.typography.headlineSmall,
+          modifier =
+            Modifier.padding(vertical = 16.dp)
+              .clickable { onRecentSearchClicked(recentSearch) }
+              .fillMaxWidth(),
+        )
+      }
+    }
+  }
 }
 
 @Composable
 private fun SearchToolbar(
-    searchQuery: String,
-    onSearchQueryChanged: (String) -> Unit,
-    onSearchTriggered: (String) -> Unit,
-    onBackClick: () -> Unit,
-    modifier: Modifier = Modifier,
+  searchQuery: String,
+  onSearchQueryChanged: (String) -> Unit,
+  onSearchTriggered: (String) -> Unit,
+  onBackClick: () -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.fillMaxWidth(),
-    ) {
-        IconButton(onClick = { onBackClick() }) {
-            Icon(
-                imageVector = NiaIcons.ArrowBack,
-                contentDescription = stringResource(
-                    CoreUiRes.strings.core_ui_back,
-                ),
-            )
-        }
-        SearchTextField(
-            onSearchQueryChanged = onSearchQueryChanged,
-            onSearchTriggered = onSearchTriggered,
-            searchQuery = searchQuery,
-        )
+  Row(
+    verticalAlignment = Alignment.CenterVertically,
+    modifier = modifier.fillMaxWidth(),
+  ) {
+    IconButton(onClick = { onBackClick() }) {
+      Icon(
+        imageVector = NiaIcons.ArrowBack,
+        contentDescription = stringResource(CoreUiRes.strings.core_ui_back),
+      )
     }
+    SearchTextField(
+      onSearchQueryChanged = onSearchQueryChanged,
+      onSearchTriggered = onSearchTriggered,
+      searchQuery = searchQuery,
+    )
+  }
 }
 
 @Composable
 private fun SearchTextField(
-    searchQuery: String,
-    onSearchQueryChanged: (String) -> Unit,
-    onSearchTriggered: (String) -> Unit,
+  searchQuery: String,
+  onSearchQueryChanged: (String) -> Unit,
+  onSearchTriggered: (String) -> Unit,
 ) {
-    val focusRequester = remember { FocusRequester() }
-    val keyboardController = LocalSoftwareKeyboardController.current
+  val focusRequester = remember { FocusRequester() }
+  val keyboardController = LocalSoftwareKeyboardController.current
 
-    val onSearchExplicitlyTriggered = {
-        keyboardController?.hide()
-        onSearchTriggered(searchQuery)
-    }
+  val onSearchExplicitlyTriggered = {
+    keyboardController?.hide()
+    onSearchTriggered(searchQuery)
+  }
 
-    TextField(
-        colors = TextFieldDefaults.colors(
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-        ),
-        leadingIcon = {
-            Icon(
-                imageVector = NiaIcons.Search,
-                contentDescription = stringResource(
-                    SearchApiRes.strings.feature_search_api_title,
-                ),
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
-        },
-        trailingIcon = {
-            if (searchQuery.isNotEmpty()) {
-                IconButton(
-                    onClick = {
-                        onSearchQueryChanged("")
-                    },
-                ) {
-                    Icon(
-                        imageVector = NiaIcons.Close,
-                        contentDescription = stringResource(
-                            SearchApiRes.strings.feature_search_api_clear_search_text_content_desc,
-                        ),
-                        tint = MaterialTheme.colorScheme.onSurface,
-                    )
-                }
-            }
-        },
-        onValueChange = {
-            if ("\n" !in it) onSearchQueryChanged(it)
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .focusRequester(focusRequester)
-            .onKeyEvent {
-                if (it.key == Key.Enter) {
-                    if (searchQuery.isBlank()) return@onKeyEvent false
-                    onSearchExplicitlyTriggered()
-                    true
-                } else {
-                    false
-                }
-            }
-            .testTag("searchTextField"),
-        shape = RoundedCornerShape(32.dp),
-        value = searchQuery,
-        keyboardOptions = KeyboardOptions(
-            imeAction = ImeAction.Search,
-        ),
-        keyboardActions = KeyboardActions(
-            onSearch = {
-                if (searchQuery.isBlank()) return@KeyboardActions
-                onSearchExplicitlyTriggered()
-            },
-        ),
-        maxLines = 1,
-        singleLine = true,
-    )
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
+  TextField(
+    colors =
+      TextFieldDefaults.colors(
+        focusedIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent,
+        disabledIndicatorColor = Color.Transparent,
+      ),
+    leadingIcon = {
+      Icon(
+        imageVector = NiaIcons.Search,
+        contentDescription = stringResource(SearchApiRes.strings.feature_search_api_title),
+        tint = MaterialTheme.colorScheme.onSurface,
+      )
+    },
+    trailingIcon = {
+      if (searchQuery.isNotEmpty()) {
+        IconButton(
+          onClick = {
+            onSearchQueryChanged("")
+          }
+        ) {
+          Icon(
+            imageVector = NiaIcons.Close,
+            contentDescription =
+              stringResource(
+                SearchApiRes.strings.feature_search_api_clear_search_text_content_desc
+              ),
+            tint = MaterialTheme.colorScheme.onSurface,
+          )
+        }
+      }
+    },
+    onValueChange = {
+      if ("\n" !in it) onSearchQueryChanged(it)
+    },
+    modifier =
+      Modifier.fillMaxWidth()
+        .padding(16.dp)
+        .focusRequester(focusRequester)
+        .onKeyEvent {
+          if (it.key == Key.Enter) {
+            if (searchQuery.isBlank()) return@onKeyEvent false
+            onSearchExplicitlyTriggered()
+            true
+          } else {
+            false
+          }
+        }
+        .testTag("searchTextField"),
+    shape = RoundedCornerShape(32.dp),
+    value = searchQuery,
+    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+    keyboardActions =
+      KeyboardActions(
+        onSearch = {
+          if (searchQuery.isBlank()) return@KeyboardActions
+          onSearchExplicitlyTriggered()
+        }
+      ),
+    maxLines = 1,
+    singleLine = true,
+  )
+  LaunchedEffect(Unit) {
+    focusRequester.requestFocus()
+  }
 }
 
 @Preview
 @Composable
 private fun SearchToolbarPreview() {
-    NiaTheme {
-        SearchToolbar(
-            searchQuery = "",
-            onBackClick = {},
-            onSearchQueryChanged = {},
-            onSearchTriggered = {},
-        )
-    }
+  NiaTheme {
+    SearchToolbar(
+      searchQuery = "",
+      onBackClick = {},
+      onSearchQueryChanged = {},
+      onSearchTriggered = {},
+    )
+  }
 }
 
 @Preview
 @Composable
 private fun EmptySearchResultColumnPreview() {
-    NiaTheme {
-        EmptySearchResultBody(
-            onInterestsClick = {},
-            searchQuery = "C++",
-        )
-    }
+  NiaTheme {
+    EmptySearchResultBody(
+      onInterestsClick = {},
+      searchQuery = "C++",
+    )
+  }
 }
 
 @Preview
 @Composable
 private fun RecentSearchesBodyPreview() {
-    NiaTheme {
-        RecentSearchesBody(
-            onClearRecentSearches = {},
-            onRecentSearchClicked = {},
-            recentSearchQueries = listOf("kotlin", "jetpack compose", "testing"),
-        )
-    }
+  NiaTheme {
+    RecentSearchesBody(
+      onClearRecentSearches = {},
+      onRecentSearchClicked = {},
+      recentSearchQueries = listOf("kotlin", "jetpack compose", "testing"),
+    )
+  }
 }
 
 @Preview
 @Composable
 private fun SearchNotReadyBodyPreview() {
-    NiaTheme {
-        SearchNotReadyBody()
-    }
+  NiaTheme {
+    SearchNotReadyBody()
+  }
 }
 
 @DevicePreviews
 @Composable
 private fun SearchScreenPreview(
-    @PreviewParameter(SearchUiStatePreviewParameterProvider::class)
-    searchResultUiState: SearchResultUiState,
+  @PreviewParameter(SearchUiStatePreviewParameterProvider::class)
+  searchResultUiState: SearchResultUiState
 ) {
-    NiaTheme {
-        SearchScreen(searchResultUiState = searchResultUiState)
-    }
+  NiaTheme {
+    SearchScreen(searchResultUiState = searchResultUiState)
+  }
 }

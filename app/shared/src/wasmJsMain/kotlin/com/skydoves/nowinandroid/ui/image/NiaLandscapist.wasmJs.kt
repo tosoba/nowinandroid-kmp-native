@@ -38,18 +38,18 @@ private const val FIREBASE_STORAGE_HOST = "firebasestorage.googleapis.com"
  * `miro.medium.com`, still load straight from source.
  */
 internal actual fun imageHttpClient(httpClient: HttpClient): HttpClient = httpClient.config {
-    install(
-        createClientPlugin("SameOriginTopicIcons") {
-            onRequest { request, _ ->
-                val url = request.url
-                if (url.host == FIREBASE_STORAGE_HOST) {
-                    localIconNameOf(url.encodedPathSegments)?.let { name ->
-                        request.url.takeFrom("${baseUrl()}/$LOCAL_TOPIC_ICONS/$name")
-                    }
-                }
-            }
-        },
-    )
+  install(
+    createClientPlugin("SameOriginTopicIcons") {
+      onRequest { request, _ ->
+        val url = request.url
+        if (url.host == FIREBASE_STORAGE_HOST) {
+          localIconNameOf(url.encodedPathSegments)?.let { name ->
+            request.url.takeFrom("${baseUrl()}/$LOCAL_TOPIC_ICONS/$name")
+          }
+        }
+      }
+    }
+  )
 }
 
 /**
@@ -60,8 +60,8 @@ internal actual fun imageHttpClient(httpClient: HttpClient): HttpClient = httpCl
  * root of a dev server.
  */
 private fun baseUrl(): String {
-    val directory = window.location.pathname.substringBeforeLast('/', missingDelimiterValue = "")
-    return "${window.location.origin}$directory"
+  val directory = window.location.pathname.substringBeforeLast('/', missingDelimiterValue = "")
+  return "${window.location.origin}$directory"
 }
 
 /**
@@ -71,8 +71,8 @@ private fun baseUrl(): String {
  * `img%2Fic_topic_UI.svg` arrives as the single segment after `o`.
  */
 private fun localIconNameOf(encodedPathSegments: List<String>): String? {
-    val objectIndex = encodedPathSegments.indexOf("o") + 1
-    val encodedObject = encodedPathSegments.getOrNull(objectIndex) ?: return null
-    val name = encodedObject.replace("%2F", "/").substringAfterLast('/')
-    return name.takeIf { it.endsWith(".svg") }
+  val objectIndex = encodedPathSegments.indexOf("o") + 1
+  val encodedObject = encodedPathSegments.getOrNull(objectIndex) ?: return null
+  val name = encodedObject.replace("%2F", "/").substringAfterLast('/')
+  return name.takeIf { it.endsWith(".svg") }
 }

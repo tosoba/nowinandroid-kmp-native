@@ -18,11 +18,9 @@ package com.skydoves.nowinandroid.core.notifications
 
 import com.skydoves.nowinandroid.core.model.data.NewsResource
 
-/**
- * Interface for creating notifications in the app
- */
+/** Interface for creating notifications in the app */
 interface Notifier {
-    fun postNewsNotifications(newsResources: List<NewsResource>)
+  fun postNewsNotifications(newsResources: List<NewsResource>)
 }
 
 /** How many news items a single sync is allowed to notify about. */
@@ -30,7 +28,7 @@ internal const val MAX_NUM_NOTIFICATIONS = 5
 
 internal const val NEWS_NOTIFICATION_CHANNEL_NAME = "News updates"
 internal const val NEWS_NOTIFICATION_CHANNEL_DESCRIPTION =
-    "The latest updates on what's new in Android"
+  "The latest updates on what's new in Android"
 
 internal fun newsNotificationGroupSummary(count: Int) = "$count news updates"
 

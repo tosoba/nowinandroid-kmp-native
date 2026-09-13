@@ -15,29 +15,29 @@
  */
 
 plugins {
-    id("nowinandroid.kmp.multiplatform.compose")
+  id("nowinandroid.kmp.multiplatform.compose")
 }
 
 kotlin {
-    sourceSets {
-        commonMain.dependencies {
-            api(projects.core.designsystem)
-            api(projects.core.model)
-            api(projects.core.analytics)
-            api(libs.kotlinx.datetime)
-            implementation(libs.kotlinx.coroutines.core)
-        }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-        }
-        getByName("wasmJsMain").dependencies {
-            implementation(libs.kotlinx.browser)
-        }
-        androidMain.dependencies {
-            implementation(libs.androidx.activity.compose)
-            implementation(libs.accompanist.permissions)
-            implementation(libs.androidx.browser)
-            implementation(libs.androidx.metrics.performance)
-        }
+  sourceSets {
+    commonMain.dependencies {
+      api(projects.core.designsystem)
+      api(projects.core.model)
+      api(projects.core.analytics)
+      api(libs.kotlinx.datetime)
+      implementation(libs.kotlinx.coroutines.core)
     }
+    commonTest.dependencies {
+      implementation(libs.kotlin.test)
+    }
+    getByName("wasmJsMain").dependencies {
+      implementation(libs.kotlinx.browser)
+    }
+    androidMain.dependencies {
+      implementation(libs.androidx.activity.compose)
+      implementation(libs.accompanist.permissions)
+      implementation(libs.androidx.browser)
+      implementation(libs.androidx.metrics.performance)
+    }
+  }
 }

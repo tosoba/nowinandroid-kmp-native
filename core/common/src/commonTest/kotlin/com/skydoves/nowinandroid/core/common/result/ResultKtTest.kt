@@ -26,40 +26,40 @@ import kotlin.test.assertIs
 
 class ResultKtTest {
 
-    @Test
-    fun resultCatchesErrors() = runTest {
-        flow {
-            emit(1)
-            throw IllegalStateException("Test Done")
-        }
-            .asResult()
-            .test {
-                assertEquals(Result.Loading, awaitItem())
-                assertEquals(Result.Success(1), awaitItem())
-
-                val errorResult = assertIs<Result.Error>(awaitItem())
-                assertEquals("Test Done", errorResult.exception.message)
-
-                awaitComplete()
-            }
+  @Test
+  fun resultCatchesErrors() = runTest {
+    flow {
+      emit(1)
+      throw IllegalStateException("Test Done")
     }
+      .asResult()
+      .test {
+        assertEquals(Result.Loading, awaitItem())
+        assertEquals(Result.Success(1), awaitItem())
 
-    @Test
-    fun resultEmitsLoadingBeforeEveryValue() = runTest {
-        flowOf(1, 2, 3).asResult().test {
-            assertEquals(Result.Loading, awaitItem())
-            assertEquals(Result.Success(1), awaitItem())
-            assertEquals(Result.Success(2), awaitItem())
-            assertEquals(Result.Success(3), awaitItem())
-            awaitComplete()
-        }
-    }
+        val errorResult = assertIs<Result.Error>(awaitItem())
+        assertEquals("Test Done", errorResult.exception.message)
 
-    @Test
-    fun anEmptyFlowStillEmitsLoading() = runTest {
-        flowOf<Int>().asResult().test {
-            assertEquals(Result.Loading, awaitItem())
-            awaitComplete()
-        }
+        awaitComplete()
+      }
+  }
+
+  @Test
+  fun resultEmitsLoadingBeforeEveryValue() = runTest {
+    flowOf(1, 2, 3).asResult().test {
+      assertEquals(Result.Loading, awaitItem())
+      assertEquals(Result.Success(1), awaitItem())
+      assertEquals(Result.Success(2), awaitItem())
+      assertEquals(Result.Success(3), awaitItem())
+      awaitComplete()
     }
+  }
+
+  @Test
+  fun anEmptyFlowStillEmitsLoading() = runTest {
+    flowOf<Int>().asResult().test {
+      assertEquals(Result.Loading, awaitItem())
+      awaitComplete()
+    }
+  }
 }

@@ -15,21 +15,21 @@
  */
 
 plugins {
-    id("nowinandroid.kmp.multiplatform")
-    alias(libs.plugins.kotlin.serialization)
+  id("nowinandroid.kmp.multiplatform")
+  alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
-    sourceSets {
-        commonMain.dependencies {
-            api(libs.kotlinx.datetime)
-            api(libs.kotlinx.serialization.json)
-            api(libs.kotlinx.immutable.collections)
-            // The annotations-only slice of the Compose runtime, so this stays a pure data module.
-            api(libs.compose.runtime.annotation)
-        }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-        }
+  sourceSets {
+    commonMain.dependencies {
+      api(libs.kotlinx.datetime)
+      api(libs.kotlinx.serialization.json)
+      api(libs.kotlinx.immutable.collections)
+      // The annotations-only slice of the Compose runtime, so this stays a pure data module.
+      api(libs.compose.runtime.annotation)
     }
+    commonTest.dependencies {
+      implementation(libs.kotlin.test)
+    }
+  }
 }

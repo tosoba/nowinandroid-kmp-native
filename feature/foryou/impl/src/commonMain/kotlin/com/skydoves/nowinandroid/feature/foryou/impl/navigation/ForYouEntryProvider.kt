@@ -24,9 +24,7 @@ import com.skydoves.nowinandroid.feature.foryou.impl.ForYouScreen
 import com.skydoves.nowinandroid.feature.topic.api.navigation.navigateToTopic
 
 fun EntryProviderScope<NavKey>.forYouEntry(navigator: Navigator) {
-    entry<ForYouNavKey> {
-        ForYouScreen(
-            onTopicClick = navigator::navigateToTopic,
-        )
-    }
+  entry<ForYouNavKey> {
+    ForYouScreen(onTopicClick = navigator::navigateToTopic)
+  }
 }

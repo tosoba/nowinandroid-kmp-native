@@ -15,34 +15,34 @@
  */
 
 plugins {
-    id("nowinandroid.kmp.multiplatform.compose")
+  id("nowinandroid.kmp.multiplatform.compose")
 }
 
 kotlin {
-    sourceSets {
-        commonMain.dependencies {
-            api(projects.core.model)
-            api(libs.compose.runtime)
-            api(libs.compose.foundation)
-            api(libs.compose.material3)
-            api(libs.compose.animation)
-            api(libs.compose.ui)
-            api(libs.compose.ui.tooling.preview)
-            api(libs.compose.material.icons.core)
-            api(libs.compose.material.icons.extended)
-            api(libs.compose.adaptive)
-            api(libs.compose.adaptive.layout)
-            api(libs.compose.adaptive.navigation)
-            api(libs.compose.material3.adaptive.navigation.suite)
-            api(libs.landscapist.image)
-            api(libs.landscapist.placeholder)
-            api(libs.landscapist.animation)
-        }
-        androidMain.dependencies {
-            implementation(libs.compose.ui.tooling)
-        }
-        getByName("desktopMain").dependencies {
-            implementation(compose.desktop.currentOs)
-        }
+  sourceSets {
+    commonMain.dependencies {
+      api(projects.core.model)
+      api(libs.compose.runtime)
+      api(libs.compose.foundation)
+      api(libs.compose.material3)
+      api(libs.compose.animation)
+      api(libs.compose.ui)
+      api(libs.compose.ui.tooling.preview)
+      api(libs.compose.material.icons.core)
+      api(libs.compose.material.icons.extended)
+      api(libs.compose.adaptive)
+      api(libs.compose.adaptive.layout)
+      api(libs.compose.adaptive.navigation)
+      api(libs.compose.material3.adaptive.navigation.suite)
+      api(libs.landscapist.image)
+      api(libs.landscapist.placeholder)
+      api(libs.landscapist.animation)
     }
+    androidMain.dependencies {
+      implementation(libs.compose.ui.tooling)
+    }
+    getByName("desktopMain").dependencies {
+      implementation(compose.desktop.currentOs)
+    }
+  }
 }

@@ -42,110 +42,111 @@ import com.skydoves.nowinandroid.feature.interests.api.MR as InterestsApiRes
 
 @Composable
 fun InterestsScreen(
-    onTopicClick: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    viewModel: InterestsViewModel,
-    shouldHighlightSelectedTopic: Boolean = false,
+  onTopicClick: (String) -> Unit,
+  modifier: Modifier = Modifier,
+  viewModel: InterestsViewModel,
+  shouldHighlightSelectedTopic: Boolean = false,
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+  val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    InterestsScreen(
-        uiState = uiState,
-        followTopic = viewModel::followTopic,
-        onTopicClick = {
-            // TODO: this violates SSOT, events should go through the ViewModel
-            viewModel.onTopicClick(it)
-            onTopicClick(it)
-        },
-        shouldHighlightSelectedTopic = shouldHighlightSelectedTopic,
-        modifier = modifier,
-    )
+  InterestsScreen(
+    uiState = uiState,
+    followTopic = viewModel::followTopic,
+    onTopicClick = {
+      // TODO: this violates SSOT, events should go through the ViewModel
+      viewModel.onTopicClick(it)
+      onTopicClick(it)
+    },
+    shouldHighlightSelectedTopic = shouldHighlightSelectedTopic,
+    modifier = modifier,
+  )
 }
 
 @NavDestination(route = InterestsNavKey::class)
 @NavEdge(to = TopicNavKey::class, label = "Topic row")
 @Composable
 internal fun InterestsScreen(
-    uiState: InterestsUiState,
-    followTopic: (String, Boolean) -> Unit,
-    onTopicClick: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    shouldHighlightSelectedTopic: Boolean = false,
+  uiState: InterestsUiState,
+  followTopic: (String, Boolean) -> Unit,
+  onTopicClick: (String) -> Unit,
+  modifier: Modifier = Modifier,
+  shouldHighlightSelectedTopic: Boolean = false,
 ) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        when (uiState) {
-            InterestsUiState.Loading ->
-                NiaLoadingWheel(
-                    contentDesc = stringResource(InterestsApiRes.strings.feature_interests_api_loading),
-                )
+  Column(
+    modifier = modifier,
+    horizontalAlignment = Alignment.CenterHorizontally,
+  ) {
+    when (uiState) {
+      InterestsUiState.Loading ->
+        NiaLoadingWheel(
+          contentDesc = stringResource(InterestsApiRes.strings.feature_interests_api_loading)
+        )
 
-            is InterestsUiState.Interests ->
-                TopicsTabContent(
-                    topics = uiState.topics,
-                    onTopicClick = onTopicClick,
-                    onFollowButtonClick = followTopic,
-                    selectedTopicId = uiState.selectedTopicId,
-                    shouldHighlightSelectedTopic = shouldHighlightSelectedTopic,
-                )
+      is InterestsUiState.Interests ->
+        TopicsTabContent(
+          topics = uiState.topics,
+          onTopicClick = onTopicClick,
+          onFollowButtonClick = followTopic,
+          selectedTopicId = uiState.selectedTopicId,
+          shouldHighlightSelectedTopic = shouldHighlightSelectedTopic,
+        )
 
-            is InterestsUiState.Empty -> InterestsEmptyScreen()
-        }
+      is InterestsUiState.Empty -> InterestsEmptyScreen()
     }
-    TrackScreenViewEvent(screenName = "Interests")
+  }
+  TrackScreenViewEvent(screenName = "Interests")
 }
 
 @Composable
 private fun InterestsEmptyScreen() {
-    Text(text = stringResource(InterestsApiRes.strings.feature_interests_api_empty_header))
+  Text(text = stringResource(InterestsApiRes.strings.feature_interests_api_empty_header))
 }
 
 @DevicePreviews
 @Composable
 fun InterestsScreenPopulated(
-    @PreviewParameter(FollowableTopicPreviewParameterProvider::class)
-    followableTopics: List<FollowableTopic>,
+  @PreviewParameter(FollowableTopicPreviewParameterProvider::class)
+  followableTopics: List<FollowableTopic>
 ) {
-    NiaTheme {
-        NiaBackground {
-            InterestsScreen(
-                uiState = InterestsUiState.Interests(
-                    selectedTopicId = null,
-                    topics = followableTopics,
-                ),
-                followTopic = { _, _ -> },
-                onTopicClick = {},
-            )
-        }
+  NiaTheme {
+    NiaBackground {
+      InterestsScreen(
+        uiState =
+          InterestsUiState.Interests(
+            selectedTopicId = null,
+            topics = followableTopics,
+          ),
+        followTopic = { _, _ -> },
+        onTopicClick = {},
+      )
     }
+  }
 }
 
 @DevicePreviews
 @Composable
 fun InterestsScreenLoading() {
-    NiaTheme {
-        NiaBackground {
-            InterestsScreen(
-                uiState = InterestsUiState.Loading,
-                followTopic = { _, _ -> },
-                onTopicClick = {},
-            )
-        }
+  NiaTheme {
+    NiaBackground {
+      InterestsScreen(
+        uiState = InterestsUiState.Loading,
+        followTopic = { _, _ -> },
+        onTopicClick = {},
+      )
     }
+  }
 }
 
 @DevicePreviews
 @Composable
 fun InterestsScreenEmpty() {
-    NiaTheme {
-        NiaBackground {
-            InterestsScreen(
-                uiState = InterestsUiState.Empty,
-                followTopic = { _, _ -> },
-                onTopicClick = {},
-            )
-        }
+  NiaTheme {
+    NiaBackground {
+      InterestsScreen(
+        uiState = InterestsUiState.Empty,
+        followTopic = { _, _ -> },
+        onTopicClick = {},
+      )
     }
+  }
 }

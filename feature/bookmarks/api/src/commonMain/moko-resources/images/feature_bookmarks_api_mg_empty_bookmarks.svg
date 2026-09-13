@@ -14,16 +14,21 @@
     limitations under the License.
 -->
 <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M16,2H55C57.209,2 59,3.791 59,6V52" stroke="url(#paint0_linear)" stroke-width="2" stroke-linecap="round"/>
-  <path d="M45,10H9C6.791,10 5,11.791 5,14V55.854C5,59.177 8.817,61.051 11.446,59.019L24.554,48.89C25.995,47.777 28.005,47.777 29.446,48.89L42.554,59.019C45.183,61.051 49,59.177 49,55.854V14C49,11.791 47.209,10 45,10Z" stroke="url(#paint1_linear)" stroke-width="2" stroke-linecap="round"/>
-  <defs>
-    <linearGradient id="paint0_linear" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#FFA8FF"/>
-      <stop offset="1" stop-color="#FF8B5E"/>
-    </linearGradient>
-    <linearGradient id="paint1_linear" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#FFA8FF"/>
-      <stop offset="1" stop-color="#FF8B5E"/>
-    </linearGradient>
-  </defs>
+    <path d="M16,2H55C57.209,2 59,3.791 59,6V52" stroke="url(#paint0_linear)" stroke-width="2"
+        stroke-linecap="round" />
+    <path
+        d="M45,10H9C6.791,10 5,11.791 5,14V55.854C5,59.177 8.817,61.051 11.446,59.019L24.554,48.89C25.995,47.777 28.005,47.777 29.446,48.89L42.554,59.019C45.183,61.051 49,59.177 49,55.854V14C49,11.791 47.209,10 45,10Z"
+        stroke="url(#paint1_linear)" stroke-width="2" stroke-linecap="round" />
+    <defs>
+        <linearGradient id="paint0_linear" x1="8" y1="8" x2="56" y2="56"
+            gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#FFA8FF" />
+            <stop offset="1" stop-color="#FF8B5E" />
+        </linearGradient>
+        <linearGradient id="paint1_linear" x1="8" y1="8" x2="56" y2="56"
+            gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#FFA8FF" />
+            <stop offset="1" stop-color="#FF8B5E" />
+        </linearGradient>
+    </defs>
 </svg>

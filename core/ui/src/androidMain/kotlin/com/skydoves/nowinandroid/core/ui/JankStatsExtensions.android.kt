@@ -27,17 +27,17 @@ import androidx.metrics.performance.PerformanceMetricsState
  */
 @Composable
 actual fun rememberMetricsStateHolder(): JankMetricsState {
-    val localView = LocalView.current
-    return remember(localView) {
-        val holder = PerformanceMetricsState.getHolderForHierarchy(localView)
-        object : JankMetricsState {
-            override fun putState(key: String, value: String) {
-                holder.state?.putState(key, value)
-            }
+  val localView = LocalView.current
+  return remember(localView) {
+    val holder = PerformanceMetricsState.getHolderForHierarchy(localView)
+    object : JankMetricsState {
+      override fun putState(key: String, value: String) {
+        holder.state?.putState(key, value)
+      }
 
-            override fun removeState(key: String) {
-                holder.state?.removeState(key)
-            }
-        }
+      override fun removeState(key: String) {
+        holder.state?.removeState(key)
+      }
     }
+  }
 }

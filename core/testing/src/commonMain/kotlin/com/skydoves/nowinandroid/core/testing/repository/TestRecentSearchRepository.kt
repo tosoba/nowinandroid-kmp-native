@@ -24,19 +24,20 @@ import kotlinx.coroutines.flow.map
 
 class TestRecentSearchRepository : RecentSearchRepository {
 
-    private val cachedRecentSearches = MutableStateFlow(emptyList<RecentSearchQuery>())
+  private val cachedRecentSearches = MutableStateFlow(emptyList<RecentSearchQuery>())
 
-    override fun getRecentSearchQueries(limit: Int): Flow<List<RecentSearchQuery>> =
-        cachedRecentSearches.map { queries ->
-            queries.sortedByDescending { it.queriedDate }.take(limit)
-        }
-
-    override suspend fun insertOrReplaceRecentSearch(searchQuery: String) {
-        cachedRecentSearches.value = cachedRecentSearches.value
-            .filterNot { it.query == searchQuery } + RecentSearchQuery(searchQuery)
+  override fun getRecentSearchQueries(limit: Int): Flow<List<RecentSearchQuery>> =
+    cachedRecentSearches.map { queries ->
+      queries.sortedByDescending { it.queriedDate }.take(limit)
     }
 
-    override suspend fun clearRecentSearches() {
-        cachedRecentSearches.value = emptyList()
-    }
+  override suspend fun insertOrReplaceRecentSearch(searchQuery: String) {
+    cachedRecentSearches.value =
+      cachedRecentSearches.value.filterNot { it.query == searchQuery } +
+        RecentSearchQuery(searchQuery)
+  }
+
+  override suspend fun clearRecentSearches() {
+    cachedRecentSearches.value = emptyList()
+  }
 }

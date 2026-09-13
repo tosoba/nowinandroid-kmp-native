@@ -15,19 +15,19 @@
  */
 
 plugins {
-    id("nowinandroid.kmp.multiplatform.compose")
+  id("nowinandroid.kmp.multiplatform.compose")
 }
 
 kotlin {
-    sourceSets {
-        commonMain.dependencies {
-            api(libs.compose.runtime)
-            api(libs.androidx.navigation3.runtime)
-            api(libs.androidx.navigation3.ui)
-            api(libs.androidx.lifecycle.viewmodel.navigation3)
-        }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-        }
+  sourceSets {
+    commonMain.dependencies {
+      api(libs.compose.runtime)
+      api(libs.androidx.navigation3.runtime)
+      api(libs.androidx.navigation3.ui)
+      api(libs.androidx.lifecycle.viewmodel.navigation3)
     }
+    commonTest.dependencies {
+      implementation(libs.kotlin.test)
+    }
+  }
 }

@@ -19,5 +19,4 @@ package com.skydoves.nowinandroid.feature.search.api.navigation
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
-@Serializable
-object SearchNavKey : NavKey
+@Serializable object SearchNavKey : NavKey

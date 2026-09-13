@@ -25,37 +25,36 @@ import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
-/**
- * A use case which obtains a list of topics with their followed state.
- */
+/** A use case which obtains a list of topics with their followed state. */
 @Inject
 class GetFollowableTopicsUseCase(
-    private val topicsRepository: TopicsRepository,
-    private val userDataRepository: UserDataRepository,
+  private val topicsRepository: TopicsRepository,
+  private val userDataRepository: UserDataRepository,
 ) {
-    /**
-     * Returns a list of topics with their associated followed state.
-     *
-     * @param sortBy - the field used to sort the topics. Default NONE = no sorting.
-     */
-    operator fun invoke(sortBy: TopicSortField = NONE): Flow<List<FollowableTopic>> = combine(
-        userDataRepository.userData,
-        topicsRepository.getTopics(),
+  /**
+   * Returns a list of topics with their associated followed state.
+   *
+   * @param sortBy - the field used to sort the topics. Default NONE = no sorting.
+   */
+  operator fun invoke(sortBy: TopicSortField = NONE): Flow<List<FollowableTopic>> =
+    combine(
+      userDataRepository.userData,
+      topicsRepository.getTopics(),
     ) { userData, topics ->
-        val followedTopics = topics.map { topic ->
-            FollowableTopic(
-                topic = topic,
-                isFollowed = topic.id in userData.followedTopics,
-            )
-        }
-        when (sortBy) {
-            NAME -> followedTopics.sortedBy { it.topic.name }
-            else -> followedTopics
-        }
+      val followedTopics = topics.map { topic ->
+        FollowableTopic(
+          topic = topic,
+          isFollowed = topic.id in userData.followedTopics,
+        )
+      }
+      when (sortBy) {
+        NAME -> followedTopics.sortedBy { it.topic.name }
+        else -> followedTopics
+      }
     }
 }
 
 enum class TopicSortField {
-    NONE,
-    NAME,
+  NONE,
+  NAME,
 }

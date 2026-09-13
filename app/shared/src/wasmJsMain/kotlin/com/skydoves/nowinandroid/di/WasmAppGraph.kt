@@ -21,9 +21,7 @@ import dev.zacsweers.metro.DependencyGraph
 import dev.zacsweers.metro.SingleIn
 
 /**
- * Like the desktop graph, the browser needs no factory: nothing in it requires a platform handle the
- * way Android needs a `Context`.
+ * Like the desktop graph, the browser needs no factory: nothing in it requires a platform handle
+ * the way Android needs a `Context`.
  */
-@DependencyGraph(AppScope::class)
-@SingleIn(AppScope::class)
-interface WasmAppGraph : AppGraph
+@DependencyGraph(AppScope::class) @SingleIn(AppScope::class) interface WasmAppGraph : AppGraph

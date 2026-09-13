@@ -35,32 +35,36 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 /**
- * Disk storage backed implementation of the [TopicsRepository].
- * Reads are exclusively from local storage to support offline access.
+ * Disk storage backed implementation of the [TopicsRepository]. Reads are exclusively from local
+ * storage to support offline access.
  */
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class OfflineFirstTopicsRepository(private val topicDao: TopicDao, private val network: NiaNetworkDataSource) :
-    TopicsRepository {
+class OfflineFirstTopicsRepository(
+  private val topicDao: TopicDao,
+  private val network: NiaNetworkDataSource,
+) : TopicsRepository {
 
-    override fun getTopics(): Flow<List<Topic>> =
-        topicDao.getTopicEntities().map { it.map(TopicEntity::asExternalModel) }
+  override fun getTopics(): Flow<List<Topic>> =
+    topicDao.getTopicEntities().map { it.map(TopicEntity::asExternalModel) }
 
-    override fun getTopic(id: String): Flow<Topic> = topicDao.getTopicEntity(id).map { it.asExternalModel() }
+  override fun getTopic(id: String): Flow<Topic> =
+    topicDao.getTopicEntity(id).map { it.asExternalModel() }
 
-    override suspend fun syncWith(synchronizer: Synchronizer): Boolean = synchronizer.changeListSync(
-        versionReader = ChangeListVersions::topicVersion,
-        changeListFetcher = { currentVersion ->
-            network.getTopicChangeList(after = currentVersion)
-        },
-        versionUpdater = { latestVersion ->
-            copy(topicVersion = latestVersion)
-        },
-        modelDeleter = topicDao::deleteTopics,
-        modelUpdater = { changedIds ->
-            val networkTopics = network.getTopics(ids = changedIds).getOrThrow()
-            topicDao.upsertTopics(entities = networkTopics.map(NetworkTopic::asEntity))
-        },
+  override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
+    synchronizer.changeListSync(
+      versionReader = ChangeListVersions::topicVersion,
+      changeListFetcher = { currentVersion ->
+        network.getTopicChangeList(after = currentVersion)
+      },
+      versionUpdater = { latestVersion ->
+        copy(topicVersion = latestVersion)
+      },
+      modelDeleter = topicDao::deleteTopics,
+      modelUpdater = { changedIds ->
+        val networkTopics = network.getTopics(ids = changedIds).getOrThrow()
+        topicDao.upsertTopics(entities = networkTopics.map(NetworkTopic::asEntity))
+      },
     )
 }

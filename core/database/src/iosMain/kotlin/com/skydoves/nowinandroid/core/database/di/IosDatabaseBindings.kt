@@ -36,22 +36,22 @@ import platform.Foundation.NSUserDomainMask
 @ContributesTo(AppScope::class)
 object IosDatabaseBindings {
 
-    @Provides
-    fun providesDatabaseBuilder(): RoomDatabase.Builder<NiaDatabase> =
-        Room.databaseBuilder(name = "${documentDirectory()}/$NIA_DATABASE_NAME")
+  @Provides
+  fun providesDatabaseBuilder(): RoomDatabase.Builder<NiaDatabase> =
+    Room.databaseBuilder(name = "${documentDirectory()}/$NIA_DATABASE_NAME")
 
-    @OptIn(ExperimentalForeignApi::class)
-    private fun documentDirectory(): String {
-        val url: NSURL? = NSFileManager.defaultManager.URLForDirectory(
-            directory = NSDocumentDirectory,
-            inDomain = NSUserDomainMask,
-            appropriateForURL = null,
-            create = false,
-            error = null,
-        )
-        return requireNotNull(url?.path) { "Unable to resolve the iOS documents directory" }
-    }
+  @OptIn(ExperimentalForeignApi::class)
+  private fun documentDirectory(): String {
+    val url: NSURL? =
+      NSFileManager.defaultManager.URLForDirectory(
+        directory = NSDocumentDirectory,
+        inDomain = NSUserDomainMask,
+        appropriateForURL = null,
+        create = false,
+        error = null,
+      )
+    return requireNotNull(url?.path) { "Unable to resolve the iOS documents directory" }
+  }
 
-    @Provides
-    fun providesSQLiteDriver(): SQLiteDriver = BundledSQLiteDriver()
+  @Provides fun providesSQLiteDriver(): SQLiteDriver = BundledSQLiteDriver()
 }

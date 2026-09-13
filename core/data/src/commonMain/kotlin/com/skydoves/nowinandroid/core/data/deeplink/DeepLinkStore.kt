@@ -34,11 +34,11 @@ import kotlinx.coroutines.flow.asStateFlow
 @Inject
 @SingleIn(AppScope::class)
 class DeepLinkStore {
-    private val newsResourceIdState = MutableStateFlow<String?>(null)
+  private val newsResourceIdState = MutableStateFlow<String?>(null)
 
-    val newsResourceId: StateFlow<String?> = newsResourceIdState.asStateFlow()
+  val newsResourceId: StateFlow<String?> = newsResourceIdState.asStateFlow()
 
-    fun submit(newsResourceId: String?) {
-        newsResourceIdState.value = newsResourceId
-    }
+  fun submit(newsResourceId: String?) {
+    newsResourceIdState.value = newsResourceId
+  }
 }

@@ -30,7 +30,6 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.request.url
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
@@ -41,33 +40,36 @@ import kotlinx.serialization.json.Json
  * `demoDebug` builds actually run against.
  */
 object NiaBackend {
-    /** Set this to your backend's base URL to switch [NiaNetworkDataSource] over to Ktor. */
-    const val BASE_URL: String = ""
+  /** Set this to your backend's base URL to switch [NiaNetworkDataSource] over to Ktor. */
+  const val BASE_URL: String = ""
 }
 
 @BindingContainer
 @ContributesTo(AppScope::class)
 object NetworkBindings {
 
-    @Provides
-    @SingleIn(AppScope::class)
-    fun providesNetworkJson(): Json = Json {
-        ignoreUnknownKeys = true
+  @Provides
+  @SingleIn(AppScope::class)
+  fun providesNetworkJson(): Json = Json {
+    ignoreUnknownKeys = true
+  }
+
+  @Provides
+  @SingleIn(AppScope::class)
+  fun providesHttpClient(json: Json): HttpClient =
+    HttpClient(httpClientEngineFactory()) {
+      expectSuccess = false
+      install(ContentNegotiation) { json(json) }
+      install(Logging) { level = LogLevel.INFO }
+      if (NiaBackend.BASE_URL.isNotEmpty()) {
+        defaultRequest { url(NiaBackend.BASE_URL) }
+      }
     }
 
-    @Provides
-    @SingleIn(AppScope::class)
-    fun providesHttpClient(json: Json): HttpClient = HttpClient(httpClientEngineFactory()) {
-        expectSuccess = false
-        install(ContentNegotiation) { json(json) }
-        install(Logging) { level = LogLevel.INFO }
-        if (NiaBackend.BASE_URL.isNotEmpty()) {
-            defaultRequest { url(NiaBackend.BASE_URL) }
-        }
-    }
-
-    @Provides
-    @SingleIn(AppScope::class)
-    fun providesNetworkDataSource(demo: DemoNiaNetworkDataSource, ktor: KtorNiaNetwork): NiaNetworkDataSource =
-        if (NiaBackend.BASE_URL.isEmpty()) demo else ktor
+  @Provides
+  @SingleIn(AppScope::class)
+  fun providesNetworkDataSource(
+    demo: DemoNiaNetworkDataSource,
+    ktor: KtorNiaNetwork,
+  ): NiaNetworkDataSource = if (NiaBackend.BASE_URL.isEmpty()) demo else ktor
 }

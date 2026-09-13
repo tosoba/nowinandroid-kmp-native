@@ -27,31 +27,30 @@ import kotlinx.coroutines.flow.map
 
 class TestNewsRepository : NewsRepository {
 
-    private val newsResourcesFlow: MutableSharedFlow<List<NewsResource>> =
-        MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+  private val newsResourcesFlow: MutableSharedFlow<List<NewsResource>> =
+    MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
-    override fun getNewsResources(query: NewsResourceQuery): Flow<List<NewsResource>> =
-        newsResourcesFlow.map { newsResources ->
-            var result = newsResources
-            query.filterTopicIds?.let { filterTopicIds ->
-                result = newsResources.filter {
-                    it.topics.map(com.skydoves.nowinandroid.core.model.data.Topic::id)
-                        .intersect(filterTopicIds)
-                        .isNotEmpty()
-                }
-            }
-            query.filterNewsIds?.let { filterNewsIds ->
-                result = result.filter { it.id in filterNewsIds }
-            }
-            result
+  override fun getNewsResources(query: NewsResourceQuery): Flow<List<NewsResource>> =
+    newsResourcesFlow.map { newsResources ->
+      var result = newsResources
+      query.filterTopicIds?.let { filterTopicIds ->
+        result = newsResources.filter {
+          it.topics
+            .map(com.skydoves.nowinandroid.core.model.data.Topic::id)
+            .intersect(filterTopicIds)
+            .isNotEmpty()
         }
-
-    /**
-     * A test-only API to allow controlling the list of news resources from tests.
-     */
-    fun sendNewsResources(newsResources: List<NewsResource>) {
-        newsResourcesFlow.tryEmit(newsResources)
+      }
+      query.filterNewsIds?.let { filterNewsIds ->
+        result = result.filter { it.id in filterNewsIds }
+      }
+      result
     }
 
-    override suspend fun syncWith(synchronizer: Synchronizer): Boolean = true
+  /** A test-only API to allow controlling the list of news resources from tests. */
+  fun sendNewsResources(newsResources: List<NewsResource>) {
+    newsResourcesFlow.tryEmit(newsResources)
+  }
+
+  override suspend fun syncWith(synchronizer: Synchronizer): Boolean = true
 }

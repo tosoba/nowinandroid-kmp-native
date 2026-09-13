@@ -30,11 +30,8 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.parameter
 import kotlinx.serialization.Serializable
 
-/**
- * Wrapper for data provided from the NIA backend.
- */
-@Serializable
-internal data class NetworkResponse<T>(val data: T)
+/** Wrapper for data provided from the NIA backend. */
+@Serializable internal data class NetworkResponse<T>(val data: T)
 
 /**
  * Ktor backed [NiaNetworkDataSource]. Replaces the Android original's Retrofit + OkHttp stack,
@@ -44,23 +41,31 @@ internal data class NetworkResponse<T>(val data: T)
 @SingleIn(AppScope::class)
 class KtorNiaNetwork(private val httpClient: HttpClient) : NiaNetworkDataSource {
 
-    override suspend fun getTopics(ids: List<String>?): ApiResponse<List<NetworkTopic>> =
-        httpClient.getApiResponse<NetworkResponse<List<NetworkTopic>>>("topics") {
-            ids?.forEach { parameter("id", it) }
-        }.mapSuccess { data }
+  override suspend fun getTopics(ids: List<String>?): ApiResponse<List<NetworkTopic>> =
+    httpClient
+      .getApiResponse<NetworkResponse<List<NetworkTopic>>>("topics") {
+        ids?.forEach { parameter("id", it) }
+      }
+      .mapSuccess { data }
 
-    override suspend fun getNewsResources(ids: List<String>?): ApiResponse<List<NetworkNewsResource>> =
-        httpClient.getApiResponse<NetworkResponse<List<NetworkNewsResource>>>("newsresources") {
-            ids?.forEach { parameter("id", it) }
-        }.mapSuccess { data }
+  override suspend fun getNewsResources(
+    ids: List<String>?
+  ): ApiResponse<List<NetworkNewsResource>> =
+    httpClient
+      .getApiResponse<NetworkResponse<List<NetworkNewsResource>>>("newsresources") {
+        ids?.forEach { parameter("id", it) }
+      }
+      .mapSuccess { data }
 
-    override suspend fun getTopicChangeList(after: Int?): ApiResponse<List<NetworkChangeList>> =
-        httpClient.getApiResponse("changelists/topics") {
-            after?.let { parameter("after", it) }
-        }
+  override suspend fun getTopicChangeList(after: Int?): ApiResponse<List<NetworkChangeList>> =
+    httpClient.getApiResponse("changelists/topics") {
+      after?.let { parameter("after", it) }
+    }
 
-    override suspend fun getNewsResourceChangeList(after: Int?): ApiResponse<List<NetworkChangeList>> =
-        httpClient.getApiResponse("changelists/newsresources") {
-            after?.let { parameter("after", it) }
-        }
+  override suspend fun getNewsResourceChangeList(
+    after: Int?
+  ): ApiResponse<List<NetworkChangeList>> =
+    httpClient.getApiResponse("changelists/newsresources") {
+      after?.let { parameter("after", it) }
+    }
 }

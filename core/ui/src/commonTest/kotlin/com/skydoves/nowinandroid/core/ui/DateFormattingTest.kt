@@ -29,19 +29,15 @@ import kotlin.time.Instant
  */
 class DateFormattingTest {
 
-    @Test
-    fun singleDigitDayIsNotPadded() {
-        val date = Instant.parse("2022-10-06T23:00:00Z")
-            .toLocalDateTime(TimeZone.UTC)
-            .date
-        assertEquals("Oct 6, 2022", date.format(MediumDateFormat))
-    }
+  @Test
+  fun singleDigitDayIsNotPadded() {
+    val date = Instant.parse("2022-10-06T23:00:00Z").toLocalDateTime(TimeZone.UTC).date
+    assertEquals("Oct 6, 2022", date.format(MediumDateFormat))
+  }
 
-    @Test
-    fun doubleDigitDayIsRendered() {
-        val date = Instant.parse("2023-01-25T09:30:00Z")
-            .toLocalDateTime(TimeZone.UTC)
-            .date
-        assertEquals("Jan 25, 2023", date.format(MediumDateFormat))
-    }
+  @Test
+  fun doubleDigitDayIsRendered() {
+    val date = Instant.parse("2023-01-25T09:30:00Z").toLocalDateTime(TimeZone.UTC).date
+    assertEquals("Jan 25, 2023", date.format(MediumDateFormat))
+  }
 }

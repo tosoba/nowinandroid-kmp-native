@@ -33,8 +33,8 @@ import org.w3c.dom.WorkerOptions
 import org.w3c.dom.WorkerType
 
 /**
- * The script the SQLite WASM build runs in. It is served from the web app's static resources
- * rather than bundled by Kotlin, because a `Worker` is constructed from a URL the page can fetch.
+ * The script the SQLite WASM build runs in. It is served from the web app's static resources rather
+ * than bundled by Kotlin, because a `Worker` is constructed from a URL the page can fetch.
  */
 private const val SQLITE_WORKER_SCRIPT = "sqlite-worker.js"
 
@@ -42,18 +42,20 @@ private const val SQLITE_WORKER_SCRIPT = "sqlite-worker.js"
 @ContributesTo(AppScope::class)
 object WasmDatabaseBindings {
 
-    @Provides
-    fun providesDatabaseBuilder(): RoomDatabase.Builder<NiaDatabase> = Room.databaseBuilder(name = NIA_DATABASE_NAME)
+  @Provides
+  fun providesDatabaseBuilder(): RoomDatabase.Builder<NiaDatabase> =
+    Room.databaseBuilder(name = NIA_DATABASE_NAME)
 
-    /**
-     * Single instance because it owns a `Worker`: every connection is a message round trip to that
-     * one thread, and starting a second worker would mean a second, unrelated database.
-     */
-    @Provides
-    @SingleIn(AppScope::class)
-    fun providesSQLiteDriver(): SQLiteDriver = WebWorkerSQLiteDriver(
-        // A module worker, because the official sqlite-wasm build is ESM only and so the worker
-        // has to `import` it rather than use `importScripts`.
-        Worker(SQLITE_WORKER_SCRIPT, WorkerOptions(type = WorkerType.MODULE)),
+  /**
+   * Single instance because it owns a `Worker`: every connection is a message round trip to that
+   * one thread, and starting a second worker would mean a second, unrelated database.
+   */
+  @Provides
+  @SingleIn(AppScope::class)
+  fun providesSQLiteDriver(): SQLiteDriver =
+    WebWorkerSQLiteDriver(
+      // A module worker, because the official sqlite-wasm build is ESM only and so the worker
+      // has to `import` it rather than use `importScripts`.
+      Worker(SQLITE_WORKER_SCRIPT, WorkerOptions(type = WorkerType.MODULE))
     )
 }

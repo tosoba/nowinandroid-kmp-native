@@ -24,60 +24,64 @@ import kotlin.time.Instant
 
 class PopulatedNewsResourceKtTest {
 
-    private val populatedNewsResource = PopulatedNewsResource(
-        entity = NewsResourceEntity(
-            id = "1",
-            title = "news",
-            content = "Metro",
-            url = "url",
-            headerImageUrl = "headerImageUrl",
-            type = "Video 📺",
-            publishDate = Instant.fromEpochMilliseconds(1),
+  private val populatedNewsResource =
+    PopulatedNewsResource(
+      entity =
+        NewsResourceEntity(
+          id = "1",
+          title = "news",
+          content = "Metro",
+          url = "url",
+          headerImageUrl = "headerImageUrl",
+          type = "Video 📺",
+          publishDate = Instant.fromEpochMilliseconds(1),
         ),
-        topics = listOf(
-            TopicEntity(
-                id = "3",
-                name = "name",
-                shortDescription = "short description",
-                longDescription = "long description",
-                url = "URL",
-                imageUrl = "image URL",
-            ),
+      topics =
+        listOf(
+          TopicEntity(
+            id = "3",
+            name = "name",
+            shortDescription = "short description",
+            longDescription = "long description",
+            url = "URL",
+            imageUrl = "image URL",
+          )
         ),
     )
 
-    @Test
-    fun populatedNewsResourceCanBeMappedToNewsResource() {
-        assertEquals(
-            NewsResource(
-                id = "1",
-                title = "news",
-                content = "Metro",
-                url = "url",
-                headerImageUrl = "headerImageUrl",
-                type = "Video 📺",
-                publishDate = Instant.fromEpochMilliseconds(1),
-                topics = listOf(
-                    Topic(
-                        id = "3",
-                        name = "name",
-                        shortDescription = "short description",
-                        longDescription = "long description",
-                        url = "URL",
-                        imageUrl = "image URL",
-                    ),
-                ),
-            ),
-            populatedNewsResource.asExternalModel(),
-        )
-    }
+  @Test
+  fun populatedNewsResourceCanBeMappedToNewsResource() {
+    assertEquals(
+      NewsResource(
+        id = "1",
+        title = "news",
+        content = "Metro",
+        url = "url",
+        headerImageUrl = "headerImageUrl",
+        type = "Video 📺",
+        publishDate = Instant.fromEpochMilliseconds(1),
+        topics =
+          listOf(
+            Topic(
+              id = "3",
+              name = "name",
+              shortDescription = "short description",
+              longDescription = "long description",
+              url = "URL",
+              imageUrl = "image URL",
+            )
+          ),
+      ),
+      populatedNewsResource.asExternalModel(),
+    )
+  }
 
-    @Test
-    fun populatedNewsResourceCanBeMappedToAnFtsEntity() {
-        val fts = populatedNewsResource.asFtsEntity()
+  @Test
+  fun populatedNewsResourceCanBeMappedToAnFtsEntity() {
+    val fts = populatedNewsResource.asFtsEntity()
 
-        assertEquals("1", fts.newsResourceId)
-        assertEquals("news", fts.title)
-        assertEquals("Metro", fts.content)
-    }
+    assertEquals("1", fts.newsResourceId)
+    assertEquals("news", fts.title)
+    assertEquals("Metro", fts.content)
+  }
 }

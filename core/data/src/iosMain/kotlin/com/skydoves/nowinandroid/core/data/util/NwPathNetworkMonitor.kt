@@ -49,19 +49,19 @@ import platform.darwin.dispatch_get_global_queue
 @ContributesBinding(AppScope::class)
 class NwPathNetworkMonitor(@ApplicationScope appScope: CoroutineScope) : NetworkMonitor {
 
-    override val isOnline: Flow<Boolean> = callbackFlow {
-        val monitor = nw_path_monitor_create()
-        nw_path_monitor_set_update_handler(monitor) { path ->
-            trySend(nw_path_get_status(path) == nw_path_status_satisfied)
-        }
-        nw_path_monitor_set_queue(
-            monitor,
-            dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT.toLong(), 0uL),
-        )
-        nw_path_monitor_start(monitor)
-
-        awaitClose { nw_path_monitor_cancel(monitor) }
+  override val isOnline: Flow<Boolean> = callbackFlow {
+    val monitor = nw_path_monitor_create()
+    nw_path_monitor_set_update_handler(monitor) { path ->
+      trySend(nw_path_get_status(path) == nw_path_status_satisfied)
     }
-        .conflate()
-        .shareIn(appScope, SharingStarted.WhileSubscribed(5_000), replay = 1)
+    nw_path_monitor_set_queue(
+      monitor,
+      dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT.toLong(), 0uL),
+    )
+    nw_path_monitor_start(monitor)
+
+    awaitClose { nw_path_monitor_cancel(monitor) }
+  }
+    .conflate()
+    .shareIn(appScope, SharingStarted.WhileSubscribed(5_000), replay = 1)
 }

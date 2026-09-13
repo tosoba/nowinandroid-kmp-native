@@ -32,12 +32,12 @@ import dev.zacsweers.metro.Provides
 @ContributesTo(AppScope::class)
 object AndroidDatabaseBindings {
 
-    @Provides
-    fun providesDatabaseBuilder(context: Context): RoomDatabase.Builder<NiaDatabase> = Room.databaseBuilder(
-        context = context.applicationContext,
-        name = context.getDatabasePath(NIA_DATABASE_NAME).absolutePath,
+  @Provides
+  fun providesDatabaseBuilder(context: Context): RoomDatabase.Builder<NiaDatabase> =
+    Room.databaseBuilder(
+      context = context.applicationContext,
+      name = context.getDatabasePath(NIA_DATABASE_NAME).absolutePath,
     )
 
-    @Provides
-    fun providesSQLiteDriver(): SQLiteDriver = BundledSQLiteDriver()
+  @Provides fun providesSQLiteDriver(): SQLiteDriver = BundledSQLiteDriver()
 }

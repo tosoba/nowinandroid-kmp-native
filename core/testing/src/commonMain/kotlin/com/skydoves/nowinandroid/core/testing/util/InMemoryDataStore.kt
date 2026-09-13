@@ -23,18 +23,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-/**
- * A [DataStore] that keeps its value in memory, so preference tests do not need a file system.
- */
+/** A [DataStore] that keeps its value in memory, so preference tests do not need a file system. */
 class InMemoryDataStore<T>(initialValue: T) : DataStore<T> {
 
-    private val state = MutableStateFlow(initialValue)
-    private val mutex = Mutex()
+  private val state = MutableStateFlow(initialValue)
+  private val mutex = Mutex()
 
-    override val data: Flow<T> = state.asStateFlow()
+  override val data: Flow<T> = state.asStateFlow()
 
-    override suspend fun updateData(transform: suspend (t: T) -> T): T = mutex.withLock {
-        state.value = transform(state.value)
-        state.value
-    }
+  override suspend fun updateData(transform: suspend (t: T) -> T): T = mutex.withLock {
+    state.value = transform(state.value)
+    state.value
+  }
 }

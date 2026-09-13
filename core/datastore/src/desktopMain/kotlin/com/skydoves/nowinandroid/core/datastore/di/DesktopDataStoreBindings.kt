@@ -34,23 +34,24 @@ import java.io.File
 @ContributesTo(AppScope::class)
 object DesktopDataStoreBindings {
 
-    @Provides
-    fun providesDataStorePathProducer(): DataStorePathProducer = DataStorePathProducer { fileName ->
-        File(System.getProperty("user.home"), ".nowinandroid")
-            .apply { mkdirs() }
-            .resolve(fileName)
-            .absolutePath
-    }
+  @Provides
+  fun providesDataStorePathProducer(): DataStorePathProducer = DataStorePathProducer { fileName ->
+    File(System.getProperty("user.home"), ".nowinandroid")
+      .apply { mkdirs() }
+      .resolve(fileName)
+      .absolutePath
+  }
 
-    @Provides
-    @SingleIn(AppScope::class)
-    fun providesUserPreferencesDataStore(
-        pathProducer: DataStorePathProducer,
-        @ApplicationScope scope: CoroutineScope,
-        @IoDispatcher ioDispatcher: CoroutineDispatcher,
-    ): DataStore<UserPreferences> = okioUserPreferencesDataStore(
-        fileSystem = FileSystem.SYSTEM,
-        pathProducer = pathProducer,
-        scope = CoroutineScope(scope.coroutineContext + ioDispatcher),
+  @Provides
+  @SingleIn(AppScope::class)
+  fun providesUserPreferencesDataStore(
+    pathProducer: DataStorePathProducer,
+    @ApplicationScope scope: CoroutineScope,
+    @IoDispatcher ioDispatcher: CoroutineDispatcher,
+  ): DataStore<UserPreferences> =
+    okioUserPreferencesDataStore(
+      fileSystem = FileSystem.SYSTEM,
+      pathProducer = pathProducer,
+      scope = CoroutineScope(scope.coroutineContext + ioDispatcher),
     )
 }

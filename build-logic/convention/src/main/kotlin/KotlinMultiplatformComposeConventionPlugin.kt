@@ -21,18 +21,18 @@ import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
 
 class KotlinMultiplatformComposeConventionPlugin : Plugin<Project> {
-    override fun apply(target: Project) {
-        with(target) {
-            pluginManager.apply("nowinandroid.kmp.multiplatform")
-            pluginManager.apply("org.jetbrains.compose")
-            pluginManager.apply("org.jetbrains.kotlin.plugin.compose")
-            pluginManager.apply("dev.icerock.mobile.multiplatform-resources")
+  override fun apply(target: Project) {
+    with(target) {
+      pluginManager.apply("nowinandroid.kmp.multiplatform")
+      pluginManager.apply("org.jetbrains.compose")
+      pluginManager.apply("org.jetbrains.kotlin.plugin.compose")
+      pluginManager.apply("dev.icerock.mobile.multiplatform-resources")
 
-            extensions.configure<ComposeCompilerGradlePluginExtension> {
-                reportsDestination.set(layout.buildDirectory.dir("compose_compiler"))
-            }
+      extensions.configure<ComposeCompilerGradlePluginExtension> {
+        reportsDestination.set(layout.buildDirectory.dir("compose_compiler"))
+      }
 
-            configureMokoResources()
-        }
+      configureMokoResources()
     }
+  }
 }

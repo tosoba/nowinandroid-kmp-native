@@ -34,15 +34,15 @@ import kotlin.reflect.KClass
 @Inject
 @SingleIn(AppScope::class)
 class NiaViewModelFactory(
-    override val viewModelProviders: Map<KClass<out ViewModel>, () -> ViewModel>,
-    override val manualAssistedFactoryProviders:
+  override val viewModelProviders: Map<KClass<out ViewModel>, () -> ViewModel>,
+  override val manualAssistedFactoryProviders:
     Map<KClass<out ManualViewModelAssistedFactory>, () -> ManualViewModelAssistedFactory>,
 ) : MetroViewModelFactory()
 
 @BindingContainer
 @ContributesTo(AppScope::class)
 object ViewModelBindings {
-    @Provides
-    @SingleIn(AppScope::class)
-    fun provideMetroViewModelFactory(factory: NiaViewModelFactory): MetroViewModelFactory = factory
+  @Provides
+  @SingleIn(AppScope::class)
+  fun provideMetroViewModelFactory(factory: NiaViewModelFactory): MetroViewModelFactory = factory
 }

@@ -81,193 +81,185 @@ import com.skydoves.nowinandroid.feature.settings.impl.SettingsDialog
 import com.skydoves.nowinandroid.feature.settings.impl.feature_settings_top_app_bar_action_icon_description
 import com.skydoves.nowinandroid.feature.settings.impl.feature_settings_top_app_bar_navigation_icon_description
 import com.skydoves.nowinandroid.feature.topic.impl.navigation.topicEntry
-import com.skydoves.nowinandroid.MR as Res
 import com.skydoves.nowinandroid.navigation.TOP_LEVEL_NAV_ITEMS
 import com.skydoves.nowinandroid.not_connected
 import dev.icerock.moko.resources.compose.stringResource
+import com.skydoves.nowinandroid.MR as Res
 import com.skydoves.nowinandroid.feature.settings.impl.MR as SettingsRes
 
 @Composable
 fun NiaApp(
-    appState: NiaAppState,
-    modifier: Modifier = Modifier,
-    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfoV2(),
+  appState: NiaAppState,
+  modifier: Modifier = Modifier,
+  windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfoV2(),
 ) {
-    val shouldShowGradientBackground = appState.navigationState.currentTopLevelKey == ForYouNavKey
-    var showSettingsDialog by rememberSaveable { mutableStateOf(false) }
+  val shouldShowGradientBackground = appState.navigationState.currentTopLevelKey == ForYouNavKey
+  var showSettingsDialog by rememberSaveable { mutableStateOf(false) }
 
-    NiaBackground(modifier = modifier) {
-        NiaGradientBackground(
-            gradientColors = if (shouldShowGradientBackground) {
-                LocalGradientColors.current
-            } else {
-                GradientColors()
-            },
-        ) {
-            val snackbarHostState = remember { SnackbarHostState() }
-            val isOffline by appState.isOffline.collectAsStateWithLifecycle()
-            val notConnectedMessage = stringResource(Res.strings.not_connected)
-            LaunchedEffect(isOffline) {
-                if (isOffline) {
-                    snackbarHostState.showSnackbar(
-                        message = notConnectedMessage,
-                        duration = Indefinite,
-                    )
-                }
-            }
-
-            CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
-                NiaApp(
-                    appState = appState,
-                    showSettingsDialog = showSettingsDialog,
-                    onSettingsDismissed = { showSettingsDialog = false },
-                    onTopAppBarActionClick = { showSettingsDialog = true },
-                    windowAdaptiveInfo = windowAdaptiveInfo,
-                )
-            }
+  NiaBackground(modifier = modifier) {
+    NiaGradientBackground(
+      gradientColors =
+        if (shouldShowGradientBackground) {
+          LocalGradientColors.current
+        } else {
+          GradientColors()
         }
+    ) {
+      val snackbarHostState = remember { SnackbarHostState() }
+      val isOffline by appState.isOffline.collectAsStateWithLifecycle()
+      val notConnectedMessage = stringResource(Res.strings.not_connected)
+      LaunchedEffect(isOffline) {
+        if (isOffline) {
+          snackbarHostState.showSnackbar(
+            message = notConnectedMessage,
+            duration = Indefinite,
+          )
+        }
+      }
+
+      CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
+        NiaApp(
+          appState = appState,
+          showSettingsDialog = showSettingsDialog,
+          onSettingsDismissed = { showSettingsDialog = false },
+          onTopAppBarActionClick = { showSettingsDialog = true },
+          windowAdaptiveInfo = windowAdaptiveInfo,
+        )
+      }
     }
+  }
 }
 
 @Composable
 @OptIn(
-    ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3AdaptiveApi::class,
+  ExperimentalMaterial3Api::class,
+  ExperimentalMaterial3AdaptiveApi::class,
 )
 internal fun NiaApp(
-    appState: NiaAppState,
-    showSettingsDialog: Boolean,
-    onSettingsDismissed: () -> Unit,
-    onTopAppBarActionClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfoV2(),
+  appState: NiaAppState,
+  showSettingsDialog: Boolean,
+  onSettingsDismissed: () -> Unit,
+  onTopAppBarActionClick: () -> Unit,
+  modifier: Modifier = Modifier,
+  windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfoV2(),
 ) {
-    val unreadNavKeys by appState.topLevelNavKeysWithUnreadResources
-        .collectAsStateWithLifecycle()
+  val unreadNavKeys by appState.topLevelNavKeysWithUnreadResources.collectAsStateWithLifecycle()
 
-    if (showSettingsDialog) {
-        SettingsDialog(
-            onDismiss = { onSettingsDismissed() },
+  if (showSettingsDialog) {
+    SettingsDialog(onDismiss = { onSettingsDismissed() })
+  }
+
+  val snackbarHostState = LocalSnackbarHostState.current
+
+  val navigator = remember { Navigator(appState.navigationState) }
+
+  NiaNavigationSuiteScaffold(
+    navigationSuiteItems = {
+      TOP_LEVEL_NAV_ITEMS.forEach { (navKey, navItem) ->
+        val hasUnread = unreadNavKeys.contains(navKey)
+        val selected = navKey == appState.navigationState.currentTopLevelKey
+        item(
+          selected = selected,
+          onClick = { navigator.navigate(navKey) },
+          icon = {
+            Icon(
+              imageVector = navItem.unselectedIcon,
+              contentDescription = null,
+            )
+          },
+          selectedIcon = {
+            Icon(
+              imageVector = navItem.selectedIcon,
+              contentDescription = null,
+            )
+          },
+          label = { Text(stringResource(navItem.iconText)) },
+          modifier =
+            Modifier.testTag("NiaNavItem")
+              .then(if (hasUnread) Modifier.notificationDot() else Modifier),
         )
-    }
+      }
+    },
+    windowAdaptiveInfo = windowAdaptiveInfo,
+  ) {
+    Scaffold(
+      modifier = modifier.enableTestTagsAsResourceId(),
+      containerColor = Color.Transparent,
+      contentColor = MaterialTheme.colorScheme.onBackground,
+      snackbarHost = {
+        SnackbarHost(
+          snackbarHostState,
+          modifier =
+            Modifier.windowInsetsPadding(WindowInsets.safeDrawing.exclude(WindowInsets.ime)),
+        )
+      },
+    ) { padding ->
+      Column(modifier = Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)) {
+        AnimatedVisibility(
+          appState.navigationState.currentKey in appState.navigationState.topLevelKeys,
+          enter = expandVertically(),
+          exit = shrinkVertically(),
+        ) {
+          val destination =
+            TOP_LEVEL_NAV_ITEMS[appState.navigationState.currentTopLevelKey]
+              ?: error(
+                "Top level nav item not found for " +
+                  "${appState.navigationState.currentTopLevelKey}"
+              )
 
-    val snackbarHostState = LocalSnackbarHostState.current
-
-    val navigator = remember { Navigator(appState.navigationState) }
-
-    NiaNavigationSuiteScaffold(
-        navigationSuiteItems = {
-            TOP_LEVEL_NAV_ITEMS.forEach { (navKey, navItem) ->
-                val hasUnread = unreadNavKeys.contains(navKey)
-                val selected = navKey == appState.navigationState.currentTopLevelKey
-                item(
-                    selected = selected,
-                    onClick = { navigator.navigate(navKey) },
-                    icon = {
-                        Icon(
-                            imageVector = navItem.unselectedIcon,
-                            contentDescription = null,
-                        )
-                    },
-                    selectedIcon = {
-                        Icon(
-                            imageVector = navItem.selectedIcon,
-                            contentDescription = null,
-                        )
-                    },
-                    label = { Text(stringResource(navItem.iconText)) },
-                    modifier = Modifier
-                        .testTag("NiaNavItem")
-                        .then(if (hasUnread) Modifier.notificationDot() else Modifier),
-                )
-            }
-        },
-        windowAdaptiveInfo = windowAdaptiveInfo,
-    ) {
-        Scaffold(
-            modifier = modifier.enableTestTagsAsResourceId(),
-            containerColor = Color.Transparent,
-            contentColor = MaterialTheme.colorScheme.onBackground,
-            snackbarHost = {
-                SnackbarHost(
-                    snackbarHostState,
-                    modifier = Modifier.windowInsetsPadding(
-                        WindowInsets.safeDrawing.exclude(WindowInsets.ime),
-                    ),
-                )
-            },
-        ) { padding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .consumeWindowInsets(padding)
-            ) {
-                AnimatedVisibility(
-                    appState.navigationState.currentKey in appState.navigationState.topLevelKeys,
-                    enter = expandVertically(),
-                    exit = shrinkVertically()
-                ) {
-                    val destination =
-                        TOP_LEVEL_NAV_ITEMS[appState.navigationState.currentTopLevelKey]
-                            ?: error(
-                                "Top level nav item not found for " +
-                                        "${appState.navigationState.currentTopLevelKey}",
-                            )
-
-                    NiaTopAppBar(
-                        titleRes = destination.titleText,
-                        navigationIcon = NiaIcons.Search,
-                        navigationIconContentDescription = stringResource(
-                            SettingsRes.strings
-                                .feature_settings_top_app_bar_navigation_icon_description,
-                        ),
-                        actionIcon = NiaIcons.Settings,
-                        actionIconContentDescription = stringResource(
-                            SettingsRes.strings
-                                .feature_settings_top_app_bar_action_icon_description,
-                        ),
-                        colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = Color.Transparent,
-                        ),
-                        onActionClick = { onTopAppBarActionClick() },
-                        onNavigationClick = { navigator.navigate(SearchNavKey) },
-                    )
-                }
-
-                val entryProvider = entryProvider {
-                    forYouEntry(navigator)
-                    bookmarksEntry(navigator)
-                    interestsEntry(navigator)
-                    topicEntry(navigator)
-                    searchEntry(navigator)
-                }
-
-                NavDisplay(
-                    entries = appState.navigationState.toEntries(entryProvider),
-                    sceneStrategies = listOf(rememberListDetailSceneStrategy()),
-                    onBack = { navigator.goBack() },
-                    modifier = Modifier.fillMaxWidth().weight(1f)
-                )
-            }
+          NiaTopAppBar(
+            titleRes = destination.titleText,
+            navigationIcon = NiaIcons.Search,
+            navigationIconContentDescription =
+              stringResource(
+                SettingsRes.strings.feature_settings_top_app_bar_navigation_icon_description
+              ),
+            actionIcon = NiaIcons.Settings,
+            actionIconContentDescription =
+              stringResource(
+                SettingsRes.strings.feature_settings_top_app_bar_action_icon_description
+              ),
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
+            onActionClick = { onTopAppBarActionClick() },
+            onNavigationClick = { navigator.navigate(SearchNavKey) },
+          )
         }
+
+        val entryProvider = entryProvider {
+          forYouEntry(navigator)
+          bookmarksEntry(navigator)
+          interestsEntry(navigator)
+          topicEntry(navigator)
+          searchEntry(navigator)
+        }
+
+        NavDisplay(
+          entries = appState.navigationState.toEntries(entryProvider),
+          sceneStrategies = listOf(rememberListDetailSceneStrategy()),
+          onBack = { navigator.goBack() },
+          modifier = Modifier.fillMaxWidth().weight(1f),
+        )
+      }
     }
+  }
 }
 
 private fun Modifier.notificationDot(): Modifier = composed {
-    val tertiaryColor = MaterialTheme.colorScheme.tertiary
-    drawWithContent {
-        drawContent()
-        drawCircle(
-            tertiaryColor,
-            radius = 5.dp.toPx(),
-            // This is based on the dimensions of the NavigationBar's "indicator pill";
-            // however, its parameters are private, so we must depend on them implicitly
-            // (NavigationBarTokens.ActiveIndicatorWidth = 64.dp)
-            center = center + Offset(
-                64.dp.toPx() * .45f,
-                32.dp.toPx() * -.45f - 6.dp.toPx(),
-            ),
-        )
-    }
+  val tertiaryColor = MaterialTheme.colorScheme.tertiary
+  drawWithContent {
+    drawContent()
+    drawCircle(
+      tertiaryColor,
+      radius = 5.dp.toPx(),
+      // This is based on the dimensions of the NavigationBar's "indicator pill";
+      // however, its parameters are private, so we must depend on them implicitly
+      // (NavigationBarTokens.ActiveIndicatorWidth = 64.dp)
+      center =
+        center +
+          Offset(
+            64.dp.toPx() * .45f,
+            32.dp.toPx() * -.45f - 6.dp.toPx(),
+          ),
+    )
+  }
 }

@@ -15,31 +15,32 @@
  */
 
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.compose.multiplatform)
-    alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.metro)
-    id("nowinandroid.spotless")
+  alias(libs.plugins.kotlin.multiplatform)
+  alias(libs.plugins.compose.multiplatform)
+  alias(libs.plugins.compose.compiler)
+  alias(libs.plugins.metro)
+  id("nowinandroid.spotless")
 }
 
-// Not `nowinandroid.kmp.multiplatform`: that convention plugin declares the Android, iOS and desktop
+// Not `nowinandroid.kmp.multiplatform`: that convention plugin declares the Android, iOS and
+// desktop
 // targets too, and this module is only ever a browser bundle.
 kotlin {
-    wasmJs {
-        browser {
-            commonWebpackConfig {
-                outputFileName = "nowinandroid.js"
-            }
-        }
-        binaries.executable()
+  wasmJs {
+    browser {
+      commonWebpackConfig {
+        outputFileName = "nowinandroid.js"
+      }
     }
+    binaries.executable()
+  }
 
-    sourceSets {
-        getByName("wasmJsMain").dependencies {
-            implementation(projects.app.shared)
-            implementation(libs.compose.runtime)
-            implementation(libs.compose.ui)
-            implementation(libs.kotlinx.browser)
-        }
+  sourceSets {
+    getByName("wasmJsMain").dependencies {
+      implementation(projects.app.shared)
+      implementation(libs.compose.runtime)
+      implementation(libs.compose.ui)
+      implementation(libs.kotlinx.browser)
     }
+  }
 }

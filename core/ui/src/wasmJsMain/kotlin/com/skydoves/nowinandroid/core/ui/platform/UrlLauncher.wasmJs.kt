@@ -26,5 +26,5 @@ import kotlinx.browser.window
  */
 @Composable
 actual fun rememberUrlLauncher(): UrlLauncher = remember {
-    UrlLauncher { url, _ -> window.open(url, "_blank") }
+  UrlLauncher { url, _ -> window.open(url, "_blank") }
 }

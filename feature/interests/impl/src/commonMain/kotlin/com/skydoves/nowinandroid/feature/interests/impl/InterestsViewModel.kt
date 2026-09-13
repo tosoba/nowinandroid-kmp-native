@@ -39,53 +39,56 @@ import kotlinx.coroutines.launch
 
 @AssistedInject
 class InterestsViewModel(
-    val userDataRepository: UserDataRepository,
-    getFollowableTopics: GetFollowableTopicsUseCase,
-    // TODO: see comment below
-    @Assisted val key: InterestsNavKey,
+  val userDataRepository: UserDataRepository,
+  getFollowableTopics: GetFollowableTopicsUseCase,
+  // TODO: see comment below
+  @Assisted val key: InterestsNavKey,
 ) : ViewModel() {
 
-    // TODO: this should no longer be necessary, the currently selected topic should be
-    //  available through the navigation state.
-    // The Android original kept this in a `SavedStateHandle`, which needs saved-state-aware
-    // `CreationExtras` that the Navigation 3 ViewModel decorator does not supply on every target.
-    // The selection is re-seeded from the nav key on restore, so nothing is lost.
-    private val selectedTopicId = MutableStateFlow(key.initialTopicId)
+  // TODO: this should no longer be necessary, the currently selected topic should be
+  //  available through the navigation state.
+  // The Android original kept this in a `SavedStateHandle`, which needs saved-state-aware
+  // `CreationExtras` that the Navigation 3 ViewModel decorator does not supply on every target.
+  // The selection is re-seeded from the nav key on restore, so nothing is lost.
+  private val selectedTopicId = MutableStateFlow(key.initialTopicId)
 
-    val uiState: StateFlow<InterestsUiState> = combine(
+  val uiState: StateFlow<InterestsUiState> =
+    combine(
         selectedTopicId,
         getFollowableTopics(sortBy = TopicSortField.NAME),
         InterestsUiState::Interests,
-    ).stateIn(
+      )
+      .stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = InterestsUiState.Loading,
-    )
+      )
 
-    fun followTopic(followedTopicId: String, followed: Boolean) {
-        viewModelScope.launch {
-            userDataRepository.setTopicIdFollowed(followedTopicId, followed)
-        }
+  fun followTopic(followedTopicId: String, followed: Boolean) {
+    viewModelScope.launch {
+      userDataRepository.setTopicIdFollowed(followedTopicId, followed)
     }
+  }
 
-    fun onTopicClick(topicId: String?) {
-        // TODO: This should modify the navigation state directly rather than just updating the
-        //  savedStateHandle
-        selectedTopicId.value = topicId
-    }
+  fun onTopicClick(topicId: String?) {
+    // TODO: This should modify the navigation state directly rather than just updating the
+    //  savedStateHandle
+    selectedTopicId.value = topicId
+  }
 
-    @AssistedFactory
-    @ManualViewModelAssistedFactoryKey
-    @ContributesIntoMap(AppScope::class)
-    fun interface Factory : ManualViewModelAssistedFactory {
-        fun create(key: InterestsNavKey): InterestsViewModel
-    }
+  @AssistedFactory
+  @ManualViewModelAssistedFactoryKey
+  @ContributesIntoMap(AppScope::class)
+  fun interface Factory : ManualViewModelAssistedFactory {
+    fun create(key: InterestsNavKey): InterestsViewModel
+  }
 }
 
 sealed interface InterestsUiState {
-    data object Loading : InterestsUiState
+  data object Loading : InterestsUiState
 
-    data class Interests(val selectedTopicId: String?, val topics: List<FollowableTopic>) : InterestsUiState
+  data class Interests(val selectedTopicId: String?, val topics: List<FollowableTopic>) :
+    InterestsUiState
 
-    data object Empty : InterestsUiState
+  data object Empty : InterestsUiState
 }

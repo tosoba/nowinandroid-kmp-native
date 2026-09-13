@@ -17,17 +17,17 @@
 package com.skydoves.nowinandroid.core.common.log
 
 actual object NiaLogger {
-    actual fun debug(tag: String, message: String) {
-        println("D/$tag: $message")
-    }
+  actual fun debug(tag: String, message: String) {
+    println("D/$tag: $message")
+  }
 
-    actual fun info(tag: String, message: String, throwable: Throwable?) {
-        println("I/$tag: $message")
-        throwable?.printStackTrace()
-    }
+  actual fun info(tag: String, message: String, throwable: Throwable?) {
+    println("I/$tag: $message")
+    throwable?.printStackTrace()
+  }
 
-    actual fun error(tag: String, message: String, throwable: Throwable?) {
-        System.err.println("E/$tag: $message")
-        throwable?.printStackTrace()
-    }
+  actual fun error(tag: String, message: String, throwable: Throwable?) {
+    System.err.println("E/$tag: $message")
+    throwable?.printStackTrace()
+  }
 }

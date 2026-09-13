@@ -15,46 +15,46 @@
  */
 
 plugins {
-    // The Compose plugin is applied for the moko-resources setup it brings in (via the compose
-    // convention), which is how the bundled demo JSON ships on Android, iOS and the desktop JVM.
-    id("nowinandroid.kmp.multiplatform.compose")
-    alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.metro)
+  // The Compose plugin is applied for the moko-resources setup it brings in (via the compose
+  // convention), which is how the bundled demo JSON ships on Android, iOS and the desktop JVM.
+  id("nowinandroid.kmp.multiplatform.compose")
+  alias(libs.plugins.kotlin.serialization)
+  alias(libs.plugins.metro)
 }
 
 kotlin {
-    sourceSets {
-        commonMain.dependencies {
-            api(projects.core.model)
-            api(projects.core.common)
-            api(libs.sandwich)
-            api(libs.sandwich.ktor)
-            api(libs.ktor.client.core)
-            implementation(libs.compose.runtime)
-            implementation(libs.compose.components.resources)
-            implementation(libs.ktor.client.content.negotiation)
-            implementation(libs.ktor.client.logging)
-            implementation(libs.ktor.serialization.kotlinx.json)
-            implementation(libs.kotlinx.serialization.json)
-            implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.metro.runtime)
-        }
-        androidMain.dependencies {
-            implementation(libs.ktor.client.okhttp)
-        }
-        iosMain.dependencies {
-            implementation(libs.ktor.client.darwin)
-        }
-        getByName("desktopMain").dependencies {
-            implementation(libs.ktor.client.okhttp)
-        }
-        getByName("wasmJsMain").dependencies {
-            implementation(libs.ktor.client.js)
-        }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-            implementation(libs.ktor.client.mock)
-            implementation(libs.kotlinx.coroutines.test)
-        }
+  sourceSets {
+    commonMain.dependencies {
+      api(projects.core.model)
+      api(projects.core.common)
+      api(libs.sandwich)
+      api(libs.sandwich.ktor)
+      api(libs.ktor.client.core)
+      implementation(libs.compose.runtime)
+      implementation(libs.compose.components.resources)
+      implementation(libs.ktor.client.content.negotiation)
+      implementation(libs.ktor.client.logging)
+      implementation(libs.ktor.serialization.kotlinx.json)
+      implementation(libs.kotlinx.serialization.json)
+      implementation(libs.kotlinx.coroutines.core)
+      implementation(libs.metro.runtime)
     }
+    androidMain.dependencies {
+      implementation(libs.ktor.client.okhttp)
+    }
+    iosMain.dependencies {
+      implementation(libs.ktor.client.darwin)
+    }
+    getByName("desktopMain").dependencies {
+      implementation(libs.ktor.client.okhttp)
+    }
+    getByName("wasmJsMain").dependencies {
+      implementation(libs.ktor.client.js)
+    }
+    commonTest.dependencies {
+      implementation(libs.kotlin.test)
+      implementation(libs.ktor.client.mock)
+      implementation(libs.kotlinx.coroutines.test)
+    }
+  }
 }

@@ -36,76 +36,77 @@ import kotlin.test.assertTrue
  */
 class NiaPreferencesDataSourceTest {
 
-    private fun TestScope.subject(): NiaPreferencesDataSource {
-        val fileSystem = FakeFileSystem()
-        return NiaPreferencesDataSource(
-            DataStoreFactory.create(
-                storage = OkioStorage(
-                    fileSystem = fileSystem,
-                    serializer = UserPreferencesSerializer,
-                    producePath = { "/user_preferences.json".toPath() },
-                ),
-                scope = backgroundScope,
-            ),
-        )
-    }
+  private fun TestScope.subject(): NiaPreferencesDataSource {
+    val fileSystem = FakeFileSystem()
+    return NiaPreferencesDataSource(
+      DataStoreFactory.create(
+        storage =
+          OkioStorage(
+            fileSystem = fileSystem,
+            serializer = UserPreferencesSerializer,
+            producePath = { "/user_preferences.json".toPath() },
+          ),
+        scope = backgroundScope,
+      )
+    )
+  }
 
-    @Test
-    fun defaultUserData() = runTest {
-        val userData = subject().userData.first()
+  @Test
+  fun defaultUserData() = runTest {
+    val userData = subject().userData.first()
 
-        assertEquals(emptySet(), userData.followedTopics)
-        assertEquals(ThemeBrand.DEFAULT, userData.themeBrand)
-        assertEquals(DarkThemeConfig.FOLLOW_SYSTEM, userData.darkThemeConfig)
-        assertFalse(userData.shouldHideOnboarding)
-    }
+    assertEquals(emptySet(), userData.followedTopics)
+    assertEquals(ThemeBrand.DEFAULT, userData.themeBrand)
+    assertEquals(DarkThemeConfig.FOLLOW_SYSTEM, userData.darkThemeConfig)
+    assertFalse(userData.shouldHideOnboarding)
+  }
 
-    @Test
-    fun followingATopicIsPersisted() = runTest {
-        val subject = subject()
+  @Test
+  fun followingATopicIsPersisted() = runTest {
+    val subject = subject()
 
-        subject.setTopicIdFollowed("1", true)
-        subject.setTopicIdFollowed("2", true)
-        subject.setTopicIdFollowed("1", false)
+    subject.setTopicIdFollowed("1", true)
+    subject.setTopicIdFollowed("2", true)
+    subject.setTopicIdFollowed("1", false)
 
-        assertEquals(setOf("2"), subject.userData.first().followedTopics)
-    }
+    assertEquals(setOf("2"), subject.userData.first().followedTopics)
+  }
 
-    @Test
-    fun unfollowingTheLastTopicResetsOnboarding() = runTest {
-        val subject = subject()
+  @Test
+  fun unfollowingTheLastTopicResetsOnboarding() = runTest {
+    val subject = subject()
 
-        subject.setTopicIdFollowed("1", true)
-        subject.setShouldHideOnboarding(true)
-        assertTrue(subject.userData.first().shouldHideOnboarding)
+    subject.setTopicIdFollowed("1", true)
+    subject.setShouldHideOnboarding(true)
+    assertTrue(subject.userData.first().shouldHideOnboarding)
 
-        subject.setTopicIdFollowed("1", false)
+    subject.setTopicIdFollowed("1", false)
 
-        assertFalse(subject.userData.first().shouldHideOnboarding)
-    }
+    assertFalse(subject.userData.first().shouldHideOnboarding)
+  }
 
-    @Test
-    fun changeListVersionsRoundTrip() = runTest {
-        val subject = subject()
+  @Test
+  fun changeListVersionsRoundTrip() = runTest {
+    val subject = subject()
 
-        subject.updateChangeListVersion { copy(topicVersion = 7, newsResourceVersion = 11) }
+    subject.updateChangeListVersion { copy(topicVersion = 7, newsResourceVersion = 11) }
 
-        assertEquals(
-            ChangeListVersions(topicVersion = 7, newsResourceVersion = 11),
-            subject.getChangeListVersions(),
-        )
-    }
+    assertEquals(
+      ChangeListVersions(topicVersion = 7, newsResourceVersion = 11),
+      subject.getChangeListVersions(),
+    )
+  }
 
-    @Test
-    fun bookmarksAndViewedResourcesArePersisted() = runTest {
-        val subject = subject()
+  @Test
+  fun bookmarksAndViewedResourcesArePersisted() = runTest {
+    val subject = subject()
 
-        subject.setNewsResourceBookmarked("n1", true)
-        subject.setNewsResourcesViewed(listOf("n1", "n2"), true)
-        subject.setNewsResourceViewed("n2", false)
+    subject.setNewsResourceBookmarked("n1", true)
+    subject.setNewsResourcesViewed(listOf("n1", "n2"), true)
+    subject.setNewsResourceViewed("n2", false)
 
-        val userData = subject.userData.first()
-        assertEquals(setOf("n1"), userData.bookmarkedNewsResources)
-        assertEquals(setOf("n1"), userData.viewedNewsResources)
-    }
+    val userData = subject.userData.first()
+    assertEquals(setOf("n1"), userData.bookmarkedNewsResources)
+    assertEquals(setOf("n1"), userData.viewedNewsResources)
+  }
 }

@@ -30,53 +30,56 @@ import kotlinx.coroutines.CoroutineScope
  * Android reports real jank state; every other target gets a no-op.
  */
 interface JankMetricsState {
-    fun putState(key: String, value: String)
-    fun removeState(key: String)
+  fun putState(key: String, value: String)
+
+  fun removeState(key: String)
 }
 
-@Composable
-expect fun rememberMetricsStateHolder(): JankMetricsState
+@Composable expect fun rememberMetricsStateHolder(): JankMetricsState
 
 /**
  * Convenience function to work with [JankMetricsState]. The side effect is re-launched if any of
  * the [keys] value is not equal to the previous composition.
+ *
  * @see TrackDisposableJank if you need to work with DisposableEffect to clean up added state.
  */
 @Composable
-fun TrackJank(vararg keys: Any, reportMetric: suspend CoroutineScope.(state: JankMetricsState) -> Unit) {
-    val metrics = rememberMetricsStateHolder()
-    LaunchedEffect(metrics, *keys) {
-        reportMetric(metrics)
-    }
+fun TrackJank(
+  vararg keys: Any,
+  reportMetric: suspend CoroutineScope.(state: JankMetricsState) -> Unit,
+) {
+  val metrics = rememberMetricsStateHolder()
+  LaunchedEffect(metrics, *keys) {
+    reportMetric(metrics)
+  }
 }
 
 /**
- * Convenience function to work with [JankMetricsState] that needs to be cleaned up. The side
- * effect is re-launched if any of the [keys] value is not equal to the previous composition.
+ * Convenience function to work with [JankMetricsState] that needs to be cleaned up. The side effect
+ * is re-launched if any of the [keys] value is not equal to the previous composition.
  */
 @Composable
 fun TrackDisposableJank(
-    vararg keys: Any,
-    reportMetric: DisposableEffectScope.(state: JankMetricsState) -> DisposableEffectResult,
+  vararg keys: Any,
+  reportMetric: DisposableEffectScope.(state: JankMetricsState) -> DisposableEffectResult,
 ) {
-    val metrics = rememberMetricsStateHolder()
-    DisposableEffect(metrics, *keys) {
-        reportMetric(this, metrics)
-    }
+  val metrics = rememberMetricsStateHolder()
+  DisposableEffect(metrics, *keys) {
+    reportMetric(this, metrics)
+  }
 }
 
-/**
- * Track jank while scrolling anything that's scrollable.
- */
+/** Track jank while scrolling anything that's scrollable. */
 @Composable
 fun TrackScrollJank(scrollableState: ScrollableState, stateName: String) {
-    TrackJank(scrollableState) { metricsHolder ->
-        snapshotFlow { scrollableState.isScrollInProgress }.collect { isScrollInProgress ->
-            if (isScrollInProgress) {
-                metricsHolder.putState(stateName, "Scrolling=true")
-            } else {
-                metricsHolder.removeState(stateName)
-            }
+  TrackJank(scrollableState) { metricsHolder ->
+    snapshotFlow { scrollableState.isScrollInProgress }
+      .collect { isScrollInProgress ->
+        if (isScrollInProgress) {
+          metricsHolder.putState(stateName, "Scrolling=true")
+        } else {
+          metricsHolder.removeState(stateName)
         }
-    }
+      }
+  }
 }

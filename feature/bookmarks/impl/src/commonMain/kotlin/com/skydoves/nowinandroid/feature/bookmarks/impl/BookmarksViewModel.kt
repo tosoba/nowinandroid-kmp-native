@@ -41,48 +41,49 @@ import kotlinx.coroutines.launch
 @ContributesIntoMap(AppScope::class)
 @ViewModelKey(BookmarksViewModel::class)
 class BookmarksViewModel(
-    private val userDataRepository: UserDataRepository,
-    userNewsResourceRepository: UserNewsResourceRepository,
+  private val userDataRepository: UserDataRepository,
+  userNewsResourceRepository: UserNewsResourceRepository,
 ) : ViewModel() {
 
-    var shouldDisplayUndoBookmark by mutableStateOf(false)
-    private var lastRemovedBookmarkId: String? = null
+  var shouldDisplayUndoBookmark by mutableStateOf(false)
+  private var lastRemovedBookmarkId: String? = null
 
-    val feedUiState: StateFlow<NewsFeedUiState> =
-        userNewsResourceRepository.observeAllBookmarked()
-            .map<List<UserNewsResource>, NewsFeedUiState>(NewsFeedUiState::Success)
-            .onStart { emit(Loading) }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = Loading,
-            )
+  val feedUiState: StateFlow<NewsFeedUiState> =
+    userNewsResourceRepository
+      .observeAllBookmarked()
+      .map<List<UserNewsResource>, NewsFeedUiState>(NewsFeedUiState::Success)
+      .onStart { emit(Loading) }
+      .stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = Loading,
+      )
 
-    fun removeFromSavedResources(newsResourceId: String) {
-        viewModelScope.launch {
-            shouldDisplayUndoBookmark = true
-            lastRemovedBookmarkId = newsResourceId
-            userDataRepository.setNewsResourceBookmarked(newsResourceId, false)
-        }
+  fun removeFromSavedResources(newsResourceId: String) {
+    viewModelScope.launch {
+      shouldDisplayUndoBookmark = true
+      lastRemovedBookmarkId = newsResourceId
+      userDataRepository.setNewsResourceBookmarked(newsResourceId, false)
     }
+  }
 
-    fun setNewsResourceViewed(newsResourceId: String, viewed: Boolean) {
-        viewModelScope.launch {
-            userDataRepository.setNewsResourceViewed(newsResourceId, viewed)
-        }
+  fun setNewsResourceViewed(newsResourceId: String, viewed: Boolean) {
+    viewModelScope.launch {
+      userDataRepository.setNewsResourceViewed(newsResourceId, viewed)
     }
+  }
 
-    fun undoBookmarkRemoval() {
-        viewModelScope.launch {
-            lastRemovedBookmarkId?.let {
-                userDataRepository.setNewsResourceBookmarked(it, true)
-            }
-        }
-        clearUndoState()
+  fun undoBookmarkRemoval() {
+    viewModelScope.launch {
+      lastRemovedBookmarkId?.let {
+        userDataRepository.setNewsResourceBookmarked(it, true)
+      }
     }
+    clearUndoState()
+  }
 
-    fun clearUndoState() {
-        shouldDisplayUndoBookmark = false
-        lastRemovedBookmarkId = null
-    }
+  fun clearUndoState() {
+    shouldDisplayUndoBookmark = false
+    lastRemovedBookmarkId = null
+  }
 }

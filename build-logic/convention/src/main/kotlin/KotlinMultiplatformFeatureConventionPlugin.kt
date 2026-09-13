@@ -25,39 +25,39 @@ import org.gradle.kotlin.dsl.dependencies
  * Declaring that once here keeps the six feature build scripts down to a `plugins { }` block.
  */
 class KotlinMultiplatformFeatureConventionPlugin : Plugin<Project> {
-    override fun apply(target: Project) {
-        with(target) {
-            pluginManager.apply("nowinandroid.kmp.multiplatform.compose")
-            pluginManager.apply("org.jetbrains.kotlin.plugin.serialization")
-            pluginManager.apply("dev.zacsweers.metro")
-            // The navgraph processor is a KSP processor and reads only its own module's sources,
-            // so it is applied per feature: each one owns and checks its slice of the graph.
-            pluginManager.apply("com.google.devtools.ksp")
-            pluginManager.apply("com.github.skydoves.navgraph")
+  override fun apply(target: Project) {
+    with(target) {
+      pluginManager.apply("nowinandroid.kmp.multiplatform.compose")
+      pluginManager.apply("org.jetbrains.kotlin.plugin.serialization")
+      pluginManager.apply("dev.zacsweers.metro")
+      // The navgraph processor is a KSP processor and reads only its own module's sources,
+      // so it is applied per feature: each one owns and checks its slice of the graph.
+      pluginManager.apply("com.google.devtools.ksp")
+      pluginManager.apply("com.github.skydoves.navgraph")
 
-            dependencies {
-                add("commonMainApi", project(":core:ui"))
-                add("commonMainApi", project(":core:designsystem"))
-                add("commonMainApi", project(":core:data"))
-                add("commonMainApi", project(":core:domain"))
-                add("commonMainApi", project(":core:analytics"))
+      dependencies {
+        add("commonMainApi", project(":core:ui"))
+        add("commonMainApi", project(":core:designsystem"))
+        add("commonMainApi", project(":core:data"))
+        add("commonMainApi", project(":core:domain"))
+        add("commonMainApi", project(":core:analytics"))
 
-                add("commonMainApi", libs.findLibrary("androidx-lifecycle-viewmodel").get())
-                add("commonMainApi", libs.findLibrary("androidx-lifecycle-viewmodel-compose").get())
-                add("commonMainApi", libs.findLibrary("androidx-lifecycle-runtime-compose").get())
-                add("commonMainApi", libs.findLibrary("androidx-navigation3-ui").get())
-                add("commonMainApi", libs.findLibrary("androidx-lifecycle-viewmodel-navigation3").get())
-                add("commonMainApi", libs.findLibrary("compose-adaptive-navigation3").get())
-                add("commonMainApi", libs.findLibrary("metro-runtime").get())
-                add("commonMainApi", libs.findLibrary("metro-viewmodel").get())
-                add("commonMainApi", libs.findLibrary("metro-viewmodel-compose").get())
-                add("commonMainApi", libs.findLibrary("compose-nav-graph-annotations").get())
+        add("commonMainApi", libs.findLibrary("androidx-lifecycle-viewmodel").get())
+        add("commonMainApi", libs.findLibrary("androidx-lifecycle-viewmodel-compose").get())
+        add("commonMainApi", libs.findLibrary("androidx-lifecycle-runtime-compose").get())
+        add("commonMainApi", libs.findLibrary("androidx-navigation3-ui").get())
+        add("commonMainApi", libs.findLibrary("androidx-lifecycle-viewmodel-navigation3").get())
+        add("commonMainApi", libs.findLibrary("compose-adaptive-navigation3").get())
+        add("commonMainApi", libs.findLibrary("metro-runtime").get())
+        add("commonMainApi", libs.findLibrary("metro-viewmodel").get())
+        add("commonMainApi", libs.findLibrary("metro-viewmodel-compose").get())
+        add("commonMainApi", libs.findLibrary("compose-nav-graph-annotations").get())
 
-                add("commonTestImplementation", libs.findLibrary("kotlin-test").get())
-                add("commonTestImplementation", libs.findLibrary("kotlinx-coroutines-test").get())
-                add("commonTestImplementation", libs.findLibrary("turbine").get())
-                add("commonTestImplementation", project(":core:testing"))
-            }
-        }
+        add("commonTestImplementation", libs.findLibrary("kotlin-test").get())
+        add("commonTestImplementation", libs.findLibrary("kotlinx-coroutines-test").get())
+        add("commonTestImplementation", libs.findLibrary("turbine").get())
+        add("commonTestImplementation", project(":core:testing"))
+      }
     }
+  }
 }

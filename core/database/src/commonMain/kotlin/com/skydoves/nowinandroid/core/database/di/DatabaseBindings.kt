@@ -36,31 +36,28 @@ import kotlinx.coroutines.CoroutineDispatcher
 @ContributesTo(AppScope::class)
 object DatabaseBindings {
 
-    @Provides
-    @SingleIn(AppScope::class)
-    fun providesNiaDatabase(
-        builder: RoomDatabase.Builder<NiaDatabase>,
-        // The driver is a binding rather than a constant: the bundled SQLite is a native library,
-        // so a target without one supplies its own.
-        driver: SQLiteDriver,
-        @IoDispatcher ioDispatcher: CoroutineDispatcher,
-    ): NiaDatabase = builder
-        .setDriver(driver)
-        .setQueryCoroutineContext(ioDispatcher)
-        .build()
+  @Provides
+  @SingleIn(AppScope::class)
+  fun providesNiaDatabase(
+    builder: RoomDatabase.Builder<NiaDatabase>,
+    // The driver is a binding rather than a constant: the bundled SQLite is a native library,
+    // so a target without one supplies its own.
+    driver: SQLiteDriver,
+    @IoDispatcher ioDispatcher: CoroutineDispatcher,
+  ): NiaDatabase = builder.setDriver(driver).setQueryCoroutineContext(ioDispatcher).build()
 
-    @Provides
-    fun providesTopicsDao(database: NiaDatabase): TopicDao = database.topicDao()
+  @Provides fun providesTopicsDao(database: NiaDatabase): TopicDao = database.topicDao()
 
-    @Provides
-    fun providesNewsResourceDao(database: NiaDatabase): NewsResourceDao = database.newsResourceDao()
+  @Provides
+  fun providesNewsResourceDao(database: NiaDatabase): NewsResourceDao = database.newsResourceDao()
 
-    @Provides
-    fun providesTopicFtsDao(database: NiaDatabase): TopicFtsDao = database.topicFtsDao()
+  @Provides fun providesTopicFtsDao(database: NiaDatabase): TopicFtsDao = database.topicFtsDao()
 
-    @Provides
-    fun providesNewsResourceFtsDao(database: NiaDatabase): NewsResourceFtsDao = database.newsResourceFtsDao()
+  @Provides
+  fun providesNewsResourceFtsDao(database: NiaDatabase): NewsResourceFtsDao =
+    database.newsResourceFtsDao()
 
-    @Provides
-    fun providesRecentSearchQueryDao(database: NiaDatabase): RecentSearchQueryDao = database.recentSearchQueryDao()
+  @Provides
+  fun providesRecentSearchQueryDao(database: NiaDatabase): RecentSearchQueryDao =
+    database.recentSearchQueryDao()
 }

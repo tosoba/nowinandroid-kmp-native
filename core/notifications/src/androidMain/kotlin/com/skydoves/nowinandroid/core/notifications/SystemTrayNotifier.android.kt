@@ -42,98 +42,97 @@ private const val NEWS_NOTIFICATION_SUMMARY_ID = 1
 private const val NEWS_NOTIFICATION_CHANNEL_ID = "news"
 private const val NEWS_NOTIFICATION_GROUP = "NEWS_NOTIFICATIONS"
 
-/**
- * Implementation of [Notifier] that displays notifications in the system tray.
- */
+/** Implementation of [Notifier] that displays notifications in the system tray. */
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class SystemTrayNotifier(private val context: Context) : Notifier {
 
-    override fun postNewsNotifications(newsResources: List<NewsResource>) = with(context) {
-        if (checkSelfPermission(this, permission.POST_NOTIFICATIONS) != PERMISSION_GRANTED) {
-            return
-        }
+  override fun postNewsNotifications(newsResources: List<NewsResource>) =
+    with(context) {
+      if (checkSelfPermission(this, permission.POST_NOTIFICATIONS) != PERMISSION_GRANTED) {
+        return
+      }
 
-        val truncatedNewsResources = newsResources.take(MAX_NUM_NOTIFICATIONS)
+      val truncatedNewsResources = newsResources.take(MAX_NUM_NOTIFICATIONS)
 
-        val newsNotifications = truncatedNewsResources.map { newsResource ->
-            createNewsNotification {
-                setSmallIcon(R.drawable.core_notifications_ic_nia_notification)
-                    .setContentTitle(newsResource.title)
-                    .setContentText(newsResource.content)
-                    .setContentIntent(newsPendingIntent(newsResource))
-                    .setGroup(NEWS_NOTIFICATION_GROUP)
-                    .setAutoCancel(true)
-            }
+      val newsNotifications = truncatedNewsResources.map { newsResource ->
+        createNewsNotification {
+          setSmallIcon(R.drawable.core_notifications_ic_nia_notification)
+            .setContentTitle(newsResource.title)
+            .setContentText(newsResource.content)
+            .setContentIntent(newsPendingIntent(newsResource))
+            .setGroup(NEWS_NOTIFICATION_GROUP)
+            .setAutoCancel(true)
         }
-        val summaryNotification = createNewsNotification {
-            val title = newsNotificationGroupSummary(truncatedNewsResources.size)
-            setContentTitle(title)
-                .setContentText(title)
-                .setSmallIcon(R.drawable.core_notifications_ic_nia_notification)
-                // Build summary info into InboxStyle template.
-                .setStyle(newsNotificationStyle(truncatedNewsResources, title))
-                .setGroup(NEWS_NOTIFICATION_GROUP)
-                .setGroupSummary(true)
-                .setAutoCancel(true)
-                .build()
-        }
+      }
+      val summaryNotification = createNewsNotification {
+        val title = newsNotificationGroupSummary(truncatedNewsResources.size)
+        setContentTitle(title)
+          .setContentText(title)
+          .setSmallIcon(R.drawable.core_notifications_ic_nia_notification)
+          // Build summary info into InboxStyle template.
+          .setStyle(newsNotificationStyle(truncatedNewsResources, title))
+          .setGroup(NEWS_NOTIFICATION_GROUP)
+          .setGroupSummary(true)
+          .setAutoCancel(true)
+          .build()
+      }
 
-        val notificationManager = NotificationManagerCompat.from(this)
-        newsNotifications.forEachIndexed { index, notification ->
-            notificationManager.notify(truncatedNewsResources[index].id.hashCode(), notification)
-        }
-        notificationManager.notify(NEWS_NOTIFICATION_SUMMARY_ID, summaryNotification)
+      val notificationManager = NotificationManagerCompat.from(this)
+      newsNotifications.forEachIndexed { index, notification ->
+        notificationManager.notify(truncatedNewsResources[index].id.hashCode(), notification)
+      }
+      notificationManager.notify(NEWS_NOTIFICATION_SUMMARY_ID, summaryNotification)
     }
 
-    /**
-     * Creates an inbox style summary notification for news updates
-     */
-    private fun newsNotificationStyle(newsResources: List<NewsResource>, title: String): InboxStyle = newsResources
-        .fold(InboxStyle()) { inboxStyle, newsResource -> inboxStyle.addLine(newsResource.title) }
-        .setBigContentTitle(title)
-        .setSummaryText(title)
+  /** Creates an inbox style summary notification for news updates */
+  private fun newsNotificationStyle(newsResources: List<NewsResource>, title: String): InboxStyle =
+    newsResources
+      .fold(InboxStyle()) { inboxStyle, newsResource -> inboxStyle.addLine(newsResource.title) }
+      .setBigContentTitle(title)
+      .setSummaryText(title)
 }
 
-/**
- * Creates a notification configured for news updates
- */
-private fun Context.createNewsNotification(block: NotificationCompat.Builder.() -> Unit): Notification {
-    ensureNotificationChannelExists()
-    return NotificationCompat.Builder(this, NEWS_NOTIFICATION_CHANNEL_ID)
-        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-        .apply(block)
-        .build()
+/** Creates a notification configured for news updates */
+private fun Context.createNewsNotification(
+  block: NotificationCompat.Builder.() -> Unit
+): Notification {
+  ensureNotificationChannelExists()
+  return NotificationCompat.Builder(this, NEWS_NOTIFICATION_CHANNEL_ID)
+    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+    .apply(block)
+    .build()
 }
 
-/**
- * Ensures that a notification channel is present if applicable
- */
+/** Ensures that a notification channel is present if applicable */
 private fun Context.ensureNotificationChannelExists() {
-    if (VERSION.SDK_INT < VERSION_CODES.O) return
+  if (VERSION.SDK_INT < VERSION_CODES.O) return
 
-    val channel = NotificationChannel(
+  val channel =
+    NotificationChannel(
         NEWS_NOTIFICATION_CHANNEL_ID,
         NEWS_NOTIFICATION_CHANNEL_NAME,
         NotificationManager.IMPORTANCE_DEFAULT,
-    ).apply {
+      )
+      .apply {
         description = NEWS_NOTIFICATION_CHANNEL_DESCRIPTION
-    }
-    NotificationManagerCompat.from(this).createNotificationChannel(channel)
+      }
+  NotificationManagerCompat.from(this).createNotificationChannel(channel)
 }
 
 /**
  * An implicit `ACTION_VIEW` on the app's own deep link host, so the manifest intent filter is the
  * only place the target activity is named.
  */
-private fun Context.newsPendingIntent(newsResource: NewsResource): PendingIntent? = PendingIntent.getActivity(
+private fun Context.newsPendingIntent(newsResource: NewsResource): PendingIntent? =
+  PendingIntent.getActivity(
     this,
     NEWS_NOTIFICATION_REQUEST_CODE,
     Intent().apply {
-        action = Intent.ACTION_VIEW
-        data = newsResource.newsDeepLink().toUri()
-        setPackage(packageName)
+      action = Intent.ACTION_VIEW
+      data = newsResource.newsDeepLink().toUri()
+      setPackage(packageName)
     },
     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-)
+  )

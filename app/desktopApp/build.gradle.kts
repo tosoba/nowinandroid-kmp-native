@@ -17,34 +17,34 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
-    alias(libs.plugins.kotlin.jvm)
-    alias(libs.plugins.compose.multiplatform)
-    alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.metro)
-    id("nowinandroid.spotless")
+  alias(libs.plugins.kotlin.jvm)
+  alias(libs.plugins.compose.multiplatform)
+  alias(libs.plugins.compose.compiler)
+  alias(libs.plugins.metro)
+  id("nowinandroid.spotless")
 }
 
 kotlin {
-    jvmToolchain(libs.versions.jvmToolchain.get().toInt())
+  jvmToolchain(libs.versions.jvmToolchain.get().toInt())
 
-    dependencies {
-        implementation(projects.app.shared)
-        implementation(compose.desktop.currentOs)
-        implementation(libs.kotlinx.coroutines.swing)
-    }
+  dependencies {
+    implementation(projects.app.shared)
+    implementation(compose.desktop.currentOs)
+    implementation(libs.kotlinx.coroutines.swing)
+  }
 }
 
 compose.desktop {
-    application {
-        mainClass = "com.skydoves.nowinandroid.MainKt"
+  application {
+    mainClass = "com.skydoves.nowinandroid.MainKt"
 
-        nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "Now in Android"
-            packageVersion = "1.0.0"
-            description = "Now in Android for Android, iOS and the desktop"
-            copyright = "Designed and developed by 2026 skydoves (Jaewoong Eum)"
-            vendor = "skydoves"
-        }
+    nativeDistributions {
+      targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+      packageName = "Now in Android"
+      packageVersion = "1.0.0"
+      description = "Now in Android for Android, iOS and the desktop"
+      copyright = "Designed and developed by 2026 skydoves (Jaewoong Eum)"
+      vendor = "skydoves"
     }
+  }
 }

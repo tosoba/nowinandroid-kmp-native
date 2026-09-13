@@ -19,17 +19,15 @@ package com.skydoves.nowinandroid.core.model.data
 import androidx.compose.runtime.Immutable
 import kotlin.time.Instant
 
-/**
- * External data layer representation of a fully populated NiA news resource
- */
+/** External data layer representation of a fully populated NiA news resource */
 @Immutable
 data class NewsResource(
-    val id: String,
-    val title: String,
-    val content: String,
-    val url: String,
-    val headerImageUrl: String?,
-    val publishDate: Instant,
-    val type: String,
-    val topics: List<Topic>,
+  val id: String,
+  val title: String,
+  val content: String,
+  val url: String,
+  val headerImageUrl: String?,
+  val publishDate: Instant,
+  val type: String,
+  val topics: List<Topic>,
 )

@@ -32,54 +32,53 @@ import kotlin.test.assertEquals
 
 class SettingsViewModelTest {
 
-    private val userDataRepository = TestUserDataRepository()
-    private lateinit var viewModel: SettingsViewModel
+  private val userDataRepository = TestUserDataRepository()
+  private lateinit var viewModel: SettingsViewModel
 
-    @BeforeTest
-    fun setUp() {
-        Dispatchers.setMain(kotlinx.coroutines.test.UnconfinedTestDispatcher())
-        viewModel = SettingsViewModel(userDataRepository)
+  @BeforeTest
+  fun setUp() {
+    Dispatchers.setMain(kotlinx.coroutines.test.UnconfinedTestDispatcher())
+    viewModel = SettingsViewModel(userDataRepository)
+  }
+
+  @AfterTest fun tearDown() = Dispatchers.resetMain()
+
+  @Test
+  fun stateIsInitiallyLoading() = runTest {
+    assertEquals(SettingsUiState.Loading, viewModel.settingsUiState.value)
+  }
+
+  @Test
+  fun stateIsSuccessAfterUserDataLoads() = runTest {
+    viewModel.settingsUiState.test {
+      assertEquals(SettingsUiState.Loading, awaitItem())
+      userDataRepository.setUserData(emptyUserData)
+
+      assertEquals(
+        SettingsUiState.Success(
+          UserEditableSettings(
+            brand = ThemeBrand.DEFAULT,
+            useDynamicColor = false,
+            darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
+          )
+        ),
+        awaitItem(),
+      )
+      cancelAndIgnoreRemainingEvents()
     }
+  }
 
-    @AfterTest
-    fun tearDown() = Dispatchers.resetMain()
+  @Test
+  fun changingTheThemeUpdatesTheState() = runTest {
+    userDataRepository.setUserData(emptyUserData)
 
-    @Test
-    fun stateIsInitiallyLoading() = runTest {
-        assertEquals(SettingsUiState.Loading, viewModel.settingsUiState.value)
-    }
+    viewModel.updateThemeBrand(ThemeBrand.ANDROID)
+    viewModel.updateDarkThemeConfig(DarkThemeConfig.DARK)
+    viewModel.updateDynamicColorPreference(true)
 
-    @Test
-    fun stateIsSuccessAfterUserDataLoads() = runTest {
-        viewModel.settingsUiState.test {
-            assertEquals(SettingsUiState.Loading, awaitItem())
-            userDataRepository.setUserData(emptyUserData)
-
-            assertEquals(
-                SettingsUiState.Success(
-                    UserEditableSettings(
-                        brand = ThemeBrand.DEFAULT,
-                        useDynamicColor = false,
-                        darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
-                    ),
-                ),
-                awaitItem(),
-            )
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
-    fun changingTheThemeUpdatesTheState() = runTest {
-        userDataRepository.setUserData(emptyUserData)
-
-        viewModel.updateThemeBrand(ThemeBrand.ANDROID)
-        viewModel.updateDarkThemeConfig(DarkThemeConfig.DARK)
-        viewModel.updateDynamicColorPreference(true)
-
-        val userData = userDataRepository.getCurrentUserData()
-        assertEquals(ThemeBrand.ANDROID, userData.themeBrand)
-        assertEquals(DarkThemeConfig.DARK, userData.darkThemeConfig)
-        assertEquals(true, userData.useDynamicColor)
-    }
+    val userData = userDataRepository.getCurrentUserData()
+    assertEquals(ThemeBrand.ANDROID, userData.themeBrand)
+    assertEquals(DarkThemeConfig.DARK, userData.darkThemeConfig)
+    assertEquals(true, userData.useDynamicColor)
+  }
 }

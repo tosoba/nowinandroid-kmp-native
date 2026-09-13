@@ -28,22 +28,23 @@ import com.skydoves.nowinandroid.feature.bookmarks.impl.BookmarksScreen
 import com.skydoves.nowinandroid.feature.topic.api.navigation.navigateToTopic
 
 fun EntryProviderScope<NavKey>.bookmarksEntry(navigator: Navigator) {
-    entry<BookmarksNavKey> {
-        val snackbarHostState = LocalSnackbarHostState.current
-        BookmarksScreen(
-            onTopicClick = navigator::navigateToTopic,
-            onShowSnackbar = { message, action ->
-                snackbarHostState.showSnackbar(
-                    message = message,
-                    actionLabel = action,
-                    duration = Short,
-                ) == ActionPerformed
-            },
-        )
-    }
+  entry<BookmarksNavKey> {
+    val snackbarHostState = LocalSnackbarHostState.current
+    BookmarksScreen(
+      onTopicClick = navigator::navigateToTopic,
+      onShowSnackbar = { message, action ->
+        snackbarHostState.showSnackbar(
+          message = message,
+          actionLabel = action,
+          duration = Short,
+        ) == ActionPerformed
+      },
+    )
+  }
 }
 
 // TODO: Why is this here?
-val LocalSnackbarHostState = compositionLocalOf<SnackbarHostState> {
+val LocalSnackbarHostState =
+  compositionLocalOf<SnackbarHostState> {
     error("SnackbarHostState state should be initialized at runtime")
-}
+  }

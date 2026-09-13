@@ -27,18 +27,18 @@ import com.skydoves.nowinandroid.ui.NiaAppRoot
 import dev.zacsweers.metro.createGraph
 
 fun main() {
-    val appGraph = createGraph<DesktopAppGraph>()
-    // The desktop has no background scheduler, so the one-off start-up sync is requested here,
-    // mirroring the Android original's unique `SyncWorker`.
-    appGraph.syncManager.initializeSync()
+  val appGraph = createGraph<DesktopAppGraph>()
+  // The desktop has no background scheduler, so the one-off start-up sync is requested here,
+  // mirroring the Android original's unique `SyncWorker`.
+  appGraph.syncManager.initializeSync()
 
-    application {
-        Window(
-            onCloseRequest = ::exitApplication,
-            title = "Now in Android",
-            state = rememberWindowState(size = DpSize(width = 1100.dp, height = 800.dp)),
-        ) {
-            NiaAppRoot(appGraph)
-        }
+  application {
+    Window(
+      onCloseRequest = ::exitApplication,
+      title = "Now in Android",
+      state = rememberWindowState(size = DpSize(width = 1100.dp, height = 800.dp)),
+    ) {
+      NiaAppRoot(appGraph)
     }
+  }
 }

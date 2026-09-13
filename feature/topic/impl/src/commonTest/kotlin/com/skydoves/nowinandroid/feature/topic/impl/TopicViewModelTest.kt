@@ -44,136 +44,137 @@ import kotlin.time.Instant
  */
 class TopicViewModelTest {
 
-    private val dispatcherRule = MainDispatcherRule()
-    private val userDataRepository = TestUserDataRepository()
-    private val topicsRepository = TestTopicsRepository()
-    private val newsRepository = TestNewsRepository()
-    private val userNewsResourceRepository = CompositeUserNewsResourceRepository(
-        newsRepository = newsRepository,
-        userDataRepository = userDataRepository,
+  private val dispatcherRule = MainDispatcherRule()
+  private val userDataRepository = TestUserDataRepository()
+  private val topicsRepository = TestTopicsRepository()
+  private val newsRepository = TestNewsRepository()
+  private val userNewsResourceRepository =
+    CompositeUserNewsResourceRepository(
+      newsRepository = newsRepository,
+      userDataRepository = userDataRepository,
     )
-    private lateinit var viewModel: TopicViewModel
+  private lateinit var viewModel: TopicViewModel
 
-    @BeforeTest
-    fun setup() {
-        dispatcherRule.setUp()
-        viewModel = TopicViewModel(
-            userDataRepository = userDataRepository,
-            topicsRepository = topicsRepository,
-            userNewsResourceRepository = userNewsResourceRepository,
-            topicId = testInputTopics[0].topic.id,
-        )
+  @BeforeTest
+  fun setup() {
+    dispatcherRule.setUp()
+    viewModel =
+      TopicViewModel(
+        userDataRepository = userDataRepository,
+        topicsRepository = topicsRepository,
+        userNewsResourceRepository = userNewsResourceRepository,
+        topicId = testInputTopics[0].topic.id,
+      )
+  }
+
+  @AfterTest fun tearDown() = dispatcherRule.tearDown()
+
+  @Test
+  fun topicId_matchesTopicIdFromTheNavKey() =
+    assertEquals(testInputTopics[0].topic.id, viewModel.topicId)
+
+  @Test
+  fun uiStateTopic_whenSuccess_matchesTopicFromRepository() = runTest {
+    backgroundScope.launch(UnconfinedTestDispatcher()) { viewModel.topicUiState.collect() }
+
+    topicsRepository.sendTopics(testInputTopics.map(FollowableTopic::topic))
+    userDataRepository.setFollowedTopicIds(setOf(testInputTopics[1].topic.id))
+    val item = viewModel.topicUiState.value
+    assertIs<TopicUiState.Success>(item)
+
+    val topicFromRepository = topicsRepository.getTopic(testInputTopics[0].topic.id).first()
+
+    assertEquals(topicFromRepository, item.followableTopic.topic)
+  }
+
+  @Test
+  fun uiStateNews_whenInitialized_thenShowLoading() = runTest {
+    assertEquals(NewsUiState.Loading, viewModel.newsUiState.value)
+  }
+
+  @Test
+  fun uiStateTopic_whenInitialized_thenShowLoading() = runTest {
+    assertEquals(TopicUiState.Loading, viewModel.topicUiState.value)
+  }
+
+  @Test
+  fun uiStateTopic_whenFollowedIdsSuccessAndTopicLoading_thenShowLoading() = runTest {
+    backgroundScope.launch(UnconfinedTestDispatcher()) { viewModel.topicUiState.collect() }
+
+    userDataRepository.setFollowedTopicIds(setOf(testInputTopics[1].topic.id))
+    assertEquals(TopicUiState.Loading, viewModel.topicUiState.value)
+  }
+
+  @Test
+  fun uiStateTopic_whenTopicSuccess_thenNewsStillLoading() = runTest {
+    backgroundScope.launch(UnconfinedTestDispatcher()) { viewModel.topicUiState.collect() }
+
+    topicsRepository.sendTopics(testInputTopics.map { it.topic })
+    userDataRepository.setFollowedTopicIds(setOf(testInputTopics[1].topic.id))
+
+    assertIs<TopicUiState.Success>(viewModel.topicUiState.value)
+    assertIs<NewsUiState.Loading>(viewModel.newsUiState.value)
+  }
+
+  @Test
+  fun uiStateTopic_whenTopicAndNewsSuccess_thenAllSuccess() = runTest {
+    backgroundScope.launch(UnconfinedTestDispatcher()) {
+      combine(viewModel.topicUiState, viewModel.newsUiState, ::Pair).collect()
     }
+    topicsRepository.sendTopics(testInputTopics.map { it.topic })
+    userDataRepository.setFollowedTopicIds(setOf(testInputTopics[1].topic.id))
+    newsRepository.sendNewsResources(sampleNewsResources)
 
-    @AfterTest
-    fun tearDown() = dispatcherRule.tearDown()
+    assertIs<TopicUiState.Success>(viewModel.topicUiState.value)
+    assertIs<NewsUiState.Success>(viewModel.newsUiState.value)
+  }
 
-    @Test
-    fun topicId_matchesTopicIdFromTheNavKey() = assertEquals(testInputTopics[0].topic.id, viewModel.topicId)
+  @Test
+  fun uiStateTopic_whenFollowingTopic_thenShowUpdatedTopic() = runTest {
+    backgroundScope.launch(UnconfinedTestDispatcher()) { viewModel.topicUiState.collect() }
 
-    @Test
-    fun uiStateTopic_whenSuccess_matchesTopicFromRepository() = runTest {
-        backgroundScope.launch(UnconfinedTestDispatcher()) { viewModel.topicUiState.collect() }
+    topicsRepository.sendTopics(testInputTopics.map { it.topic })
+    // Set which topic IDs are followed, not including 0.
+    userDataRepository.setFollowedTopicIds(setOf(testInputTopics[1].topic.id))
 
-        topicsRepository.sendTopics(testInputTopics.map(FollowableTopic::topic))
-        userDataRepository.setFollowedTopicIds(setOf(testInputTopics[1].topic.id))
-        val item = viewModel.topicUiState.value
-        assertIs<TopicUiState.Success>(item)
+    viewModel.followTopicToggle(true)
 
-        val topicFromRepository = topicsRepository.getTopic(testInputTopics[0].topic.id).first()
+    assertEquals(
+      TopicUiState.Success(followableTopic = testOutputTopics[0]),
+      viewModel.topicUiState.value,
+    )
+  }
 
-        assertEquals(topicFromRepository, item.followableTopic.topic)
-    }
+  @Test
+  fun bookmarkingNews_updatesTheUserData() = runTest {
+    backgroundScope.launch(UnconfinedTestDispatcher()) { viewModel.newsUiState.collect() }
 
-    @Test
-    fun uiStateNews_whenInitialized_thenShowLoading() = runTest {
-        assertEquals(NewsUiState.Loading, viewModel.newsUiState.value)
-    }
+    topicsRepository.sendTopics(testInputTopics.map { it.topic })
+    userDataRepository.setFollowedTopicIds(setOf(testInputTopics[0].topic.id))
+    newsRepository.sendNewsResources(sampleNewsResources)
 
-    @Test
-    fun uiStateTopic_whenInitialized_thenShowLoading() = runTest {
-        assertEquals(TopicUiState.Loading, viewModel.topicUiState.value)
-    }
+    viewModel.bookmarkNews(sampleNewsResources.first().id, true)
 
-    @Test
-    fun uiStateTopic_whenFollowedIdsSuccessAndTopicLoading_thenShowLoading() = runTest {
-        backgroundScope.launch(UnconfinedTestDispatcher()) { viewModel.topicUiState.collect() }
+    assertTrue(
+      sampleNewsResources.first().id in
+        userDataRepository.getCurrentUserData().bookmarkedNewsResources
+    )
+  }
 
-        userDataRepository.setFollowedTopicIds(setOf(testInputTopics[1].topic.id))
-        assertEquals(TopicUiState.Loading, viewModel.topicUiState.value)
-    }
+  @Test
+  fun markingNewsViewed_updatesTheUserData() = runTest {
+    backgroundScope.launch(UnconfinedTestDispatcher()) { viewModel.newsUiState.collect() }
 
-    @Test
-    fun uiStateTopic_whenTopicSuccess_thenNewsStillLoading() = runTest {
-        backgroundScope.launch(UnconfinedTestDispatcher()) { viewModel.topicUiState.collect() }
+    topicsRepository.sendTopics(testInputTopics.map { it.topic })
+    userDataRepository.setFollowedTopicIds(setOf(testInputTopics[0].topic.id))
+    newsRepository.sendNewsResources(sampleNewsResources)
 
-        topicsRepository.sendTopics(testInputTopics.map { it.topic })
-        userDataRepository.setFollowedTopicIds(setOf(testInputTopics[1].topic.id))
+    viewModel.setNewsResourceViewed(sampleNewsResources.first().id, true)
 
-        assertIs<TopicUiState.Success>(viewModel.topicUiState.value)
-        assertIs<NewsUiState.Loading>(viewModel.newsUiState.value)
-    }
-
-    @Test
-    fun uiStateTopic_whenTopicAndNewsSuccess_thenAllSuccess() = runTest {
-        backgroundScope.launch(UnconfinedTestDispatcher()) {
-            combine(viewModel.topicUiState, viewModel.newsUiState, ::Pair).collect()
-        }
-        topicsRepository.sendTopics(testInputTopics.map { it.topic })
-        userDataRepository.setFollowedTopicIds(setOf(testInputTopics[1].topic.id))
-        newsRepository.sendNewsResources(sampleNewsResources)
-
-        assertIs<TopicUiState.Success>(viewModel.topicUiState.value)
-        assertIs<NewsUiState.Success>(viewModel.newsUiState.value)
-    }
-
-    @Test
-    fun uiStateTopic_whenFollowingTopic_thenShowUpdatedTopic() = runTest {
-        backgroundScope.launch(UnconfinedTestDispatcher()) { viewModel.topicUiState.collect() }
-
-        topicsRepository.sendTopics(testInputTopics.map { it.topic })
-        // Set which topic IDs are followed, not including 0.
-        userDataRepository.setFollowedTopicIds(setOf(testInputTopics[1].topic.id))
-
-        viewModel.followTopicToggle(true)
-
-        assertEquals(
-            TopicUiState.Success(followableTopic = testOutputTopics[0]),
-            viewModel.topicUiState.value,
-        )
-    }
-
-    @Test
-    fun bookmarkingNews_updatesTheUserData() = runTest {
-        backgroundScope.launch(UnconfinedTestDispatcher()) { viewModel.newsUiState.collect() }
-
-        topicsRepository.sendTopics(testInputTopics.map { it.topic })
-        userDataRepository.setFollowedTopicIds(setOf(testInputTopics[0].topic.id))
-        newsRepository.sendNewsResources(sampleNewsResources)
-
-        viewModel.bookmarkNews(sampleNewsResources.first().id, true)
-
-        assertTrue(
-            sampleNewsResources.first().id in
-                userDataRepository.getCurrentUserData().bookmarkedNewsResources,
-        )
-    }
-
-    @Test
-    fun markingNewsViewed_updatesTheUserData() = runTest {
-        backgroundScope.launch(UnconfinedTestDispatcher()) { viewModel.newsUiState.collect() }
-
-        topicsRepository.sendTopics(testInputTopics.map { it.topic })
-        userDataRepository.setFollowedTopicIds(setOf(testInputTopics[0].topic.id))
-        newsRepository.sendNewsResources(sampleNewsResources)
-
-        viewModel.setNewsResourceViewed(sampleNewsResources.first().id, true)
-
-        assertTrue(
-            sampleNewsResources.first().id in
-                userDataRepository.getCurrentUserData().viewedNewsResources,
-        )
-    }
+    assertTrue(
+      sampleNewsResources.first().id in userDataRepository.getCurrentUserData().viewedNewsResources
+    )
+  }
 }
 
 private const val TOPIC_1_NAME = "Android Studio"
@@ -184,37 +185,42 @@ private const val TOPIC_LONG_DESC = "At vero eos et accusamus et iusto odio dign
 private const val TOPIC_URL = "URL"
 private const val TOPIC_IMAGE_URL = "Image URL"
 
-private fun testTopic(id: String, name: String) = Topic(
+private fun testTopic(id: String, name: String) =
+  Topic(
     id = id,
     name = name,
     shortDescription = TOPIC_SHORT_DESC,
     longDescription = TOPIC_LONG_DESC,
     url = TOPIC_URL,
     imageUrl = TOPIC_IMAGE_URL,
-)
+  )
 
-private val testInputTopics = listOf(
+private val testInputTopics =
+  listOf(
     FollowableTopic(testTopic("0", TOPIC_1_NAME), isFollowed = true),
     FollowableTopic(testTopic("1", TOPIC_2_NAME), isFollowed = false),
     FollowableTopic(testTopic("2", TOPIC_3_NAME), isFollowed = false),
-)
+  )
 
-private val testOutputTopics = listOf(
+private val testOutputTopics =
+  listOf(
     FollowableTopic(testTopic("0", TOPIC_1_NAME), isFollowed = true),
     FollowableTopic(testTopic("1", TOPIC_2_NAME), isFollowed = false),
     FollowableTopic(testTopic("2", TOPIC_3_NAME), isFollowed = false),
-)
+  )
 
-private val sampleNewsResources = listOf(
+private val sampleNewsResources =
+  listOf(
     NewsResource(
-        id = "1",
-        title = "Thanks for helping us reach 1M YouTube Subscribers",
-        content = "Thank you everyone for following the Now in Android series and everything the " +
-            "Android Developers YouTube channel has to offer.",
-        url = "https://youtu.be/-fJ6poHQrjM",
-        headerImageUrl = "https://i.ytimg.com/vi/-fJ6poHQrjM/maxresdefault.jpg",
-        publishDate = Instant.parse("2021-11-09T00:00:00.000Z"),
-        type = "Video 📺",
-        topics = listOf(testInputTopics[0].topic),
-    ),
-)
+      id = "1",
+      title = "Thanks for helping us reach 1M YouTube Subscribers",
+      content =
+        "Thank you everyone for following the Now in Android series and everything the " +
+          "Android Developers YouTube channel has to offer.",
+      url = "https://youtu.be/-fJ6poHQrjM",
+      headerImageUrl = "https://i.ytimg.com/vi/-fJ6poHQrjM/maxresdefault.jpg",
+      publishDate = Instant.parse("2021-11-09T00:00:00.000Z"),
+      type = "Video 📺",
+      topics = listOf(testInputTopics[0].topic),
+    )
+  )

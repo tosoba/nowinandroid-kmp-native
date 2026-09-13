@@ -20,9 +20,8 @@ import androidx.room3.ColumnTypeConverter
 import kotlin.time.Instant
 
 class InstantConverter {
-    @ColumnTypeConverter
-    fun longToInstant(value: Long): Instant = Instant.fromEpochMilliseconds(value)
+  @ColumnTypeConverter
+  fun longToInstant(value: Long): Instant = Instant.fromEpochMilliseconds(value)
 
-    @ColumnTypeConverter
-    fun instantToLong(instant: Instant): Long = instant.toEpochMilliseconds()
+  @ColumnTypeConverter fun instantToLong(instant: Instant): Long = instant.toEpochMilliseconds()
 }

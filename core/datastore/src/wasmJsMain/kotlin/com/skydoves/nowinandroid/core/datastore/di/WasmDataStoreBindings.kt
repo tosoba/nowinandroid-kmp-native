@@ -38,10 +38,10 @@ import okio.Buffer
 @ContributesTo(AppScope::class)
 object WasmDataStoreBindings {
 
-    @Provides
-    @SingleIn(AppScope::class)
-    fun providesUserPreferencesDataStore(): DataStore<UserPreferences> =
-        LocalStorageDataStore(USER_PREFERENCES_FILE_NAME, UserPreferencesSerializer)
+  @Provides
+  @SingleIn(AppScope::class)
+  fun providesUserPreferencesDataStore(): DataStore<UserPreferences> =
+    LocalStorageDataStore(USER_PREFERENCES_FILE_NAME, UserPreferencesSerializer)
 }
 
 /**
@@ -56,30 +56,34 @@ object WasmDataStoreBindings {
  * platforms use. It writes to an okio `BufferedSink`, and an in-memory [Buffer] turns that into the
  * string `localStorage` holds, so the stored format is identical everywhere.
  */
-private class LocalStorageDataStore(private val key: String, private val serializer: OkioSerializer<UserPreferences>) :
-    DataStore<UserPreferences> {
+private class LocalStorageDataStore(
+  private val key: String,
+  private val serializer: OkioSerializer<UserPreferences>,
+) : DataStore<UserPreferences> {
 
-    private val mutex = Mutex()
-    private val cache = MutableStateFlow<UserPreferences?>(null)
+  private val mutex = Mutex()
+  private val cache = MutableStateFlow<UserPreferences?>(null)
 
-    override val data: Flow<UserPreferences> = cache
-        .onStart { mutex.withLock { if (cache.value == null) cache.value = load() } }
-        .filterNotNull()
+  override val data: Flow<UserPreferences> =
+    cache
+      .onStart { mutex.withLock { if (cache.value == null) cache.value = load() } }
+      .filterNotNull()
 
-    override suspend fun updateData(transform: suspend (UserPreferences) -> UserPreferences): UserPreferences =
-        mutex.withLock {
-            val updated = transform(cache.value ?: load())
-            val buffer = Buffer()
-            serializer.writeTo(updated, buffer)
-            localStorage.setItem(key, buffer.readUtf8())
-            cache.value = updated
-            updated
-        }
+  override suspend fun updateData(
+    transform: suspend (UserPreferences) -> UserPreferences
+  ): UserPreferences = mutex.withLock {
+    val updated = transform(cache.value ?: load())
+    val buffer = Buffer()
+    serializer.writeTo(updated, buffer)
+    localStorage.setItem(key, buffer.readUtf8())
+    cache.value = updated
+    updated
+  }
 
-    /** Unreadable stored preferences fall back to defaults, rather than leaving the app unusable. */
-    private suspend fun load(): UserPreferences {
-        val stored = localStorage.getItem(key) ?: return serializer.defaultValue
-        return runCatching { serializer.readFrom(Buffer().apply { writeUtf8(stored) }) }
-            .getOrElse { serializer.defaultValue }
-    }
+  /** Unreadable stored preferences fall back to defaults, rather than leaving the app unusable. */
+  private suspend fun load(): UserPreferences {
+    val stored = localStorage.getItem(key) ?: return serializer.defaultValue
+    return runCatching { serializer.readFrom(Buffer().apply { writeUtf8(stored) }) }
+      .getOrElse { serializer.defaultValue }
+  }
 }

@@ -32,78 +32,79 @@ import kotlin.time.Instant
 
 class CompositeUserNewsResourceRepositoryTest {
 
-    private val newsRepository = TestNewsRepository()
-    private val userDataRepository = TestUserDataRepository()
-    private val subject = CompositeUserNewsResourceRepository(newsRepository, userDataRepository)
+  private val newsRepository = TestNewsRepository()
+  private val userDataRepository = TestUserDataRepository()
+  private val subject = CompositeUserNewsResourceRepository(newsRepository, userDataRepository)
 
-    @Test
-    fun newsResourcesAreJoinedWithUserData() = runTest {
-        newsRepository.sendNewsResources(sampleNewsResources)
-        userDataRepository.setUserData(
-            emptyUserData.copy(
-                followedTopics = setOf("1"),
-                bookmarkedNewsResources = setOf("2"),
-                viewedNewsResources = setOf("1"),
-            ),
-        )
+  @Test
+  fun newsResourcesAreJoinedWithUserData() = runTest {
+    newsRepository.sendNewsResources(sampleNewsResources)
+    userDataRepository.setUserData(
+      emptyUserData.copy(
+        followedTopics = setOf("1"),
+        bookmarkedNewsResources = setOf("2"),
+        viewedNewsResources = setOf("1"),
+      )
+    )
 
-        val userNewsResources = subject.observeAll().first()
+    val userNewsResources = subject.observeAll().first()
 
-        assertEquals(2, userNewsResources.size)
-        assertTrue(userNewsResources.first { it.id == "1" }.hasBeenViewed)
-        assertTrue(userNewsResources.first { it.id == "2" }.isSaved)
-        assertTrue(userNewsResources.first { it.id == "1" }.followableTopics.single().isFollowed)
-    }
+    assertEquals(2, userNewsResources.size)
+    assertTrue(userNewsResources.first { it.id == "1" }.hasBeenViewed)
+    assertTrue(userNewsResources.first { it.id == "2" }.isSaved)
+    assertTrue(userNewsResources.first { it.id == "1" }.followableTopics.single().isFollowed)
+  }
 
-    @Test
-    fun onlyFollowedTopicsAreObserved() = runTest {
-        newsRepository.sendNewsResources(sampleNewsResources)
-        userDataRepository.setUserData(emptyUserData.copy(followedTopics = setOf("2")))
+  @Test
+  fun onlyFollowedTopicsAreObserved() = runTest {
+    newsRepository.sendNewsResources(sampleNewsResources)
+    userDataRepository.setUserData(emptyUserData.copy(followedTopics = setOf("2")))
 
-        assertEquals(listOf("2"), subject.observeAllForFollowedTopics().first().map { it.id })
-    }
+    assertEquals(listOf("2"), subject.observeAllForFollowedTopics().first().map { it.id })
+  }
 
-    @Test
-    fun observingBookmarksWithNoBookmarksIsEmpty() = runTest {
-        newsRepository.sendNewsResources(sampleNewsResources)
-        userDataRepository.setUserData(emptyUserData)
+  @Test
+  fun observingBookmarksWithNoBookmarksIsEmpty() = runTest {
+    newsRepository.sendNewsResources(sampleNewsResources)
+    userDataRepository.setUserData(emptyUserData)
 
-        assertEquals(emptyList(), subject.observeAllBookmarked().first())
-    }
+    assertEquals(emptyList(), subject.observeAllBookmarked().first())
+  }
 
-    @Test
-    fun filteringByNewsIdNarrowsTheResult() = runTest {
-        newsRepository.sendNewsResources(sampleNewsResources)
-        userDataRepository.setUserData(emptyUserData)
+  @Test
+  fun filteringByNewsIdNarrowsTheResult() = runTest {
+    newsRepository.sendNewsResources(sampleNewsResources)
+    userDataRepository.setUserData(emptyUserData)
 
-        val filtered = subject.observeAll(NewsResourceQuery(filterNewsIds = setOf("2"))).first()
+    val filtered = subject.observeAll(NewsResourceQuery(filterNewsIds = setOf("2"))).first()
 
-        assertEquals(listOf("2"), filtered.map { it.id })
-    }
+    assertEquals(listOf("2"), filtered.map { it.id })
+  }
 }
 
 private val topicOne = Topic("1", "Compose", "short", "long", "", "")
 private val topicTwo = Topic("2", "Testing", "short", "long", "", "")
 
-private val sampleNewsResources = listOf(
+private val sampleNewsResources =
+  listOf(
     NewsResource(
-        id = "1",
-        title = "Compose 1.9",
-        content = "content",
-        url = "https://example.com/1",
-        headerImageUrl = null,
-        publishDate = Instant.fromEpochMilliseconds(0),
-        type = "Article",
-        topics = listOf(topicOne),
+      id = "1",
+      title = "Compose 1.9",
+      content = "content",
+      url = "https://example.com/1",
+      headerImageUrl = null,
+      publishDate = Instant.fromEpochMilliseconds(0),
+      type = "Article",
+      topics = listOf(topicOne),
     ),
     NewsResource(
-        id = "2",
-        title = "Testing tips",
-        content = "content",
-        url = "https://example.com/2",
-        headerImageUrl = null,
-        publishDate = Instant.fromEpochMilliseconds(1),
-        type = "Article",
-        topics = listOf(topicTwo),
+      id = "2",
+      title = "Testing tips",
+      content = "content",
+      url = "https://example.com/2",
+      headerImageUrl = null,
+      publishDate = Instant.fromEpochMilliseconds(1),
+      type = "Article",
+      topics = listOf(topicTwo),
     ),
-)
+  )

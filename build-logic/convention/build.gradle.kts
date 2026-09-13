@@ -15,51 +15,51 @@
  */
 
 plugins {
-    `kotlin-dsl`
+  `kotlin-dsl`
 }
 
 group = "com.skydoves.nowinandroid.buildlogic"
 
 java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
-    }
+  toolchain {
+    languageVersion.set(JavaLanguageVersion.of(21))
+  }
 }
 
 dependencies {
-    compileOnly(libs.android.gradlePlugin)
-    compileOnly(libs.kotlin.gradlePlugin)
-    compileOnly(libs.compose.gradlePlugin)
-    compileOnly(libs.compose.compiler.gradlePlugin)
-    compileOnly(libs.spotless.gradlePlugin)
-    implementation(libs.moko.resources.gradlePlugin)
+  compileOnly(libs.android.gradlePlugin)
+  compileOnly(libs.kotlin.gradlePlugin)
+  compileOnly(libs.compose.gradlePlugin)
+  compileOnly(libs.compose.compiler.gradlePlugin)
+  compileOnly(libs.spotless.gradlePlugin)
+  implementation(libs.moko.resources.gradlePlugin)
 }
 
 gradlePlugin {
-    plugins {
-        register("kotlinMultiplatform") {
-            id = "nowinandroid.kmp.multiplatform"
-            implementationClass = "KotlinMultiplatformConventionPlugin"
-        }
-        register("kotlinMultiplatformCompose") {
-            id = "nowinandroid.kmp.multiplatform.compose"
-            implementationClass = "KotlinMultiplatformComposeConventionPlugin"
-        }
-        register("kotlinMultiplatformFeature") {
-            id = "nowinandroid.kmp.feature"
-            implementationClass = "KotlinMultiplatformFeatureConventionPlugin"
-        }
-        register("kotlinMultiplatformFeatureApi") {
-            id = "nowinandroid.kmp.feature.api"
-            implementationClass = "KotlinMultiplatformFeatureApiConventionPlugin"
-        }
-        register("androidApplication") {
-            id = "nowinandroid.android.application"
-            implementationClass = "AndroidApplicationConventionPlugin"
-        }
-        register("spotless") {
-            id = "nowinandroid.spotless"
-            implementationClass = "SpotlessConventionPlugin"
-        }
+  plugins {
+    register("kotlinMultiplatform") {
+      id = "nowinandroid.kmp.multiplatform"
+      implementationClass = "KotlinMultiplatformConventionPlugin"
     }
+    register("kotlinMultiplatformCompose") {
+      id = "nowinandroid.kmp.multiplatform.compose"
+      implementationClass = "KotlinMultiplatformComposeConventionPlugin"
+    }
+    register("kotlinMultiplatformFeature") {
+      id = "nowinandroid.kmp.feature"
+      implementationClass = "KotlinMultiplatformFeatureConventionPlugin"
+    }
+    register("kotlinMultiplatformFeatureApi") {
+      id = "nowinandroid.kmp.feature.api"
+      implementationClass = "KotlinMultiplatformFeatureApiConventionPlugin"
+    }
+    register("androidApplication") {
+      id = "nowinandroid.android.application"
+      implementationClass = "AndroidApplicationConventionPlugin"
+    }
+    register("spotless") {
+      id = "nowinandroid.spotless"
+      implementationClass = "SpotlessConventionPlugin"
+    }
+  }
 }

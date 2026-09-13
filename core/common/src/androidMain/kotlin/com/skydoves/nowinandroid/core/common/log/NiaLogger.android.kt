@@ -19,15 +19,15 @@ package com.skydoves.nowinandroid.core.common.log
 import android.util.Log
 
 actual object NiaLogger {
-    actual fun debug(tag: String, message: String) {
-        Log.d(tag, message)
-    }
+  actual fun debug(tag: String, message: String) {
+    Log.d(tag, message)
+  }
 
-    actual fun info(tag: String, message: String, throwable: Throwable?) {
-        Log.i(tag, message, throwable)
-    }
+  actual fun info(tag: String, message: String, throwable: Throwable?) {
+    Log.i(tag, message, throwable)
+  }
 
-    actual fun error(tag: String, message: String, throwable: Throwable?) {
-        Log.e(tag, message, throwable)
-    }
+  actual fun error(tag: String, message: String, throwable: Throwable?) {
+    Log.e(tag, message, throwable)
+  }
 }

@@ -28,35 +28,35 @@ import com.skydoves.nowinandroid.ui.NiaAppRoot
 
 class MainActivity : ComponentActivity() {
 
-    private lateinit var deepLinkStore: DeepLinkStore
+  private lateinit var deepLinkStore: DeepLinkStore
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+  override fun onCreate(savedInstanceState: Bundle?) {
+    installSplashScreen()
+    super.onCreate(savedInstanceState)
+    enableEdgeToEdge()
 
-        val appGraph = (application as NiaApplication).appGraph
-        deepLinkStore = appGraph.deepLinkStore
-        handleDeepLink(intent)
+    val appGraph = (application as NiaApplication).appGraph
+    deepLinkStore = appGraph.deepLinkStore
+    handleDeepLink(intent)
 
-        setContent {
-            NiaAppRoot(appGraph)
-        }
+    setContent {
+      NiaAppRoot(appGraph)
     }
+  }
 
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        handleDeepLink(intent)
-    }
+  override fun onNewIntent(intent: Intent) {
+    super.onNewIntent(intent)
+    handleDeepLink(intent)
+  }
 
-    /**
-     * A notification tap arrives as `.../foryou/{newsResourceId}`; the shared
-     * [DeepLinkStore] is what the For You screen observes.
-     */
-    private fun handleDeepLink(intent: Intent?) {
-        val data = intent?.data?.toString() ?: return
-        if (!data.startsWith(DEEP_LINK_BASE_PATH)) return
-        val newsResourceId = data.removePrefix("$DEEP_LINK_BASE_PATH/").takeIf { it.isNotEmpty() }
-        deepLinkStore.submit(newsResourceId)
-    }
+  /**
+   * A notification tap arrives as `.../foryou/{newsResourceId}`; the shared [DeepLinkStore] is what
+   * the For You screen observes.
+   */
+  private fun handleDeepLink(intent: Intent?) {
+    val data = intent?.data?.toString() ?: return
+    if (!data.startsWith(DEEP_LINK_BASE_PATH)) return
+    val newsResourceId = data.removePrefix("$DEEP_LINK_BASE_PATH/").takeIf { it.isNotEmpty() }
+    deepLinkStore.submit(newsResourceId)
+  }
 }

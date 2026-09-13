@@ -27,18 +27,15 @@ import com.skydoves.nowinandroid.core.database.model.NewsResourceTopicCrossRef
 import com.skydoves.nowinandroid.core.database.model.PopulatedNewsResource
 import kotlinx.coroutines.flow.Flow
 
-/**
- * DAO for [NewsResourceEntity] access
- */
+/** DAO for [NewsResourceEntity] access */
 @Dao
 interface NewsResourceDao {
 
-    /**
-     * Fetches news resources that match the query parameters
-     */
-    @Transaction
-    @Query(
-        value = """
+  /** Fetches news resources that match the query parameters */
+  @Transaction
+  @Query(
+    value =
+      """
             SELECT * FROM news_resources
             WHERE
                 CASE WHEN :useFilterNewsIds
@@ -55,21 +52,20 @@ interface NewsResourceDao {
                     ELSE 1
                 END
             ORDER BY publish_date DESC
-    """,
-    )
-    fun getNewsResources(
-        useFilterTopicIds: Boolean = false,
-        filterTopicIds: Set<String> = emptySet(),
-        useFilterNewsIds: Boolean = false,
-        filterNewsIds: Set<String> = emptySet(),
-    ): Flow<List<PopulatedNewsResource>>
+    """
+  )
+  fun getNewsResources(
+    useFilterTopicIds: Boolean = false,
+    filterTopicIds: Set<String> = emptySet(),
+    useFilterNewsIds: Boolean = false,
+    filterNewsIds: Set<String> = emptySet(),
+  ): Flow<List<PopulatedNewsResource>>
 
-    /**
-     * Fetches ids of news resources that match the query parameters
-     */
-    @Transaction
-    @Query(
-        value = """
+  /** Fetches ids of news resources that match the query parameters */
+  @Transaction
+  @Query(
+    value =
+      """
             SELECT id FROM news_resources
             WHERE
                 CASE WHEN :useFilterNewsIds
@@ -86,32 +82,30 @@ interface NewsResourceDao {
                     ELSE 1
                 END
             ORDER BY publish_date DESC
-    """,
-    )
-    fun getNewsResourceIds(
-        useFilterTopicIds: Boolean = false,
-        filterTopicIds: Set<String> = emptySet(),
-        useFilterNewsIds: Boolean = false,
-        filterNewsIds: Set<String> = emptySet(),
-    ): Flow<List<String>>
+    """
+  )
+  fun getNewsResourceIds(
+    useFilterTopicIds: Boolean = false,
+    filterTopicIds: Set<String> = emptySet(),
+    useFilterNewsIds: Boolean = false,
+    filterNewsIds: Set<String> = emptySet(),
+  ): Flow<List<String>>
 
-    /**
-     * Inserts or updates [newsResourceEntities] in the db under the specified primary keys
-     */
-    @Upsert
-    suspend fun upsertNewsResources(newsResourceEntities: List<NewsResourceEntity>)
+  /** Inserts or updates [newsResourceEntities] in the db under the specified primary keys */
+  @Upsert suspend fun upsertNewsResources(newsResourceEntities: List<NewsResourceEntity>)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertOrIgnoreTopicCrossRefEntities(newsResourceTopicCrossReferences: List<NewsResourceTopicCrossRef>)
+  @Insert(onConflict = OnConflictStrategy.IGNORE)
+  suspend fun insertOrIgnoreTopicCrossRefEntities(
+    newsResourceTopicCrossReferences: List<NewsResourceTopicCrossRef>
+  )
 
-    /**
-     * Deletes rows in the db matching the specified [ids]
-     */
-    @Query(
-        value = """
+  /** Deletes rows in the db matching the specified [ids] */
+  @Query(
+    value =
+      """
             DELETE FROM news_resources
             WHERE id in (:ids)
-        """,
-    )
-    suspend fun deleteNewsResources(ids: List<String>)
+        """
+  )
+  suspend fun deleteNewsResources(ids: List<String>)
 }

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
     Designed and developed by 2026 skydoves (Jaewoong Eum)
 
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,5 +15,7 @@
 -->
 <resources>
     <string name="feature_topic_api_loading">Loading topic</string>
-    <string name="feature_topic_api_error">Could not load this topic. Check your connection and try again.</string>
+    <string name="feature_topic_api_error">Could not load this topic. Check your connection and try
+        again.
+    </string>
 </resources>

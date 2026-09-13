@@ -35,9 +35,11 @@ import io.ktor.client.HttpClient
  * the SVG topic icons render, because Landscapist's engine has no SVG path of its own.
  */
 @Composable
-internal fun rememberNiaLandscapist(httpClient: HttpClient): Landscapist = rememberLandscapist(httpClient)
+internal fun rememberNiaLandscapist(httpClient: HttpClient): Landscapist =
+  rememberLandscapist(httpClient)
 
-internal fun buildNiaLandscapist(httpClient: HttpClient, diskCache: DiskCache?): Landscapist = Landscapist.builder()
+internal fun buildNiaLandscapist(httpClient: HttpClient, diskCache: DiskCache?): Landscapist =
+  Landscapist.builder()
     .fetcher(KtorImageFetcher(httpClient, NetworkConfig()))
     .decoder(SvgImageDecoder())
     .apply { diskCache?.let { diskCache(it) } }
@@ -48,5 +50,4 @@ internal fun buildNiaLandscapist(httpClient: HttpClient, diskCache: DiskCache?):
  * Landscapist's own default returns null there for exactly that reason, while iOS and desktop can
  * resolve one without help.
  */
-@Composable
-internal expect fun rememberLandscapist(httpClient: HttpClient): Landscapist
+@Composable internal expect fun rememberLandscapist(httpClient: HttpClient): Landscapist

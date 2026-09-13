@@ -22,31 +22,30 @@ import androidx.compose.ui.test.runComposeUiTest
 import kotlin.test.Test
 
 /**
- * The topic screen used to answer [TopicUiState.Error] with `TODO()`, so a topic that failed to load
- * took the app down with it. This pins that it renders instead.
+ * The topic screen used to answer [TopicUiState.Error] with `TODO()`, so a topic that failed to
+ * load took the app down with it. This pins that it renders instead.
  *
  * It runs under a real composition, which needs a window, so it lives off Android alongside the
  * other `runComposeUiTest` cases.
  */
 class TopicScreenErrorTest {
 
-    @OptIn(ExperimentalTestApi::class)
-    @Test
-    fun topicErrorStateRendersAMessageRatherThanCrashing() = runComposeUiTest {
-        setContent {
-            TopicScreen(
-                topicUiState = TopicUiState.Error,
-                newsUiState = NewsUiState.Error,
-                showBackButton = true,
-                onBackClick = {},
-                onFollowClick = {},
-                onTopicClick = {},
-                onBookmarkChanged = { _, _ -> },
-                onNewsResourceViewed = {},
-            )
-        }
-
-        onNodeWithText("Could not load this topic. Check your connection and try again.")
-            .assertExists()
+  @OptIn(ExperimentalTestApi::class)
+  @Test
+  fun topicErrorStateRendersAMessageRatherThanCrashing() = runComposeUiTest {
+    setContent {
+      TopicScreen(
+        topicUiState = TopicUiState.Error,
+        newsUiState = NewsUiState.Error,
+        showBackButton = true,
+        onBackClick = {},
+        onFollowClick = {},
+        onTopicClick = {},
+        onBookmarkChanged = { _, _ -> },
+        onNewsResourceViewed = {},
+      )
     }
+
+    onNodeWithText("Could not load this topic. Check your connection and try again.").assertExists()
+  }
 }

@@ -23,13 +23,11 @@ import java.net.URI
 
 @Composable
 actual fun rememberUrlLauncher(): UrlLauncher = remember {
-    UrlLauncher { url, _ ->
-        runCatching {
-            if (Desktop.isDesktopSupported() &&
-                Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)
-            ) {
-                Desktop.getDesktop().browse(URI(url))
-            }
-        }
+  UrlLauncher { url, _ ->
+    runCatching {
+      if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+        Desktop.getDesktop().browse(URI(url))
+      }
     }
+  }
 }

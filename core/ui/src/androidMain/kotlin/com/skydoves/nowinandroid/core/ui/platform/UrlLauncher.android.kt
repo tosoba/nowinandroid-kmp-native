@@ -26,16 +26,15 @@ import androidx.core.net.toUri
 
 @Composable
 actual fun rememberUrlLauncher(): UrlLauncher {
-    val context = LocalContext.current
-    return remember(context) {
-        UrlLauncher { url, toolbarColor ->
-            val customTabBarColor = CustomTabColorSchemeParams.Builder()
-                .setToolbarColor(toolbarColor.toArgb())
-                .build()
-            CustomTabsIntent.Builder()
-                .setDefaultColorSchemeParams(customTabBarColor)
-                .build()
-                .launchUrl(context, url.toUri())
-        }
+  val context = LocalContext.current
+  return remember(context) {
+    UrlLauncher { url, toolbarColor ->
+      val customTabBarColor =
+        CustomTabColorSchemeParams.Builder().setToolbarColor(toolbarColor.toArgb()).build()
+      CustomTabsIntent.Builder()
+        .setDefaultColorSchemeParams(customTabBarColor)
+        .build()
+        .launchUrl(context, url.toUri())
     }
+  }
 }

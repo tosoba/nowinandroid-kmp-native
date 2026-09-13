@@ -43,97 +43,98 @@ import kotlin.test.assertTrue
  */
 class KtorNiaNetworkTest {
 
-    private fun network(handler: MockEngine) = KtorNiaNetwork(
-        HttpClient(handler) {
-            expectSuccess = false
-            install(ContentNegotiation) { json(Json { ignoreUnknownKeys = true }) }
-        },
+  private fun network(handler: MockEngine) =
+    KtorNiaNetwork(
+      HttpClient(handler) {
+        expectSuccess = false
+        install(ContentNegotiation) { json(Json { ignoreUnknownKeys = true }) }
+      }
     )
 
-    private fun jsonEngine(body: String) = MockEngine {
-        respond(
-            content = body,
-            status = HttpStatusCode.OK,
-            headers = headersOf("Content-Type", ContentType.Application.Json.toString()),
+  private fun jsonEngine(body: String) = MockEngine {
+    respond(
+      content = body,
+      status = HttpStatusCode.OK,
+      headers = headersOf("Content-Type", ContentType.Application.Json.toString()),
+    )
+  }
+
+  @Test
+  fun topicsAreUnwrappedFromTheDataEnvelope() = runTest {
+    val subject =
+      network(jsonEngine("""{"data":[{"id":"1","name":"Headlines"},{"id":"2","name":"UI"}]}"""))
+
+    val topics = subject.getTopics().getOrThrow()
+
+    assertEquals(listOf("1", "2"), topics.map { it.id })
+    assertEquals(listOf("Headlines", "UI"), topics.map { it.name })
+  }
+
+  @Test
+  fun newsResourcesAreUnwrappedFromTheDataEnvelope() = runTest {
+    val subject =
+      network(
+        jsonEngine(
+          """
+          |{"data":[{"id":"n1","title":"t","content":"c","url":"u",
+          |"headerImageUrl":"h","publishDate":"2022-10-04T23:00:00.000Z",
+          |"type":"Article","topics":["1"]}]}
+          """
+            .trimMargin()
         )
+      )
+
+    val news = subject.getNewsResources().getOrThrow()
+
+    assertEquals(listOf("n1"), news.map { it.id })
+    assertEquals(listOf(listOf("1")), news.map { it.topics })
+  }
+
+  @Test
+  fun changeListsAreNotEnveloped() = runTest {
+    val subject = network(jsonEngine("""[{"id":"1","changeListVersion":3,"isDelete":false}]"""))
+
+    val changeList = subject.getTopicChangeList().getOrThrow()
+
+    assertEquals(1, changeList.size)
+    assertEquals(3, changeList.single().changeListVersion)
+  }
+
+  @Test
+  fun idsAreSentAsRepeatedQueryParameters() = runTest {
+    var requestedUrl = ""
+    val engine = MockEngine { request ->
+      requestedUrl = request.url.toString()
+      respond(
+        content = """{"data":[]}""",
+        status = HttpStatusCode.OK,
+        headers = headersOf("Content-Type", ContentType.Application.Json.toString()),
+      )
     }
 
-    @Test
-    fun topicsAreUnwrappedFromTheDataEnvelope() = runTest {
-        val subject = network(
-            jsonEngine("""{"data":[{"id":"1","name":"Headlines"},{"id":"2","name":"UI"}]}"""),
-        )
+    network(engine).getTopics(ids = listOf("1", "2")).getOrThrow()
 
-        val topics = subject.getTopics().getOrThrow()
+    assertContains(requestedUrl, "id=1")
+    assertContains(requestedUrl, "id=2")
+  }
 
-        assertEquals(listOf("1", "2"), topics.map { it.id })
-        assertEquals(listOf("Headlines", "UI"), topics.map { it.name })
-    }
+  @Test
+  fun anHttpErrorIsAFailureError() = runTest {
+    val subject = network(MockEngine { respondError(HttpStatusCode.InternalServerError) })
 
-    @Test
-    fun newsResourcesAreUnwrappedFromTheDataEnvelope() = runTest {
-        val subject = network(
-            jsonEngine(
-                """{"data":[{"id":"n1","title":"t","content":"c","url":"u",
-                |"headerImageUrl":"h","publishDate":"2022-10-04T23:00:00.000Z",
-                |"type":"Article","topics":["1"]}]}
-                """.trimMargin(),
-            ),
-        )
+    val response = subject.getTopics()
 
-        val news = subject.getNewsResources().getOrThrow()
+    val failure = assertIs<ApiResponse.Failure.Error>(response)
+    assertTrue(failure.message().isNotEmpty())
+  }
 
-        assertEquals(listOf("n1"), news.map { it.id })
-        assertEquals(listOf(listOf("1")), news.map { it.topics })
-    }
+  @Test
+  fun aTransportFailureIsAFailureException() = runTest {
+    val subject = network(MockEngine { throw kotlinx.io.IOException("no network") })
 
-    @Test
-    fun changeListsAreNotEnveloped() = runTest {
-        val subject = network(
-            jsonEngine("""[{"id":"1","changeListVersion":3,"isDelete":false}]"""),
-        )
+    val response = subject.getNewsResources()
 
-        val changeList = subject.getTopicChangeList().getOrThrow()
-
-        assertEquals(1, changeList.size)
-        assertEquals(3, changeList.single().changeListVersion)
-    }
-
-    @Test
-    fun idsAreSentAsRepeatedQueryParameters() = runTest {
-        var requestedUrl = ""
-        val engine = MockEngine { request ->
-            requestedUrl = request.url.toString()
-            respond(
-                content = """{"data":[]}""",
-                status = HttpStatusCode.OK,
-                headers = headersOf("Content-Type", ContentType.Application.Json.toString()),
-            )
-        }
-
-        network(engine).getTopics(ids = listOf("1", "2")).getOrThrow()
-
-        assertContains(requestedUrl, "id=1")
-        assertContains(requestedUrl, "id=2")
-    }
-
-    @Test
-    fun anHttpErrorIsAFailureError() = runTest {
-        val subject = network(MockEngine { respondError(HttpStatusCode.InternalServerError) })
-
-        val response = subject.getTopics()
-
-        val failure = assertIs<ApiResponse.Failure.Error>(response)
-        assertTrue(failure.message().isNotEmpty())
-    }
-
-    @Test
-    fun aTransportFailureIsAFailureException() = runTest {
-        val subject = network(MockEngine { throw kotlinx.io.IOException("no network") })
-
-        val response = subject.getNewsResources()
-
-        val failure = assertIs<ApiResponse.Failure.Exception>(response)
-        assertEquals("no network", failure.message)
-    }
+    val failure = assertIs<ApiResponse.Failure.Exception>(response)
+    assertEquals("no network", failure.message)
+  }
 }

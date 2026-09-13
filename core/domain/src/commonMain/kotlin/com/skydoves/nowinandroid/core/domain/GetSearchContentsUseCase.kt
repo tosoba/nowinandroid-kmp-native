@@ -27,30 +27,33 @@ import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
-/**
- * A use case which returns the searched contents matched with the search query.
- */
+/** A use case which returns the searched contents matched with the search query. */
 @Inject
 class GetSearchContentsUseCase(
-    private val searchContentsRepository: SearchContentsRepository,
-    private val userDataRepository: UserDataRepository,
+  private val searchContentsRepository: SearchContentsRepository,
+  private val userDataRepository: UserDataRepository,
 ) {
-    operator fun invoke(searchQuery: String): Flow<UserSearchResult> =
-        searchContentsRepository.searchContents(searchQuery)
-            .mapToUserSearchResult(userDataRepository.userData)
+  operator fun invoke(searchQuery: String): Flow<UserSearchResult> =
+    searchContentsRepository
+      .searchContents(searchQuery)
+      .mapToUserSearchResult(userDataRepository.userData)
 }
 
-private fun Flow<SearchResult>.mapToUserSearchResult(userDataStream: Flow<UserData>): Flow<UserSearchResult> =
-    combine(userDataStream) { searchResult, userData ->
-        UserSearchResult(
-            topics = searchResult.topics.map { topic ->
-                FollowableTopic(
-                    topic = topic,
-                    isFollowed = topic.id in userData.followedTopics,
-                )
-            },
-            newsResources = searchResult.newsResources.map { news ->
-                UserNewsResource(newsResource = news, userData = userData)
-            },
-        )
-    }
+private fun Flow<SearchResult>.mapToUserSearchResult(
+  userDataStream: Flow<UserData>
+): Flow<UserSearchResult> =
+  combine(userDataStream) { searchResult, userData ->
+    UserSearchResult(
+      topics =
+        searchResult.topics.map { topic ->
+          FollowableTopic(
+            topic = topic,
+            isFollowed = topic.id in userData.followedTopics,
+          )
+        },
+      newsResources =
+        searchResult.newsResources.map { news ->
+          UserNewsResource(newsResource = news, userData = userData)
+        },
+    )
+  }

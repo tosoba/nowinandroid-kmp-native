@@ -29,6 +29,6 @@ actual fun supportsDynamicTheming(): Boolean = Build.VERSION.SDK_INT >= Build.VE
 
 @Composable
 actual fun dynamicNiaColorScheme(darkTheme: Boolean): ColorScheme {
-    val context = LocalContext.current
-    return if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+  val context = LocalContext.current
+  return if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
 }

@@ -32,12 +32,11 @@ import java.io.File
 @ContributesTo(AppScope::class)
 object DesktopDatabaseBindings {
 
-    @Provides
-    fun providesDatabaseBuilder(): RoomDatabase.Builder<NiaDatabase> {
-        val directory = File(System.getProperty("user.home"), ".nowinandroid").apply { mkdirs() }
-        return Room.databaseBuilder(name = File(directory, NIA_DATABASE_NAME).absolutePath)
-    }
+  @Provides
+  fun providesDatabaseBuilder(): RoomDatabase.Builder<NiaDatabase> {
+    val directory = File(System.getProperty("user.home"), ".nowinandroid").apply { mkdirs() }
+    return Room.databaseBuilder(name = File(directory, NIA_DATABASE_NAME).absolutePath)
+  }
 
-    @Provides
-    fun providesSQLiteDriver(): SQLiteDriver = BundledSQLiteDriver()
+  @Provides fun providesSQLiteDriver(): SQLiteDriver = BundledSQLiteDriver()
 }

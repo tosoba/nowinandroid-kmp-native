@@ -26,11 +26,11 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 /**
  * The Android namespace every module derives from its Gradle path, so no module has to repeat it.
- * `:core:model` becomes `com.skydoves.nowinandroid.core.model`, `:feature:foryou`
- * becomes `com.skydoves.nowinandroid.feature.foryou`.
+ * `:core:model` becomes `com.skydoves.nowinandroid.core.model`, `:feature:foryou` becomes
+ * `com.skydoves.nowinandroid.feature.foryou`.
  */
 internal val Project.derivedNamespace: String
-    get() = "com.skydoves.nowinandroid" + path.replace(":", ".").replace("-", "")
+  get() = "com.skydoves.nowinandroid" + path.replace(":", ".").replace("-", "")
 
 /**
  * Declares the three target platforms plus the intermediate source sets that carry dependencies
@@ -42,82 +42,83 @@ internal val Project.derivedNamespace: String
  * [withHostTest] and [withDeviceTest] are what create `androidHostTest` and `androidDeviceTest`.
  */
 internal fun Project.configureKotlinMultiplatform(extension: KotlinMultiplatformExtension) =
-    extension.apply {
-        val jvmTargetVersion = libs.version("jvmTarget")
+  extension.apply {
+    val jvmTargetVersion = libs.version("jvmTarget")
 
-        androidLibraryTarget(this@configureKotlinMultiplatform, jvmTargetVersion)
+    androidLibraryTarget(this@configureKotlinMultiplatform, jvmTargetVersion)
 
-        jvm("desktop") {
-            compilerOptions { jvmTarget.set(JvmTarget.fromTarget(jvmTargetVersion)) }
-        }
-
-        // No iosX64: Room 3 and androidx.sqlite 2.7.0 stopped publishing that target, and an Intel
-        // simulator is not something this app needs to support.
-        iosArm64()
-        iosSimulatorArm64()
-
-        wasmJs { browser() }
-
-        applyDefaultHierarchyTemplate()
-
-        compilerOptions {
-            freeCompilerArgs.addAll("-Xexpect-actual-classes")
-        }
-
-        with(sourceSets) {
-            all {
-                languageSettings.optIn("kotlin.RequiresOptIn")
-                languageSettings.optIn("kotlin.time.ExperimentalTime")
-            }
-
-            // Everything Skiko renders: no Android framework, no `android.content.Context`.
-            // `dependOn` skips names that do not exist, so a target left out of this list silently
-            // loses every actual declared here.
-            val nonAndroidMain = create("nonAndroidMain") { dependsOn(getByName("commonMain")) }
-            dependOn(nonAndroidMain, "iosMain", "desktopMain", "wasmJsMain")
-
-            // The test counterpart. Room's bundled SQLite ships a JNI library that an Android
-            // *host* unit test cannot load, so tests that touch a real database live here and run
-            // on the desktop JVM and on iOS instead.
-            val nonAndroidTest = create("nonAndroidTest") { dependsOn(getByName("commonTest")) }
-            dependOn(nonAndroidTest, "iosTest", "desktopTest")
-
-            // Android + desktop share a JVM runtime, so they share JVM-only libraries.
-            val jvmSharedMain = create("jvmSharedMain") { dependsOn(getByName("commonMain")) }
-            dependOn(jvmSharedMain, "androidMain", "desktopMain")
-        }
+    jvm("desktop") {
+      compilerOptions { jvmTarget.set(JvmTarget.fromTarget(jvmTargetVersion)) }
     }
+
+    // No iosX64: Room 3 and androidx.sqlite 2.7.0 stopped publishing that target, and an Intel
+    // simulator is not something this app needs to support.
+    iosArm64()
+    iosSimulatorArm64()
+
+    wasmJs { browser() }
+
+    applyDefaultHierarchyTemplate()
+
+    compilerOptions {
+      freeCompilerArgs.addAll("-Xexpect-actual-classes")
+    }
+
+    with(sourceSets) {
+      all {
+        languageSettings.optIn("kotlin.RequiresOptIn")
+        languageSettings.optIn("kotlin.time.ExperimentalTime")
+      }
+
+      // Everything Skiko renders: no Android framework, no `android.content.Context`.
+      // `dependOn` skips names that do not exist, so a target left out of this list silently
+      // loses every actual declared here.
+      val nonAndroidMain = create("nonAndroidMain") { dependsOn(getByName("commonMain")) }
+      dependOn(nonAndroidMain, "iosMain", "desktopMain", "wasmJsMain")
+
+      // The test counterpart. Room's bundled SQLite ships a JNI library that an Android
+      // *host* unit test cannot load, so tests that touch a real database live here and run
+      // on the desktop JVM and on iOS instead.
+      val nonAndroidTest = create("nonAndroidTest") { dependsOn(getByName("commonTest")) }
+      dependOn(nonAndroidTest, "iosTest", "desktopTest")
+
+      // Android + desktop share a JVM runtime, so they share JVM-only libraries.
+      val jvmSharedMain = create("jvmSharedMain") { dependsOn(getByName("commonMain")) }
+      dependOn(jvmSharedMain, "androidMain", "desktopMain")
+    }
+  }
 
 /**
  * Wires [parent] into each named source set that exists. Test source sets only materialise once
  * `withHostTest`/`withDeviceTest` have run, so a missing name is skipped rather than failing.
  */
 private fun NamedDomainObjectContainer<KotlinSourceSet>.dependOn(
-    parent: KotlinSourceSet,
-    vararg names: String,
+  parent: KotlinSourceSet,
+  vararg names: String,
 ) = names.forEach { name -> findByName(name)?.dependsOn(parent) }
 
 private fun KotlinMultiplatformExtension.androidLibraryTarget(
-    project: Project,
-    jvmTargetVersion: String,
+  project: Project,
+  jvmTargetVersion: String,
 ) {
-    val android = (this as ExtensionAware).extensions
-        .getByName("android") as KotlinMultiplatformAndroidLibraryTarget
+  val android =
+    (this as ExtensionAware).extensions.getByName("android")
+      as KotlinMultiplatformAndroidLibraryTarget
 
-    android.apply {
-        namespace = project.derivedNamespace
-        compileSdk = project.libs.version("androidCompileSdk").toInt()
-        minSdk = project.libs.version("androidMinSdk").toInt()
-        compilerOptions { jvmTarget.set(JvmTarget.fromTarget(jvmTargetVersion)) }
-        androidResources.enable = true
-        lint { abortOnError = false }
+  android.apply {
+    namespace = project.derivedNamespace
+    compileSdk = project.libs.version("androidCompileSdk").toInt()
+    minSdk = project.libs.version("androidMinSdk").toInt()
+    compilerOptions { jvmTarget.set(JvmTarget.fromTarget(jvmTargetVersion)) }
+    androidResources.enable = true
+    lint { abortOnError = false }
 
-        withHostTest {
-            isIncludeAndroidResources = true
-            isReturnDefaultValues = true
-        }
-        withDeviceTest {
-            instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        }
+    withHostTest {
+      isIncludeAndroidResources = true
+      isReturnDefaultValues = true
     }
+    withDeviceTest {
+      instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+  }
 }

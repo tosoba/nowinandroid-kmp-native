@@ -18,9 +18,7 @@ package com.skydoves.nowinandroid.core.notifications
 
 import com.skydoves.nowinandroid.core.model.data.NewsResource
 
-/**
- * Implementation of [Notifier] which does nothing. Useful for tests and previews.
- */
+/** Implementation of [Notifier] which does nothing. Useful for tests and previews. */
 class NoOpNotifier : Notifier {
-    override fun postNewsNotifications(newsResources: List<NewsResource>) = Unit
+  override fun postNewsNotifications(newsResources: List<NewsResource>) = Unit
 }

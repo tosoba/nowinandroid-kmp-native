@@ -22,13 +22,13 @@ import com.skydoves.nowinandroid.di.AndroidAppGraph
 import dev.zacsweers.metro.createGraphFactory
 
 class NiaApplication : Application() {
-    lateinit var appGraph: AndroidAppGraph
-        private set
+  lateinit var appGraph: AndroidAppGraph
+    private set
 
-    override fun onCreate() {
-        super.onCreate()
-        appGraph = createGraphFactory<AndroidAppGraph.Factory>().create(this)
-        // The Android original enqueued a one-off `SyncWorker` from `Sync.initialize`.
-        appGraph.syncManager.initializeSync()
-    }
+  override fun onCreate() {
+    super.onCreate()
+    appGraph = createGraphFactory<AndroidAppGraph.Factory>().create(this)
+    // The Android original enqueued a one-off `SyncWorker` from `Sync.initialize`.
+    appGraph.syncManager.initializeSync()
+  }
 }

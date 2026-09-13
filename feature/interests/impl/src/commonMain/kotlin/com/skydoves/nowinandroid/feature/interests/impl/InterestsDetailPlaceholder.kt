@@ -39,36 +39,38 @@ import com.skydoves.nowinandroid.feature.interests.api.MR as InterestsApiRes
 
 @Composable
 fun InterestsDetailPlaceholder(modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-        shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
+  Card(
+    modifier = modifier,
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+    shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
+  ) {
+    Column(
+      modifier = Modifier.fillMaxSize(),
+      horizontalAlignment = Alignment.CenterHorizontally,
+      verticalArrangement =
+        Arrangement.spacedBy(
+          20.dp,
+          alignment = Alignment.CenterVertically,
+        ),
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(
-                20.dp,
-                alignment = Alignment.CenterVertically,
-            ),
-        ) {
-            Icon(
-                painter = painterResource(InterestsApiRes.images.feature_interests_api_ic_detail_placeholder),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
-            Text(
-                text = stringResource(InterestsApiRes.strings.feature_interests_api_select_an_interest),
-                style = MaterialTheme.typography.titleLarge,
-            )
-        }
+      Icon(
+        painter =
+          painterResource(InterestsApiRes.images.feature_interests_api_ic_detail_placeholder),
+        contentDescription = null,
+        tint = MaterialTheme.colorScheme.primary,
+      )
+      Text(
+        text = stringResource(InterestsApiRes.strings.feature_interests_api_select_an_interest),
+        style = MaterialTheme.typography.titleLarge,
+      )
     }
+  }
 }
 
 @Preview(widthDp = 200, heightDp = 300)
 @Composable
 fun TopicDetailPlaceholderPreview() {
-    NiaTheme {
-        InterestsDetailPlaceholder()
-    }
+  NiaTheme {
+    InterestsDetailPlaceholder()
+  }
 }

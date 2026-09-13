@@ -22,30 +22,24 @@ import androidx.room3.PrimaryKey
 import com.skydoves.nowinandroid.core.model.data.Topic
 
 /**
- * Defines a topic a user may follow.
- * It has a many to many relationship with [NewsResourceEntity]
+ * Defines a topic a user may follow. It has a many to many relationship with [NewsResourceEntity]
  */
-@Entity(
-    tableName = "topics",
-)
+@Entity(tableName = "topics")
 data class TopicEntity(
-    @PrimaryKey
-    val id: String,
-    val name: String,
-    val shortDescription: String,
-    @ColumnInfo(defaultValue = "")
-    val longDescription: String,
-    @ColumnInfo(defaultValue = "")
-    val url: String,
-    @ColumnInfo(defaultValue = "")
-    val imageUrl: String,
+  @PrimaryKey val id: String,
+  val name: String,
+  val shortDescription: String,
+  @ColumnInfo(defaultValue = "") val longDescription: String,
+  @ColumnInfo(defaultValue = "") val url: String,
+  @ColumnInfo(defaultValue = "") val imageUrl: String,
 )
 
-fun TopicEntity.asExternalModel() = Topic(
+fun TopicEntity.asExternalModel() =
+  Topic(
     id = id,
     name = name,
     shortDescription = shortDescription,
     longDescription = longDescription,
     url = url,
     imageUrl = imageUrl,
-)
+  )

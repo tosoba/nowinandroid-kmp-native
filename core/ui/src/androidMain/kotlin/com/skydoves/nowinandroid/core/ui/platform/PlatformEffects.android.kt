@@ -28,23 +28,22 @@ import com.google.accompanist.permissions.rememberPermissionState
 
 @Composable
 actual fun ReportFullyDrawnWhen(predicate: () -> Boolean) {
-    ReportDrawnWhen(predicate)
+  ReportDrawnWhen(predicate)
 }
 
 @Composable
 @OptIn(ExperimentalPermissionsApi::class)
 actual fun NotificationPermissionEffect() {
-    // Permission requests should only be made from an Activity Context, which is not present
-    // in previews
-    if (LocalInspectionMode.current) return
-    if (VERSION.SDK_INT < VERSION_CODES.TIRAMISU) return
-    val notificationsPermissionState = rememberPermissionState(
-        android.Manifest.permission.POST_NOTIFICATIONS,
-    )
-    LaunchedEffect(notificationsPermissionState) {
-        val status = notificationsPermissionState.status
-        if (status is Denied && !status.shouldShowRationale) {
-            notificationsPermissionState.launchPermissionRequest()
-        }
+  // Permission requests should only be made from an Activity Context, which is not present
+  // in previews
+  if (LocalInspectionMode.current) return
+  if (VERSION.SDK_INT < VERSION_CODES.TIRAMISU) return
+  val notificationsPermissionState =
+    rememberPermissionState(android.Manifest.permission.POST_NOTIFICATIONS)
+  LaunchedEffect(notificationsPermissionState) {
+    val status = notificationsPermissionState.status
+    if (status is Denied && !status.shouldShowRationale) {
+      notificationsPermissionState.launchPermissionRequest()
     }
+  }
 }

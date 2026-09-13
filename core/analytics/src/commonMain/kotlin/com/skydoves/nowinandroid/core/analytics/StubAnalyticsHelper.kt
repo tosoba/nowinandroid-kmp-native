@@ -32,7 +32,7 @@ private const val TAG = "StubAnalyticsHelper"
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class StubAnalyticsHelper : AnalyticsHelper {
-    override fun logEvent(event: AnalyticsEvent) {
-        NiaLogger.debug(TAG, "Received analytics event: $event")
-    }
+  override fun logEvent(event: AnalyticsEvent) {
+    NiaLogger.debug(TAG, "Received analytics event: $event")
+  }
 }

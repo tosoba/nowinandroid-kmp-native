@@ -35,24 +35,24 @@ import androidx.savedstate.serialization.SavedStateConfiguration
  * Create a navigation state that persists config changes and process death.
  *
  * @param configuration - saved state configuration whose `serializersModule` registers every
- * [NavKey] subclass, so the back stacks survive process death on every platform.
+ *   [NavKey] subclass, so the back stacks survive process death on every platform.
  */
 @Composable
 fun rememberNavigationState(
-    configuration: SavedStateConfiguration,
-    startKey: NavKey,
-    topLevelKeys: Set<NavKey>,
+  configuration: SavedStateConfiguration,
+  startKey: NavKey,
+  topLevelKeys: Set<NavKey>,
 ): NavigationState {
-    val topLevelStack = rememberNavBackStack(configuration, startKey)
-    val subStacks = topLevelKeys.associateWith { key -> rememberNavBackStack(configuration, key) }
+  val topLevelStack = rememberNavBackStack(configuration, startKey)
+  val subStacks = topLevelKeys.associateWith { key -> rememberNavBackStack(configuration, key) }
 
-    return remember(startKey, topLevelKeys) {
-        NavigationState(
-            startKey = startKey,
-            topLevelStack = topLevelStack,
-            subStacks = subStacks,
-        )
-    }
+  return remember(startKey, topLevelKeys) {
+    NavigationState(
+      startKey = startKey,
+      topLevelStack = topLevelStack,
+      subStacks = subStacks,
+    )
+  }
 }
 
 /**
@@ -63,39 +63,39 @@ fun rememberNavigationState(
  * @param subStacks - the back stacks for each top level key
  */
 class NavigationState(
-    val startKey: NavKey,
-    val topLevelStack: NavBackStack<NavKey>,
-    val subStacks: Map<NavKey, NavBackStack<NavKey>>,
+  val startKey: NavKey,
+  val topLevelStack: NavBackStack<NavKey>,
+  val subStacks: Map<NavKey, NavBackStack<NavKey>>,
 ) {
-    val currentTopLevelKey: NavKey by derivedStateOf { topLevelStack.last() }
+  val currentTopLevelKey: NavKey by derivedStateOf { topLevelStack.last() }
 
-    val topLevelKeys get() = subStacks.keys
+  val topLevelKeys
+    get() = subStacks.keys
 
-    val currentSubStack: NavBackStack<NavKey>
-        get() = subStacks[currentTopLevelKey]
-            ?: error("Sub stack for $currentTopLevelKey does not exist")
+  val currentSubStack: NavBackStack<NavKey>
+    get() =
+      subStacks[currentTopLevelKey] ?: error("Sub stack for $currentTopLevelKey does not exist")
 
-    val currentKey: NavKey by derivedStateOf { currentSubStack.last() }
+  val currentKey: NavKey by derivedStateOf { currentSubStack.last() }
 }
 
-/**
- * Convert NavigationState into NavEntries.
- */
+/** Convert NavigationState into NavEntries. */
 @Composable
-fun NavigationState.toEntries(entryProvider: (NavKey) -> NavEntry<NavKey>): SnapshotStateList<NavEntry<NavKey>> {
-    val decoratedEntries = subStacks.mapValues { (_, stack) ->
-        val decorators = listOf(
-            rememberSaveableStateHolderNavEntryDecorator<NavKey>(),
-            rememberViewModelStoreNavEntryDecorator<NavKey>(),
-        )
-        rememberDecoratedNavEntries(
-            backStack = stack,
-            entryDecorators = decorators,
-            entryProvider = entryProvider,
-        )
-    }
+fun NavigationState.toEntries(
+  entryProvider: (NavKey) -> NavEntry<NavKey>
+): SnapshotStateList<NavEntry<NavKey>> {
+  val decoratedEntries = subStacks.mapValues { (_, stack) ->
+    val decorators =
+      listOf(
+        rememberSaveableStateHolderNavEntryDecorator<NavKey>(),
+        rememberViewModelStoreNavEntryDecorator<NavKey>(),
+      )
+    rememberDecoratedNavEntries(
+      backStack = stack,
+      entryDecorators = decorators,
+      entryProvider = entryProvider,
+    )
+  }
 
-    return topLevelStack
-        .flatMap { decoratedEntries[it] ?: emptyList() }
-        .toMutableStateList()
+  return topLevelStack.flatMap { decoratedEntries[it] ?: emptyList() }.toMutableStateList()
 }

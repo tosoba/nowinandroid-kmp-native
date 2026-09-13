@@ -23,17 +23,14 @@ import androidx.room3.Query
 import com.skydoves.nowinandroid.core.database.model.TopicFtsEntity
 import kotlinx.coroutines.flow.Flow
 
-/**
- * DAO for [TopicFtsEntity] access.
- */
+/** DAO for [TopicFtsEntity] access. */
 @Dao
 interface TopicFtsDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(topics: List<TopicFtsEntity>)
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  suspend fun insertAll(topics: List<TopicFtsEntity>)
 
-    @Query("SELECT topicId FROM topicsFts WHERE topicsFts MATCH :query")
-    fun searchAllTopics(query: String): Flow<List<String>>
+  @Query("SELECT topicId FROM topicsFts WHERE topicsFts MATCH :query")
+  fun searchAllTopics(query: String): Flow<List<String>>
 
-    @Query("SELECT count(*) FROM topicsFts")
-    fun getCount(): Flow<Int>
+  @Query("SELECT count(*) FROM topicsFts") fun getCount(): Flow<Int>
 }

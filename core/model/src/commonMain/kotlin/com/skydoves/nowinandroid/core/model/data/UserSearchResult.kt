@@ -24,6 +24,6 @@ import androidx.compose.runtime.Immutable
  */
 @Immutable
 data class UserSearchResult(
-    val topics: List<FollowableTopic> = emptyList(),
-    val newsResources: List<UserNewsResource> = emptyList(),
+  val topics: List<FollowableTopic> = emptyList(),
+  val newsResources: List<UserNewsResource> = emptyList(),
 )

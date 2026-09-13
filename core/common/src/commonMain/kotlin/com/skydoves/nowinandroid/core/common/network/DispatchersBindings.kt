@@ -30,17 +30,15 @@ import kotlinx.coroutines.SupervisorJob
 @ContributesTo(AppScope::class)
 object DispatchersBindings {
 
-    @Provides
-    @IoDispatcher
-    fun providesIoDispatcher(): CoroutineDispatcher = ioDispatcher
+  @Provides @IoDispatcher fun providesIoDispatcher(): CoroutineDispatcher = ioDispatcher
 
-    @Provides
-    @DefaultDispatcher
-    fun providesDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
+  @Provides
+  @DefaultDispatcher
+  fun providesDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
 
-    @Provides
-    @SingleIn(AppScope::class)
-    @ApplicationScope
-    fun providesApplicationScope(@DefaultDispatcher dispatcher: CoroutineDispatcher): CoroutineScope =
-        CoroutineScope(SupervisorJob() + dispatcher)
+  @Provides
+  @SingleIn(AppScope::class)
+  @ApplicationScope
+  fun providesApplicationScope(@DefaultDispatcher dispatcher: CoroutineDispatcher): CoroutineScope =
+    CoroutineScope(SupervisorJob() + dispatcher)
 }

@@ -15,29 +15,29 @@
  */
 
 plugins {
-    id("nowinandroid.kmp.multiplatform")
-    alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.metro)
+  id("nowinandroid.kmp.multiplatform")
+  alias(libs.plugins.kotlin.serialization)
+  alias(libs.plugins.metro)
 }
 
 kotlin {
-    sourceSets {
-        commonMain.dependencies {
-            api(projects.core.model)
-            api(projects.core.common)
-            api(libs.androidx.datastore.core.okio)
-            implementation(libs.okio)
-            implementation(libs.kotlinx.serialization.json)
-            implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.metro.runtime)
-        }
-        getByName("wasmJsMain").dependencies {
-            implementation(libs.kotlinx.browser)
-        }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-            implementation(libs.kotlinx.coroutines.test)
-            implementation(libs.okio.fakefilesystem)
-        }
+  sourceSets {
+    commonMain.dependencies {
+      api(projects.core.model)
+      api(projects.core.common)
+      api(libs.androidx.datastore.core.okio)
+      implementation(libs.okio)
+      implementation(libs.kotlinx.serialization.json)
+      implementation(libs.kotlinx.coroutines.core)
+      implementation(libs.metro.runtime)
     }
+    getByName("wasmJsMain").dependencies {
+      implementation(libs.kotlinx.browser)
+    }
+    commonTest.dependencies {
+      implementation(libs.kotlin.test)
+      implementation(libs.kotlinx.coroutines.test)
+      implementation(libs.okio.fakefilesystem)
+    }
+  }
 }

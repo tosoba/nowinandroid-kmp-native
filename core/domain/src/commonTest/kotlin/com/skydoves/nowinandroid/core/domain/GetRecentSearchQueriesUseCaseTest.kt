@@ -25,26 +25,26 @@ import kotlin.test.assertTrue
 
 class GetRecentSearchQueriesUseCaseTest {
 
-    private val recentSearchRepository = TestRecentSearchRepository()
-    private val useCase = GetRecentSearchQueriesUseCase(recentSearchRepository)
+  private val recentSearchRepository = TestRecentSearchRepository()
+  private val useCase = GetRecentSearchQueriesUseCase(recentSearchRepository)
 
-    @Test
-    fun recentSearchesAreReturnedMostRecentFirst() = runTest {
-        recentSearchRepository.insertOrReplaceRecentSearch("kotlin")
-        recentSearchRepository.insertOrReplaceRecentSearch("compose")
+  @Test
+  fun recentSearchesAreReturnedMostRecentFirst() = runTest {
+    recentSearchRepository.insertOrReplaceRecentSearch("kotlin")
+    recentSearchRepository.insertOrReplaceRecentSearch("compose")
 
-        assertEquals(listOf("compose", "kotlin"), useCase().first().map { it.query })
-    }
+    assertEquals(listOf("compose", "kotlin"), useCase().first().map { it.query })
+  }
 
-    @Test
-    fun theLimitIsHonoured() = runTest {
-        repeat(5) { recentSearchRepository.insertOrReplaceRecentSearch("query $it") }
+  @Test
+  fun theLimitIsHonoured() = runTest {
+    repeat(5) { recentSearchRepository.insertOrReplaceRecentSearch("query $it") }
 
-        assertEquals(3, useCase(limit = 3).first().size)
-    }
+    assertEquals(3, useCase(limit = 3).first().size)
+  }
 
-    @Test
-    fun noRecentSearchesReturnsAnEmptyList() = runTest {
-        assertTrue(useCase().first().isEmpty())
-    }
+  @Test
+  fun noRecentSearchesReturnsAnEmptyList() = runTest {
+    assertTrue(useCase().first().isEmpty())
+  }
 }

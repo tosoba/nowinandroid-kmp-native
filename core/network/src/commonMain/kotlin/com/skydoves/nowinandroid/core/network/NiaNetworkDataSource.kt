@@ -28,11 +28,11 @@ import com.skydoves.sandwich.ApiResponse
  * two distinct, inspectable results rather than a thrown exception the caller has to guess at.
  */
 interface NiaNetworkDataSource {
-    suspend fun getTopics(ids: List<String>? = null): ApiResponse<List<NetworkTopic>>
+  suspend fun getTopics(ids: List<String>? = null): ApiResponse<List<NetworkTopic>>
 
-    suspend fun getNewsResources(ids: List<String>? = null): ApiResponse<List<NetworkNewsResource>>
+  suspend fun getNewsResources(ids: List<String>? = null): ApiResponse<List<NetworkNewsResource>>
 
-    suspend fun getTopicChangeList(after: Int? = null): ApiResponse<List<NetworkChangeList>>
+  suspend fun getTopicChangeList(after: Int? = null): ApiResponse<List<NetworkChangeList>>
 
-    suspend fun getNewsResourceChangeList(after: Int? = null): ApiResponse<List<NetworkChangeList>>
+  suspend fun getNewsResourceChangeList(after: Int? = null): ApiResponse<List<NetworkChangeList>>
 }

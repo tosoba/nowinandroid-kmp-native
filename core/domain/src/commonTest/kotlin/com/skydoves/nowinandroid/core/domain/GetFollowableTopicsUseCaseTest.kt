@@ -28,56 +28,57 @@ import kotlin.test.assertEquals
 
 class GetFollowableTopicsUseCaseTest {
 
-    private val topicsRepository = TestTopicsRepository()
-    private val userDataRepository = TestUserDataRepository()
+  private val topicsRepository = TestTopicsRepository()
+  private val userDataRepository = TestUserDataRepository()
 
-    private val useCase = GetFollowableTopicsUseCase(topicsRepository, userDataRepository)
+  private val useCase = GetFollowableTopicsUseCase(topicsRepository, userDataRepository)
 
-    @Test
-    fun whenNoParams_followableTopicsAreReturnedWithNoSorting() = runTest {
-        val followableTopics = useCase()
+  @Test
+  fun whenNoParams_followableTopicsAreReturnedWithNoSorting() = runTest {
+    val followableTopics = useCase()
 
-        topicsRepository.sendTopics(testTopics)
-        userDataRepository.setFollowedTopicIds(setOf(testTopics[0].id, testTopics[2].id))
+    topicsRepository.sendTopics(testTopics)
+    userDataRepository.setFollowedTopicIds(setOf(testTopics[0].id, testTopics[2].id))
 
-        assertEquals(
-            listOf(
-                FollowableTopic(testTopics[0], true),
-                FollowableTopic(testTopics[1], false),
-                FollowableTopic(testTopics[2], true),
-            ),
-            followableTopics.first(),
-        )
-    }
+    assertEquals(
+      listOf(
+        FollowableTopic(testTopics[0], true),
+        FollowableTopic(testTopics[1], false),
+        FollowableTopic(testTopics[2], true),
+      ),
+      followableTopics.first(),
+    )
+  }
 
-    @Test
-    fun whenSortOrderIsByName_topicsSortedByNameAreReturned() = runTest {
-        val followableTopics = useCase(sortBy = NAME)
+  @Test
+  fun whenSortOrderIsByName_topicsSortedByNameAreReturned() = runTest {
+    val followableTopics = useCase(sortBy = NAME)
 
-        topicsRepository.sendTopics(testTopics)
-        userDataRepository.setFollowedTopicIds(emptySet())
+    topicsRepository.sendTopics(testTopics)
+    userDataRepository.setFollowedTopicIds(emptySet())
 
-        assertEquals(
-            testTopics.sortedBy { it.name }.map { FollowableTopic(it, false) },
-            followableTopics.first(),
-        )
-    }
+    assertEquals(
+      testTopics.sortedBy { it.name }.map { FollowableTopic(it, false) },
+      followableTopics.first(),
+    )
+  }
 
-    @Test
-    fun followedStateTracksTheUserDataStream() = runTest {
-        val followableTopics = useCase()
+  @Test
+  fun followedStateTracksTheUserDataStream() = runTest {
+    val followableTopics = useCase()
 
-        topicsRepository.sendTopics(testTopics)
-        userDataRepository.setFollowedTopicIds(emptySet())
-        assertEquals(listOf(false, false, false), followableTopics.first().map { it.isFollowed })
+    topicsRepository.sendTopics(testTopics)
+    userDataRepository.setFollowedTopicIds(emptySet())
+    assertEquals(listOf(false, false, false), followableTopics.first().map { it.isFollowed })
 
-        userDataRepository.setTopicIdFollowed(testTopics[1].id, true)
-        assertEquals(listOf(false, true, false), followableTopics.first().map { it.isFollowed })
-    }
+    userDataRepository.setTopicIdFollowed(testTopics[1].id, true)
+    assertEquals(listOf(false, true, false), followableTopics.first().map { it.isFollowed })
+  }
 }
 
-private val testTopics = listOf(
+private val testTopics =
+  listOf(
     Topic("1", "Headlines", "", "", "", ""),
     Topic("2", "Android Studio", "", "", "", ""),
     Topic("3", "Compose", "", "", "", ""),
-)
+  )

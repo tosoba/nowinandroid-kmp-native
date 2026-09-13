@@ -21,11 +21,11 @@ import com.skydoves.nowinandroid.core.analytics.AnalyticsHelper
 
 class TestAnalyticsHelper : AnalyticsHelper {
 
-    private val events = mutableListOf<AnalyticsEvent>()
+  private val events = mutableListOf<AnalyticsEvent>()
 
-    override fun logEvent(event: AnalyticsEvent) {
-        events.add(event)
-    }
+  override fun logEvent(event: AnalyticsEvent) {
+    events.add(event)
+  }
 
-    fun hasLogged(event: AnalyticsEvent) = event in events
+  fun hasLogged(event: AnalyticsEvent) = event in events
 }

@@ -15,23 +15,23 @@
  */
 
 plugins {
-    id("nowinandroid.kmp.multiplatform")
-    alias(libs.plugins.metro)
+  id("nowinandroid.kmp.multiplatform")
+  alias(libs.plugins.metro)
 }
 
 kotlin {
-    sourceSets {
-        commonMain.dependencies {
-            api(projects.core.data)
-            api(projects.core.model)
-            implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.metro.runtime)
-        }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-            implementation(libs.kotlinx.coroutines.test)
-            implementation(libs.turbine)
-            implementation(projects.core.testing)
-        }
+  sourceSets {
+    commonMain.dependencies {
+      api(projects.core.data)
+      api(projects.core.model)
+      implementation(libs.kotlinx.coroutines.core)
+      implementation(libs.metro.runtime)
     }
+    commonTest.dependencies {
+      implementation(libs.kotlin.test)
+      implementation(libs.kotlinx.coroutines.test)
+      implementation(libs.turbine)
+      implementation(projects.core.testing)
+    }
+  }
 }

@@ -19,15 +19,15 @@ package com.skydoves.nowinandroid.core.common.log
 import platform.Foundation.NSLog
 
 actual object NiaLogger {
-    actual fun debug(tag: String, message: String) {
-        NSLog("D/%s: %s", tag, message)
-    }
+  actual fun debug(tag: String, message: String) {
+    NSLog("D/%s: %s", tag, message)
+  }
 
-    actual fun info(tag: String, message: String, throwable: Throwable?) {
-        NSLog("I/%s: %s %s", tag, message, throwable?.stackTraceToString().orEmpty())
-    }
+  actual fun info(tag: String, message: String, throwable: Throwable?) {
+    NSLog("I/%s: %s %s", tag, message, throwable?.stackTraceToString().orEmpty())
+  }
 
-    actual fun error(tag: String, message: String, throwable: Throwable?) {
-        NSLog("E/%s: %s %s", tag, message, throwable?.stackTraceToString().orEmpty())
-    }
+  actual fun error(tag: String, message: String, throwable: Throwable?) {
+    NSLog("E/%s: %s %s", tag, message, throwable?.stackTraceToString().orEmpty())
+  }
 }

@@ -20,42 +20,43 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 
 class SpotlessConventionPlugin : Plugin<Project> {
-    override fun apply(target: Project) {
-        with(target) {
-            pluginManager.apply("com.diffplug.spotless")
+  override fun apply(target: Project) {
+    with(target) {
+      pluginManager.apply("com.diffplug.spotless")
 
-            extensions.configure<SpotlessExtension> {
-                val buildDirectory = layout.buildDirectory.asFileTree
-                kotlin {
-                    target("**/*.kt")
-                    targetExclude(buildDirectory)
-                    ktlint().editorConfigOverride(
-                        mapOf(
-                            "ktlint_standard_function-naming" to "disabled",
-                            "ktlint_standard_property-naming" to "disabled",
-                            "ktlint_function_naming_ignore_when_annotated_with" to "Composable",
-                            "max_line_length" to "120",
-                        ),
-                    )
-                    licenseHeaderFile(rootProject.file("spotless/spotless.license.kt"))
-                    trimTrailingWhitespace()
-                    endWithNewline()
-                }
-                format("kts") {
-                    target("**/*.kts")
-                    targetExclude(buildDirectory)
-                    licenseHeaderFile(
-                        rootProject.file("spotless/spotless.license.kt"),
-                        // First line that is neither blank nor part of a block comment.
-                        "(^(?!\\s*$)(?![\\/ ]\\*).*$)",
-                    )
-                }
-                format("xml") {
-                    target("**/*.xml")
-                    targetExclude(buildDirectory)
-                    licenseHeaderFile(rootProject.file("spotless/spotless.license.xml"), "(<[^!?])")
-                }
-            }
+      extensions.configure<SpotlessExtension> {
+        val buildDirectory = layout.buildDirectory.asFileTree
+        kotlin {
+          target("**/*.kt")
+          targetExclude(buildDirectory)
+          ktlint()
+            .editorConfigOverride(
+              mapOf(
+                "ktlint_standard_function-naming" to "disabled",
+                "ktlint_standard_property-naming" to "disabled",
+                "ktlint_function_naming_ignore_when_annotated_with" to "Composable",
+                "max_line_length" to "120",
+              )
+            )
+          licenseHeaderFile(rootProject.file("spotless/spotless.license.kt"))
+          trimTrailingWhitespace()
+          endWithNewline()
         }
+        format("kts") {
+          target("**/*.kts")
+          targetExclude(buildDirectory)
+          licenseHeaderFile(
+            rootProject.file("spotless/spotless.license.kt"),
+            // First line that is neither blank nor part of a block comment.
+            "(^(?!\\s*$)(?![\\/ ]\\*).*$)",
+          )
+        }
+        format("xml") {
+          target("**/*.xml")
+          targetExclude(buildDirectory)
+          licenseHeaderFile(rootProject.file("spotless/spotless.license.xml"), "(<[^!?])")
+        }
+      }
     }
+  }
 }

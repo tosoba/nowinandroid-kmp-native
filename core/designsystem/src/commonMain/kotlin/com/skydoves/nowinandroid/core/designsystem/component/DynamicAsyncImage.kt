@@ -42,19 +42,20 @@ import dev.icerock.moko.resources.compose.painterResource
 /**
  * The shimmer every remote image shows while it loads.
  *
- * Upstream filled the loading slot with an 80.dp [androidx.compose.material3.CircularProgressIndicator].
- * That size was chosen for the 180.dp news header, where it still covers most of the card and blinks
- * on every scroll; over a 32.dp topic icon the same spinner is clamped to the icon and reads as a
- * stray ring. A shimmer takes the shape of whatever box it is given, so one definition is right at
- * both sizes and the placeholder reads as "a picture is arriving here".
+ * Upstream filled the loading slot with an 80.dp
+ * [androidx.compose.material3.CircularProgressIndicator]. That size was chosen for the 180.dp news
+ * header, where it still covers most of the card and blinks on every scroll; over a 32.dp topic
+ * icon the same spinner is clamped to the icon and reads as a stray ring. A shimmer takes the shape
+ * of whatever box it is given, so one definition is right at both sizes and the placeholder reads
+ * as "a picture is arriving here".
  */
 @Composable
 fun rememberNiaShimmer(): Shimmer {
-    val baseColor = MaterialTheme.colorScheme.surfaceVariant
-    val highlightColor = MaterialTheme.colorScheme.surface
-    return remember(baseColor, highlightColor) {
-        Shimmer.Resonate(baseColor = baseColor, highlightColor = highlightColor)
-    }
+  val baseColor = MaterialTheme.colorScheme.surfaceVariant
+  val highlightColor = MaterialTheme.colorScheme.surface
+  return remember(baseColor, highlightColor) {
+    Shimmer.Resonate(baseColor = baseColor, highlightColor = highlightColor)
+  }
 }
 
 /**
@@ -66,50 +67,52 @@ fun rememberNiaShimmer(): Shimmer {
  */
 @Composable
 fun DynamicAsyncImage(
-    imageUrl: String,
-    contentDescription: String?,
-    modifier: Modifier = Modifier,
-    placeholder: Painter = painterResource(MR.images.core_designsystem_ic_placeholder_default),
+  imageUrl: String,
+  contentDescription: String?,
+  modifier: Modifier = Modifier,
+  placeholder: Painter = painterResource(MR.images.core_designsystem_ic_placeholder_default),
 ) {
-    val iconTint = LocalTintTheme.current.iconTint
-    val colorFilter = if (iconTint != Unspecified) ColorFilter.tint(iconTint) else null
-    val isLocalInspection = LocalInspectionMode.current
-    val shimmer = rememberNiaShimmer()
+  val iconTint = LocalTintTheme.current.iconTint
+  val colorFilter = if (iconTint != Unspecified) ColorFilter.tint(iconTint) else null
+  val isLocalInspection = LocalInspectionMode.current
+  val shimmer = rememberNiaShimmer()
 
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center,
-    ) {
-        if (isLocalInspection) {
-            // Previews and screenshot tests have no network, so they render the placeholder.
-            Image(
-                painter = placeholder,
-                contentDescription = contentDescription,
-                contentScale = ContentScale.Crop,
-                colorFilter = colorFilter,
-            )
-            return@Box
-        }
-
-        LandscapistImage(
-            imageModel = { imageUrl },
-            modifier = Modifier.fillMaxSize(),
-            imageOptions = ImageOptions(
-                contentScale = ContentScale.Crop,
-                contentDescription = contentDescription,
-                colorFilter = colorFilter,
-            ),
-            component = rememberImageComponent {
-                +ShimmerPlugin(shimmer = shimmer)
-            },
-            failure = {
-                Image(
-                    painter = placeholder,
-                    contentDescription = contentDescription,
-                    contentScale = ContentScale.Crop,
-                    colorFilter = colorFilter,
-                )
-            },
-        )
+  Box(
+    modifier = modifier,
+    contentAlignment = Alignment.Center,
+  ) {
+    if (isLocalInspection) {
+      // Previews and screenshot tests have no network, so they render the placeholder.
+      Image(
+        painter = placeholder,
+        contentDescription = contentDescription,
+        contentScale = ContentScale.Crop,
+        colorFilter = colorFilter,
+      )
+      return@Box
     }
+
+    LandscapistImage(
+      imageModel = { imageUrl },
+      modifier = Modifier.fillMaxSize(),
+      imageOptions =
+        ImageOptions(
+          contentScale = ContentScale.Crop,
+          contentDescription = contentDescription,
+          colorFilter = colorFilter,
+        ),
+      component =
+        rememberImageComponent {
+          +ShimmerPlugin(shimmer = shimmer)
+        },
+      failure = {
+        Image(
+          painter = placeholder,
+          contentDescription = contentDescription,
+          contentScale = ContentScale.Crop,
+          colorFilter = colorFilter,
+        )
+      },
+    )
+  }
 }

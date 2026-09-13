@@ -21,5 +21,5 @@ package com.skydoves.nowinandroid.core.analytics
  * example implementations.
  */
 interface AnalyticsHelper {
-    fun logEvent(event: AnalyticsEvent)
+  fun logEvent(event: AnalyticsEvent)
 }

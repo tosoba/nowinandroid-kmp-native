@@ -29,11 +29,11 @@ import com.skydoves.nowinandroid.feature.interests.api.navigation.InterestsNavKe
 import com.skydoves.nowinandroid.feature.search.api.feature_search_api_interests
 import com.skydoves.nowinandroid.feature.search.api.navigation.SearchNavKey
 import com.skydoves.nowinandroid.feature.topic.api.navigation.TopicNavKey
-import com.skydoves.nowinandroid.MR as Res
+import dev.icerock.moko.resources.StringResource
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
-import dev.icerock.moko.resources.StringResource
+import com.skydoves.nowinandroid.MR as Res
 import com.skydoves.nowinandroid.feature.bookmarks.api.MR as BookmarksApiRes
 import com.skydoves.nowinandroid.feature.foryou.api.MR as ForYouApiRes
 import com.skydoves.nowinandroid.feature.search.api.MR as SearchApiRes
@@ -43,58 +43,62 @@ import com.skydoves.nowinandroid.feature.search.api.MR as SearchApiRes
  * current route that is used in the top app bar and common navigation UI.
  *
  * @param selectedIcon The icon to be displayed in the navigation UI when this destination is
- * selected.
- * @param unselectedIcon The icon to be displayed in the navigation UI when this destination is
- * not selected.
+ *   selected.
+ * @param unselectedIcon The icon to be displayed in the navigation UI when this destination is not
+ *   selected.
  * @param iconText Text that to be displayed in the navigation UI.
  * @param titleText Text that is displayed on the top app bar.
  */
 data class TopLevelNavItem(
-    val selectedIcon: ImageVector,
-    val unselectedIcon: ImageVector,
-    val iconText: StringResource,
-    val titleText: StringResource,
+  val selectedIcon: ImageVector,
+  val unselectedIcon: ImageVector,
+  val iconText: StringResource,
+  val titleText: StringResource,
 )
 
-val FOR_YOU = TopLevelNavItem(
+val FOR_YOU =
+  TopLevelNavItem(
     selectedIcon = NiaIcons.Upcoming,
     unselectedIcon = NiaIcons.UpcomingBorder,
     iconText = ForYouApiRes.strings.feature_foryou_api_title,
     titleText = Res.strings.app_name,
-)
+  )
 
-val BOOKMARKS = TopLevelNavItem(
+val BOOKMARKS =
+  TopLevelNavItem(
     selectedIcon = NiaIcons.Bookmarks,
     unselectedIcon = NiaIcons.BookmarksBorder,
     iconText = BookmarksApiRes.strings.feature_bookmarks_api_title,
     titleText = BookmarksApiRes.strings.feature_bookmarks_api_title,
-)
+  )
 
-val INTERESTS = TopLevelNavItem(
+val INTERESTS =
+  TopLevelNavItem(
     selectedIcon = NiaIcons.Grid3x3,
     unselectedIcon = NiaIcons.Grid3x3,
     iconText = SearchApiRes.strings.feature_search_api_interests,
     titleText = SearchApiRes.strings.feature_search_api_interests,
-)
+  )
 
-val TOP_LEVEL_NAV_ITEMS: Map<NavKey, TopLevelNavItem> = mapOf(
+val TOP_LEVEL_NAV_ITEMS: Map<NavKey, TopLevelNavItem> =
+  mapOf(
     ForYouNavKey to FOR_YOU,
     BookmarksNavKey to BOOKMARKS,
     InterestsNavKey(null) to INTERESTS,
-)
+  )
 
 /**
  * Navigation 3 serialises the back stack to survive process death, and open polymorphism needs
  * every [NavKey] subclass registered up front.
  */
 val NiaSavedStateConfiguration: SavedStateConfiguration = SavedStateConfiguration {
-    serializersModule = SerializersModule {
-        polymorphic(NavKey::class) {
-            subclass(ForYouNavKey::class)
-            subclass(BookmarksNavKey::class)
-            subclass(InterestsNavKey::class)
-            subclass(TopicNavKey::class)
-            subclass(SearchNavKey::class)
-        }
+  serializersModule = SerializersModule {
+    polymorphic(NavKey::class) {
+      subclass(ForYouNavKey::class)
+      subclass(BookmarksNavKey::class)
+      subclass(InterestsNavKey::class)
+      subclass(TopicNavKey::class)
+      subclass(SearchNavKey::class)
     }
+  }
 }

@@ -20,4 +20,7 @@ import androidx.compose.runtime.Immutable
 
 /** An entity that holds the search result */
 @Immutable
-data class SearchResult(val topics: List<Topic> = emptyList(), val newsResources: List<NewsResource> = emptyList())
+data class SearchResult(
+  val topics: List<Topic> = emptyList(),
+  val newsResources: List<NewsResource> = emptyList(),
+)

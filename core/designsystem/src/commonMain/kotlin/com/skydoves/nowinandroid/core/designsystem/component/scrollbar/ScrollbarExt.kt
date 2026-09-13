@@ -39,59 +39,64 @@ import kotlin.math.min
  */
 @Composable
 fun LazyListState.scrollbarState(
-    itemsAvailable: Int,
-    itemIndex: (LazyListItemInfo) -> Int = LazyListItemInfo::index,
+  itemsAvailable: Int,
+  itemIndex: (LazyListItemInfo) -> Int = LazyListItemInfo::index,
 ): ScrollbarState {
-    val state = remember { ScrollbarState() }
-    LaunchedEffect(this, itemsAvailable) {
-        snapshotFlow {
-            if (itemsAvailable == 0) return@snapshotFlow null
+  val state = remember { ScrollbarState() }
+  LaunchedEffect(this, itemsAvailable) {
+    snapshotFlow {
+      if (itemsAvailable == 0) return@snapshotFlow null
 
-            val visibleItemsInfo = layoutInfo.visibleItemsInfo
-            if (visibleItemsInfo.isEmpty()) return@snapshotFlow null
+      val visibleItemsInfo = layoutInfo.visibleItemsInfo
+      if (visibleItemsInfo.isEmpty()) return@snapshotFlow null
 
-            val firstIndex = min(
-                a = interpolateFirstItemIndex(
-                    visibleItems = visibleItemsInfo,
-                    itemSize = { it.size },
-                    offset = { it.offset },
-                    nextItemOnMainAxis = { first -> visibleItemsInfo.find { it != first } },
-                    itemIndex = itemIndex,
-                ),
-                b = itemsAvailable.toFloat(),
-            )
-            if (firstIndex.isNaN()) return@snapshotFlow null
+      val firstIndex =
+        min(
+          a =
+            interpolateFirstItemIndex(
+              visibleItems = visibleItemsInfo,
+              itemSize = { it.size },
+              offset = { it.offset },
+              nextItemOnMainAxis = { first -> visibleItemsInfo.find { it != first } },
+              itemIndex = itemIndex,
+            ),
+          b = itemsAvailable.toFloat(),
+        )
+      if (firstIndex.isNaN()) return@snapshotFlow null
 
-            val itemsVisible = visibleItemsInfo.floatSumOf { itemInfo ->
-                itemVisibilityPercentage(
-                    itemSize = itemInfo.size,
-                    itemStartOffset = itemInfo.offset,
-                    viewportStartOffset = layoutInfo.viewportStartOffset,
-                    viewportEndOffset = layoutInfo.viewportEndOffset,
-                )
-            }
+      val itemsVisible = visibleItemsInfo.floatSumOf { itemInfo ->
+        itemVisibilityPercentage(
+          itemSize = itemInfo.size,
+          itemStartOffset = itemInfo.offset,
+          viewportStartOffset = layoutInfo.viewportStartOffset,
+          viewportEndOffset = layoutInfo.viewportEndOffset,
+        )
+      }
 
-            val thumbTravelPercent = min(
-                a = firstIndex / itemsAvailable,
-                b = 1f,
-            )
-            val thumbSizePercent = min(
-                a = itemsVisible / itemsAvailable,
-                b = 1f,
-            )
-            scrollbarStateValue(
-                thumbSizePercent = thumbSizePercent,
-                thumbMovedPercent = when {
-                    layoutInfo.reverseLayout -> 1f - thumbTravelPercent
-                    else -> thumbTravelPercent
-                },
-            )
-        }
-            .filterNotNull()
-            .distinctUntilChanged()
-            .collect { state.onScroll(it) }
+      val thumbTravelPercent =
+        min(
+          a = firstIndex / itemsAvailable,
+          b = 1f,
+        )
+      val thumbSizePercent =
+        min(
+          a = itemsVisible / itemsAvailable,
+          b = 1f,
+        )
+      scrollbarStateValue(
+        thumbSizePercent = thumbSizePercent,
+        thumbMovedPercent =
+          when {
+            layoutInfo.reverseLayout -> 1f - thumbTravelPercent
+            else -> thumbTravelPercent
+          },
+      )
     }
-    return state
+      .filterNotNull()
+      .distinctUntilChanged()
+      .collect { state.onScroll(it) }
+  }
+  return state
 }
 
 /**
@@ -102,133 +107,144 @@ fun LazyListState.scrollbarState(
  */
 @Composable
 fun LazyGridState.scrollbarState(
-    itemsAvailable: Int,
-    itemIndex: (LazyGridItemInfo) -> Int = LazyGridItemInfo::index,
+  itemsAvailable: Int,
+  itemIndex: (LazyGridItemInfo) -> Int = LazyGridItemInfo::index,
 ): ScrollbarState {
-    val state = remember { ScrollbarState() }
-    LaunchedEffect(this, itemsAvailable) {
-        snapshotFlow {
-            if (itemsAvailable == 0) return@snapshotFlow null
+  val state = remember { ScrollbarState() }
+  LaunchedEffect(this, itemsAvailable) {
+    snapshotFlow {
+      if (itemsAvailable == 0) return@snapshotFlow null
 
-            val visibleItemsInfo = layoutInfo.visibleItemsInfo
-            if (visibleItemsInfo.isEmpty()) return@snapshotFlow null
+      val visibleItemsInfo = layoutInfo.visibleItemsInfo
+      if (visibleItemsInfo.isEmpty()) return@snapshotFlow null
 
-            val firstIndex = min(
-                a = interpolateFirstItemIndex(
-                    visibleItems = visibleItemsInfo,
-                    itemSize = { layoutInfo.orientation.valueOf(it.size) },
-                    offset = { layoutInfo.orientation.valueOf(it.offset) },
-                    nextItemOnMainAxis = { first ->
-                        when (layoutInfo.orientation) {
-                            Orientation.Vertical -> visibleItemsInfo.find {
-                                it != first && it.row != first.row
-                            }
+      val firstIndex =
+        min(
+          a =
+            interpolateFirstItemIndex(
+              visibleItems = visibleItemsInfo,
+              itemSize = { layoutInfo.orientation.valueOf(it.size) },
+              offset = { layoutInfo.orientation.valueOf(it.offset) },
+              nextItemOnMainAxis = { first ->
+                when (layoutInfo.orientation) {
+                  Orientation.Vertical ->
+                    visibleItemsInfo.find {
+                      it != first && it.row != first.row
+                    }
 
-                            Orientation.Horizontal -> visibleItemsInfo.find {
-                                it != first && it.column != first.column
-                            }
-                        }
-                    },
-                    itemIndex = itemIndex,
-                ),
-                b = itemsAvailable.toFloat(),
-            )
-            if (firstIndex.isNaN()) return@snapshotFlow null
+                  Orientation.Horizontal ->
+                    visibleItemsInfo.find {
+                      it != first && it.column != first.column
+                    }
+                }
+              },
+              itemIndex = itemIndex,
+            ),
+          b = itemsAvailable.toFloat(),
+        )
+      if (firstIndex.isNaN()) return@snapshotFlow null
 
-            val itemsVisible = visibleItemsInfo.floatSumOf { itemInfo ->
-                itemVisibilityPercentage(
-                    itemSize = layoutInfo.orientation.valueOf(itemInfo.size),
-                    itemStartOffset = layoutInfo.orientation.valueOf(itemInfo.offset),
-                    viewportStartOffset = layoutInfo.viewportStartOffset,
-                    viewportEndOffset = layoutInfo.viewportEndOffset,
-                )
-            }
+      val itemsVisible = visibleItemsInfo.floatSumOf { itemInfo ->
+        itemVisibilityPercentage(
+          itemSize = layoutInfo.orientation.valueOf(itemInfo.size),
+          itemStartOffset = layoutInfo.orientation.valueOf(itemInfo.offset),
+          viewportStartOffset = layoutInfo.viewportStartOffset,
+          viewportEndOffset = layoutInfo.viewportEndOffset,
+        )
+      }
 
-            val thumbTravelPercent = min(
-                a = firstIndex / itemsAvailable,
-                b = 1f,
-            )
-            val thumbSizePercent = min(
-                a = itemsVisible / itemsAvailable,
-                b = 1f,
-            )
-            scrollbarStateValue(
-                thumbSizePercent = thumbSizePercent,
-                thumbMovedPercent = when {
-                    layoutInfo.reverseLayout -> 1f - thumbTravelPercent
-                    else -> thumbTravelPercent
-                },
-            )
-        }
-            .filterNotNull()
-            .distinctUntilChanged()
-            .collect { state.onScroll(it) }
+      val thumbTravelPercent =
+        min(
+          a = firstIndex / itemsAvailable,
+          b = 1f,
+        )
+      val thumbSizePercent =
+        min(
+          a = itemsVisible / itemsAvailable,
+          b = 1f,
+        )
+      scrollbarStateValue(
+        thumbSizePercent = thumbSizePercent,
+        thumbMovedPercent =
+          when {
+            layoutInfo.reverseLayout -> 1f - thumbTravelPercent
+            else -> thumbTravelPercent
+          },
+      )
     }
-    return state
+      .filterNotNull()
+      .distinctUntilChanged()
+      .collect { state.onScroll(it) }
+  }
+  return state
 }
 
 /**
  * Remembers a [ScrollbarState] driven by the changes in a [LazyStaggeredGridState]
  *
  * @param itemsAvailable the total amount of items available to scroll in the staggered grid.
- * @param itemIndex a lookup function for index of an item in the staggered grid relative
- * to [itemsAvailable].
+ * @param itemIndex a lookup function for index of an item in the staggered grid relative to
+ *   [itemsAvailable].
  */
 @Composable
 fun LazyStaggeredGridState.scrollbarState(
-    itemsAvailable: Int,
-    itemIndex: (LazyStaggeredGridItemInfo) -> Int = LazyStaggeredGridItemInfo::index,
+  itemsAvailable: Int,
+  itemIndex: (LazyStaggeredGridItemInfo) -> Int = LazyStaggeredGridItemInfo::index,
 ): ScrollbarState {
-    val state = remember { ScrollbarState() }
-    LaunchedEffect(this, itemsAvailable) {
-        snapshotFlow {
-            if (itemsAvailable == 0) return@snapshotFlow null
+  val state = remember { ScrollbarState() }
+  LaunchedEffect(this, itemsAvailable) {
+    snapshotFlow {
+      if (itemsAvailable == 0) return@snapshotFlow null
 
-            val visibleItemsInfo = layoutInfo.visibleItemsInfo
-            if (visibleItemsInfo.isEmpty()) return@snapshotFlow null
+      val visibleItemsInfo = layoutInfo.visibleItemsInfo
+      if (visibleItemsInfo.isEmpty()) return@snapshotFlow null
 
-            val firstIndex = min(
-                a = interpolateFirstItemIndex(
-                    visibleItems = visibleItemsInfo,
-                    itemSize = { layoutInfo.orientation.valueOf(it.size) },
-                    offset = { layoutInfo.orientation.valueOf(it.offset) },
-                    nextItemOnMainAxis = { first ->
-                        visibleItemsInfo.find { it != first && it.lane == first.lane }
-                    },
-                    itemIndex = itemIndex,
-                ),
-                b = itemsAvailable.toFloat(),
-            )
-            if (firstIndex.isNaN()) return@snapshotFlow null
+      val firstIndex =
+        min(
+          a =
+            interpolateFirstItemIndex(
+              visibleItems = visibleItemsInfo,
+              itemSize = { layoutInfo.orientation.valueOf(it.size) },
+              offset = { layoutInfo.orientation.valueOf(it.offset) },
+              nextItemOnMainAxis = { first ->
+                visibleItemsInfo.find { it != first && it.lane == first.lane }
+              },
+              itemIndex = itemIndex,
+            ),
+          b = itemsAvailable.toFloat(),
+        )
+      if (firstIndex.isNaN()) return@snapshotFlow null
 
-            val itemsVisible = visibleItemsInfo.floatSumOf { itemInfo ->
-                itemVisibilityPercentage(
-                    itemSize = layoutInfo.orientation.valueOf(itemInfo.size),
-                    itemStartOffset = layoutInfo.orientation.valueOf(itemInfo.offset),
-                    viewportStartOffset = layoutInfo.viewportStartOffset,
-                    viewportEndOffset = layoutInfo.viewportEndOffset,
-                )
-            }
+      val itemsVisible = visibleItemsInfo.floatSumOf { itemInfo ->
+        itemVisibilityPercentage(
+          itemSize = layoutInfo.orientation.valueOf(itemInfo.size),
+          itemStartOffset = layoutInfo.orientation.valueOf(itemInfo.offset),
+          viewportStartOffset = layoutInfo.viewportStartOffset,
+          viewportEndOffset = layoutInfo.viewportEndOffset,
+        )
+      }
 
-            val thumbTravelPercent = min(
-                a = firstIndex / itemsAvailable,
-                b = 1f,
-            )
-            val thumbSizePercent = min(
-                a = itemsVisible / itemsAvailable,
-                b = 1f,
-            )
-            scrollbarStateValue(
-                thumbSizePercent = thumbSizePercent,
-                thumbMovedPercent = thumbTravelPercent,
-            )
-        }
-            .filterNotNull()
-            .distinctUntilChanged()
-            .collect { state.onScroll(it) }
+      val thumbTravelPercent =
+        min(
+          a = firstIndex / itemsAvailable,
+          b = 1f,
+        )
+      val thumbSizePercent =
+        min(
+          a = itemsVisible / itemsAvailable,
+          b = 1f,
+        )
+      scrollbarStateValue(
+        thumbSizePercent = thumbSizePercent,
+        thumbMovedPercent = thumbTravelPercent,
+      )
     }
-    return state
+      .filterNotNull()
+      .distinctUntilChanged()
+      .collect { state.onScroll(it) }
+  }
+  return state
 }
 
 private inline fun <T> List<T>.floatSumOf(selector: (T) -> Float): Float =
-    fold(initial = 0f) { accumulator, listItem -> accumulator + selector(listItem) }
+  fold(initial = 0f) { accumulator, listItem -> accumulator + selector(listItem) }
