@@ -16,8 +16,9 @@
 
 package com.skydoves.nowinandroid.ui
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -57,7 +58,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.skydoves.nowinandroid.core.designsystem.component.NiaBackground
@@ -105,10 +105,7 @@ fun NiaApp(
             },
         ) {
             val snackbarHostState = remember { SnackbarHostState() }
-
             val isOffline by appState.isOffline.collectAsStateWithLifecycle()
-
-            // If user is not connected to the internet show a snack bar to inform them.
             val notConnectedMessage = stringResource(Res.string.not_connected)
             LaunchedEffect(isOffline) {
                 if (isOffline) {
@@ -118,11 +115,10 @@ fun NiaApp(
                     )
                 }
             }
+
             CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
                 NiaApp(
                     appState = appState,
-
-                    // TODO: Settings should be a dialog screen
                     showSettingsDialog = showSettingsDialog,
                     onSettingsDismissed = { showSettingsDialog = false },
                     onTopAppBarActionClick = { showSettingsDialog = true },
@@ -193,39 +189,17 @@ internal fun NiaApp(
             containerColor = Color.Transparent,
             contentColor = MaterialTheme.colorScheme.onBackground,
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
-            snackbarHost = {
-                SnackbarHost(
-                    snackbarHostState,
-                    modifier = Modifier.windowInsetsPadding(
-                        WindowInsets.safeDrawing.exclude(
-                            WindowInsets.ime,
-                        ),
-                    ),
-                )
-            },
-        ) { padding ->
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .consumeWindowInsets(padding)
-                    .windowInsetsPadding(
-                        WindowInsets.safeDrawing.only(
-                            WindowInsetsSides.Horizontal,
-                        ),
-                    ),
-            ) {
-                // Only show the top app bar on top level destinations.
-                var shouldShowTopAppBar = false
-
-                if (appState.navigationState.currentKey in appState.navigationState.topLevelKeys) {
-                    shouldShowTopAppBar = true
-
+            topBar = {
+                AnimatedVisibility(
+                    visible = appState.navigationState.currentKey in appState.navigationState.topLevelKeys,
+                    enter = expandVertically(),
+                    exit = shrinkVertically()
+                ) {
                     val destination =
                         TOP_LEVEL_NAV_ITEMS[appState.navigationState.currentTopLevelKey]
                             ?: error(
                                 "Top level nav item not found for " +
-                                    "${appState.navigationState.currentTopLevelKey}",
+                                        "${appState.navigationState.currentTopLevelKey}",
                             )
 
                     NiaTopAppBar(
@@ -247,37 +221,36 @@ internal fun NiaApp(
                         onNavigationClick = { navigator.navigate(SearchNavKey) },
                     )
                 }
-
-                Box(
-                    // Workaround for https://issuetracker.google.com/338478720
-                    modifier = Modifier.consumeWindowInsets(
-                        if (shouldShowTopAppBar) {
-                            WindowInsets.safeDrawing.only(WindowInsetsSides.Top)
-                        } else {
-                            WindowInsets(0, 0, 0, 0)
-                        },
+            },
+            snackbarHost = {
+                SnackbarHost(
+                    snackbarHostState,
+                    modifier = Modifier.windowInsetsPadding(
+                        WindowInsets.safeDrawing.exclude(WindowInsets.ime),
                     ),
-                ) {
-                    val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>()
-
-                    val entryProvider = entryProvider {
-                        forYouEntry(navigator)
-                        bookmarksEntry(navigator)
-                        interestsEntry(navigator)
-                        topicEntry(navigator)
-                        searchEntry(navigator)
-                    }
-
-                    NavDisplay(
-                        entries = appState.navigationState.toEntries(entryProvider),
-                        sceneStrategies = listOf(listDetailStrategy),
-                        onBack = { navigator.goBack() },
-                    )
-                }
-
-                // TODO: We may want to add padding or spacer when the snackbar is shown so that
-                //  content doesn't display behind it.
+                )
+            },
+        ) { padding ->
+            val entryProvider = entryProvider {
+                forYouEntry(navigator)
+                bookmarksEntry(navigator)
+                interestsEntry(navigator)
+                topicEntry(navigator)
+                searchEntry(navigator)
             }
+
+            NavDisplay(
+                entries = appState.navigationState.toEntries(entryProvider),
+                sceneStrategies = listOf(rememberListDetailSceneStrategy()),
+                onBack = { navigator.goBack() },
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .consumeWindowInsets(padding)
+                    .windowInsetsPadding(
+                        WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
+                    )
+            )
         }
     }
 }

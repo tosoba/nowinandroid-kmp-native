@@ -118,86 +118,88 @@ internal fun TopicScreen(
 ) {
     val state = rememberLazyListState()
     TrackScrollJank(scrollableState = state, stateName = "topic:screen")
-    Box(
-        modifier = modifier,
-    ) {
-        LazyColumn(
-            state = state,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            item {
-                Spacer(Modifier.windowInsetsTopHeight(WindowInsets.safeDrawing))
-            }
-            when (topicUiState) {
-                TopicUiState.Loading -> item {
-                    NiaLoadingWheel(
-                        modifier = modifier,
-                        contentDesc = stringResource(TopicApiRes.string.feature_topic_api_loading),
-                    )
-                }
 
-                TopicUiState.Error -> item {
-                    Text(
-                        text = stringResource(TopicApiRes.string.feature_topic_api_error),
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 24.dp, vertical = 48.dp),
-                    )
-                }
-                is TopicUiState.Success -> {
-                    item {
-                        TopicToolbar(
-                            showBackButton = showBackButton,
-                            onBackClick = onBackClick,
-                            onFollowClick = onFollowClick,
-                            uiState = topicUiState.followableTopic,
+    Column(modifier = modifier) {
+        Spacer(Modifier.windowInsetsTopHeight(WindowInsets.safeDrawing))
+
+        Box {
+            LazyColumn(
+                state = state,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                when (topicUiState) {
+                    TopicUiState.Loading -> item {
+                        NiaLoadingWheel(
+                            modifier = modifier,
+                            contentDesc = stringResource(TopicApiRes.string.feature_topic_api_loading),
                         )
                     }
-                    topicBody(
-                        name = topicUiState.followableTopic.topic.name,
-                        description = topicUiState.followableTopic.topic.longDescription,
-                        news = newsUiState,
-                        imageUrl = topicUiState.followableTopic.topic.imageUrl,
-                        onBookmarkChanged = onBookmarkChanged,
-                        onNewsResourceViewed = onNewsResourceViewed,
-                        onTopicClick = onTopicClick,
-                    )
+
+                    TopicUiState.Error -> item {
+                        Text(
+                            text = stringResource(TopicApiRes.string.feature_topic_api_error),
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 24.dp, vertical = 48.dp),
+                        )
+                    }
+
+                    is TopicUiState.Success -> {
+                        item {
+                            TopicToolbar(
+                                showBackButton = showBackButton,
+                                onBackClick = onBackClick,
+                                onFollowClick = onFollowClick,
+                                uiState = topicUiState.followableTopic,
+                            )
+                        }
+                        topicBody(
+                            name = topicUiState.followableTopic.topic.name,
+                            description = topicUiState.followableTopic.topic.longDescription,
+                            news = newsUiState,
+                            imageUrl = topicUiState.followableTopic.topic.imageUrl,
+                            onBookmarkChanged = onBookmarkChanged,
+                            onNewsResourceViewed = onNewsResourceViewed,
+                            onTopicClick = onTopicClick,
+                        )
+                    }
+                }
+                item {
+                    Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.safeDrawing))
                 }
             }
-            item {
-                Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.safeDrawing))
-            }
-        }
-        val itemsAvailable = topicItemsSize(topicUiState, newsUiState)
-        val scrollbarState = state.scrollbarState(
-            itemsAvailable = itemsAvailable,
-        )
-        state.DraggableScrollbar(
-            modifier = Modifier
-                .fillMaxHeight()
-                .windowInsetsPadding(WindowInsets.systemBars)
-                .padding(horizontal = 2.dp)
-                .align(Alignment.CenterEnd),
-            state = scrollbarState,
-            orientation = Orientation.Vertical,
-            onThumbMoved = state.rememberDraggableScroller(
+            val itemsAvailable = topicItemsSize(topicUiState, newsUiState)
+            val scrollbarState = state.scrollbarState(
                 itemsAvailable = itemsAvailable,
-            ),
-        )
+            )
+            state.DraggableScrollbar(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .windowInsetsPadding(WindowInsets.systemBars)
+                    .padding(horizontal = 2.dp)
+                    .align(Alignment.CenterEnd),
+                state = scrollbarState,
+                orientation = Orientation.Vertical,
+                onThumbMoved = state.rememberDraggableScroller(
+                    itemsAvailable = itemsAvailable,
+                ),
+            )
+        }
     }
 }
 
-private fun topicItemsSize(topicUiState: TopicUiState, newsUiState: NewsUiState) = when (topicUiState) {
-    TopicUiState.Error -> 1 // Error message
-    TopicUiState.Loading -> 1 // Loading bar
-    is TopicUiState.Success -> when (newsUiState) {
-        NewsUiState.Error -> 0 // Nothing
-        NewsUiState.Loading -> 1 // Loading bar
-        is NewsUiState.Success -> 2 + newsUiState.news.size // Toolbar, header
+private fun topicItemsSize(topicUiState: TopicUiState, newsUiState: NewsUiState) =
+    when (topicUiState) {
+        TopicUiState.Error -> 1 // Error message
+        TopicUiState.Loading -> 1 // Loading bar
+        is TopicUiState.Success -> when (newsUiState) {
+            NewsUiState.Error -> 0 // Nothing
+            NewsUiState.Loading -> 1 // Loading bar
+            is NewsUiState.Success -> 2 + newsUiState.news.size // Toolbar, header
+        }
     }
-}
 
 private fun LazyListScope.topicBody(
     name: String,
