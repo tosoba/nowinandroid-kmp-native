@@ -58,6 +58,7 @@ import com.skydoves.nowinandroid.core.designsystem.component.scrollbar.ThumbStat
 import com.skydoves.nowinandroid.core.designsystem.component.scrollbar.ThumbState.Dormant
 import com.skydoves.nowinandroid.core.designsystem.component.scrollbar.ThumbState.Inactive
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * The time period for showing the scrollbar thumb after interacting with it, before it fades away
@@ -127,7 +128,10 @@ fun ScrollableState.DecorativeScrollbar(
  * A scrollbar thumb that is intended to also be a touch target for fast scrolling.
  */
 @Composable
-private fun ScrollableState.DraggableScrollbarThumb(interactionSource: InteractionSource, orientation: Orientation) {
+private fun ScrollableState.DraggableScrollbarThumb(
+    interactionSource: InteractionSource,
+    orientation: Orientation
+) {
     Box(
         modifier = Modifier
             .run {
@@ -144,7 +148,10 @@ private fun ScrollableState.DraggableScrollbarThumb(interactionSource: Interacti
  * A decorative scrollbar thumb used solely for communicating a user's position in a list.
  */
 @Composable
-private fun ScrollableState.DecorativeScrollbarThumb(interactionSource: InteractionSource, orientation: Orientation) {
+private fun ScrollableState.DecorativeScrollbarThumb(
+    interactionSource: InteractionSource,
+    orientation: Orientation
+) {
     Box(
         modifier = Modifier
             .run {
@@ -160,12 +167,16 @@ private fun ScrollableState.DecorativeScrollbarThumb(interactionSource: Interact
 // TODO: This lint is removed in 1.6 as the recommendation has changed
 // remove when project is upgraded
 @Composable
-private fun Modifier.scrollThumb(scrollableState: ScrollableState, interactionSource: InteractionSource): Modifier {
+private fun Modifier.scrollThumb(
+    scrollableState: ScrollableState,
+    interactionSource: InteractionSource
+): Modifier {
     val colorState = scrollbarThumbColor(scrollableState, interactionSource)
     return this then ScrollThumbElement { colorState.value }
 }
 
-private data class ScrollThumbElement(val colorProducer: ColorProducer) : ModifierNodeElement<ScrollThumbNode>() {
+private data class ScrollThumbElement(val colorProducer: ColorProducer) :
+    ModifierNodeElement<ScrollThumbNode>() {
     override fun create(): ScrollThumbNode = ScrollThumbNode(colorProducer)
     override fun update(node: ScrollThumbNode) {
         node.colorProducer = colorProducer
@@ -204,13 +215,16 @@ private class ScrollThumbNode(var colorProducer: ColorProducer) :
  * @param interactionSource source of interactions in the scrolling container
  */
 @Composable
-private fun scrollbarThumbColor(scrollableState: ScrollableState, interactionSource: InteractionSource): State<Color> {
+private fun scrollbarThumbColor(
+    scrollableState: ScrollableState,
+    interactionSource: InteractionSource
+): State<Color> {
     var state by remember { mutableStateOf(Dormant) }
     val pressed by interactionSource.collectIsPressedAsState()
     val hovered by interactionSource.collectIsHoveredAsState()
     val dragged by interactionSource.collectIsDraggedAsState()
     val active = (scrollableState.canScrollForward || scrollableState.canScrollBackward) &&
-        (pressed || hovered || dragged || scrollableState.isScrollInProgress)
+            (pressed || hovered || dragged || scrollableState.isScrollInProgress)
 
     val color = animateColorAsState(
         targetValue = when (state) {
@@ -228,7 +242,7 @@ private fun scrollbarThumbColor(scrollableState: ScrollableState, interactionSou
             true -> state = Active
             false -> if (state == Active) {
                 state = Inactive
-                delay(SCROLLBAR_INACTIVE_TO_DORMANT_TIME_IN_MS)
+                delay(SCROLLBAR_INACTIVE_TO_DORMANT_TIME_IN_MS.milliseconds)
                 state = Dormant
             }
         }
