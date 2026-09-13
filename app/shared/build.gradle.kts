@@ -87,9 +87,15 @@ kotlin {
     }
 }
 
-// The app shell owns the app-level strings, so its `Res` gets the root package rather than the
-// path-derived `...app.shared.generated.resources` the convention plugin would give it.
-compose.resources {
-    publicResClass = true
-    packageOfResClass = "com.skydoves.nowinandroid.generated.resources"
+// The app shell owns the app-level strings, so its `MR` gets the root package rather than the
+// path-derived `...app.shared` the convention plugin would give it.
+multiplatformResources {
+    resourcesPackage.set("com.skydoves.nowinandroid")
+    resourcesVisibility = dev.icerock.gradle.MRVisibility.Public
 }
+
+tasks
+  .matching { it.name == "syncComposeResourcesForIos" }
+  .configureEach {
+    enabled = false
+  }

@@ -37,10 +37,8 @@ import com.skydoves.nowinandroid.core.designsystem.component.DynamicAsyncImage
 import com.skydoves.nowinandroid.core.designsystem.component.NiaIconToggleButton
 import com.skydoves.nowinandroid.core.designsystem.icon.NiaIcons
 import com.skydoves.nowinandroid.core.designsystem.theme.NiaTheme
-import com.skydoves.nowinandroid.core.ui.generated.resources.Res
-import com.skydoves.nowinandroid.core.ui.generated.resources.core_ui_interests_card_follow_button_content_desc
-import com.skydoves.nowinandroid.core.ui.generated.resources.core_ui_interests_card_unfollow_button_content_desc
-import org.jetbrains.compose.resources.stringResource
+import com.skydoves.nowinandroid.core.ui.MR as Res
+import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun InterestsItem(
@@ -72,7 +70,7 @@ fun InterestsItem(
                     Icon(
                         imageVector = NiaIcons.Add,
                         contentDescription = stringResource(
-                            Res.string.core_ui_interests_card_follow_button_content_desc,
+                            Res.strings.core_ui_interests_card_follow_button_content_desc,
                         ),
                     )
                 },
@@ -80,7 +78,7 @@ fun InterestsItem(
                     Icon(
                         imageVector = NiaIcons.Check,
                         contentDescription = stringResource(
-                            Res.string.core_ui_interests_card_unfollow_button_content_desc,
+                            Res.strings.core_ui_interests_card_unfollow_button_content_desc,
                         ),
                     )
                 },

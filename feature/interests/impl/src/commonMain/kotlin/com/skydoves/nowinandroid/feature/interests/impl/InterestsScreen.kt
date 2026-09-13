@@ -33,12 +33,12 @@ import com.skydoves.nowinandroid.core.model.data.FollowableTopic
 import com.skydoves.nowinandroid.core.ui.DevicePreviews
 import com.skydoves.nowinandroid.core.ui.FollowableTopicPreviewParameterProvider
 import com.skydoves.nowinandroid.core.ui.TrackScreenViewEvent
-import com.skydoves.nowinandroid.feature.interests.api.generated.resources.feature_interests_api_empty_header
-import com.skydoves.nowinandroid.feature.interests.api.generated.resources.feature_interests_api_loading
+import com.skydoves.nowinandroid.feature.interests.api.feature_interests_api_empty_header
+import com.skydoves.nowinandroid.feature.interests.api.feature_interests_api_loading
 import com.skydoves.nowinandroid.feature.interests.api.navigation.InterestsNavKey
 import com.skydoves.nowinandroid.feature.topic.api.navigation.TopicNavKey
-import org.jetbrains.compose.resources.stringResource
-import com.skydoves.nowinandroid.feature.interests.api.generated.resources.Res as InterestsApiRes
+import dev.icerock.moko.resources.compose.stringResource
+import com.skydoves.nowinandroid.feature.interests.api.MR as InterestsApiRes
 
 @Composable
 fun InterestsScreen(
@@ -79,7 +79,7 @@ internal fun InterestsScreen(
         when (uiState) {
             InterestsUiState.Loading ->
                 NiaLoadingWheel(
-                    contentDesc = stringResource(InterestsApiRes.string.feature_interests_api_loading),
+                    contentDesc = stringResource(InterestsApiRes.strings.feature_interests_api_loading),
                 )
 
             is InterestsUiState.Interests ->
@@ -99,7 +99,7 @@ internal fun InterestsScreen(
 
 @Composable
 private fun InterestsEmptyScreen() {
-    Text(text = stringResource(InterestsApiRes.string.feature_interests_api_empty_header))
+    Text(text = stringResource(InterestsApiRes.strings.feature_interests_api_empty_header))
 }
 
 @DevicePreviews

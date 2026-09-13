@@ -31,11 +31,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.skydoves.nowinandroid.core.designsystem.theme.NiaTheme
-import com.skydoves.nowinandroid.feature.interests.api.generated.resources.feature_interests_api_ic_detail_placeholder
-import com.skydoves.nowinandroid.feature.interests.api.generated.resources.feature_interests_api_select_an_interest
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.stringResource
-import com.skydoves.nowinandroid.feature.interests.api.generated.resources.Res as InterestsApiRes
+import com.skydoves.nowinandroid.feature.interests.api.feature_interests_api_ic_detail_placeholder
+import com.skydoves.nowinandroid.feature.interests.api.feature_interests_api_select_an_interest
+import dev.icerock.moko.resources.compose.painterResource
+import dev.icerock.moko.resources.compose.stringResource
+import com.skydoves.nowinandroid.feature.interests.api.MR as InterestsApiRes
 
 @Composable
 fun InterestsDetailPlaceholder(modifier: Modifier = Modifier) {
@@ -53,12 +53,12 @@ fun InterestsDetailPlaceholder(modifier: Modifier = Modifier) {
             ),
         ) {
             Icon(
-                painter = painterResource(InterestsApiRes.drawable.feature_interests_api_ic_detail_placeholder),
+                painter = painterResource(InterestsApiRes.images.feature_interests_api_ic_detail_placeholder),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
             )
             Text(
-                text = stringResource(InterestsApiRes.string.feature_interests_api_select_an_interest),
+                text = stringResource(InterestsApiRes.strings.feature_interests_api_select_an_interest),
                 style = MaterialTheme.typography.titleLarge,
             )
         }

@@ -22,7 +22,6 @@ import com.skydoves.nowinandroid.di.AndroidAppGraph
 import dev.zacsweers.metro.createGraphFactory
 
 class NiaApplication : Application() {
-
     lateinit var appGraph: AndroidAppGraph
         private set
 

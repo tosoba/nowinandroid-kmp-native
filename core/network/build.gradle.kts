@@ -15,8 +15,8 @@
  */
 
 plugins {
-    // Compose Multiplatform is applied only for `compose.components.resources`: it is the one
-    // cross-platform way to read the bundled demo JSON on Android, iOS and the desktop JVM alike.
+    // The Compose plugin is applied for the moko-resources setup it brings in (via the compose
+    // convention), which is how the bundled demo JSON ships on Android, iOS and the desktop JVM.
     id("nowinandroid.kmp.multiplatform.compose")
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.metro)

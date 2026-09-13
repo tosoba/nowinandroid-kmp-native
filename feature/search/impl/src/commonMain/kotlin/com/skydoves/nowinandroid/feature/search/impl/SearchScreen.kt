@@ -91,26 +91,26 @@ import com.skydoves.nowinandroid.core.ui.DevicePreviews
 import com.skydoves.nowinandroid.core.ui.InterestsItem
 import com.skydoves.nowinandroid.core.ui.NewsFeedUiState.Success
 import com.skydoves.nowinandroid.core.ui.TrackScreenViewEvent
-import com.skydoves.nowinandroid.core.ui.generated.resources.core_ui_back
+import com.skydoves.nowinandroid.core.ui.core_ui_back
 import com.skydoves.nowinandroid.core.ui.newsFeed
 import com.skydoves.nowinandroid.feature.interests.api.navigation.InterestsNavKey
-import com.skydoves.nowinandroid.feature.search.api.generated.resources.feature_search_api_clear_recent_searches_content_desc
-import com.skydoves.nowinandroid.feature.search.api.generated.resources.feature_search_api_clear_search_text_content_desc
-import com.skydoves.nowinandroid.feature.search.api.generated.resources.feature_search_api_interests
-import com.skydoves.nowinandroid.feature.search.api.generated.resources.feature_search_api_not_ready
-import com.skydoves.nowinandroid.feature.search.api.generated.resources.feature_search_api_recent_searches
-import com.skydoves.nowinandroid.feature.search.api.generated.resources.feature_search_api_result_not_found
-import com.skydoves.nowinandroid.feature.search.api.generated.resources.feature_search_api_title
-import com.skydoves.nowinandroid.feature.search.api.generated.resources.feature_search_api_to_browse_topics
-import com.skydoves.nowinandroid.feature.search.api.generated.resources.feature_search_api_topics
-import com.skydoves.nowinandroid.feature.search.api.generated.resources.feature_search_api_try_another_search
-import com.skydoves.nowinandroid.feature.search.api.generated.resources.feature_search_api_updates
+import com.skydoves.nowinandroid.feature.search.api.feature_search_api_clear_recent_searches_content_desc
+import com.skydoves.nowinandroid.feature.search.api.feature_search_api_clear_search_text_content_desc
+import com.skydoves.nowinandroid.feature.search.api.feature_search_api_interests
+import com.skydoves.nowinandroid.feature.search.api.feature_search_api_not_ready
+import com.skydoves.nowinandroid.feature.search.api.feature_search_api_recent_searches
+import com.skydoves.nowinandroid.feature.search.api.feature_search_api_result_not_found
+import com.skydoves.nowinandroid.feature.search.api.feature_search_api_title
+import com.skydoves.nowinandroid.feature.search.api.feature_search_api_to_browse_topics
+import com.skydoves.nowinandroid.feature.search.api.feature_search_api_topics
+import com.skydoves.nowinandroid.feature.search.api.feature_search_api_try_another_search
+import com.skydoves.nowinandroid.feature.search.api.feature_search_api_updates
 import com.skydoves.nowinandroid.feature.search.api.navigation.SearchNavKey
 import com.skydoves.nowinandroid.feature.topic.api.navigation.TopicNavKey
 import dev.zacsweers.metrox.viewmodel.metroViewModel
-import org.jetbrains.compose.resources.stringResource
-import com.skydoves.nowinandroid.core.ui.generated.resources.Res as CoreUiRes
-import com.skydoves.nowinandroid.feature.search.api.generated.resources.Res as SearchApiRes
+import dev.icerock.moko.resources.compose.stringResource
+import com.skydoves.nowinandroid.core.ui.MR as CoreUiRes
+import com.skydoves.nowinandroid.feature.search.api.MR as SearchApiRes
 
 @NavDestination(route = SearchNavKey::class)
 @NavEdge(to = InterestsNavKey::class, label = "Interests")
@@ -228,7 +228,7 @@ fun EmptySearchResultBody(searchQuery: String, onInterestsClick: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(horizontal = 48.dp),
     ) {
-        val message = stringResource(SearchApiRes.string.feature_search_api_result_not_found, searchQuery)
+        val message = stringResource(SearchApiRes.strings.feature_search_api_result_not_found, searchQuery)
         val start = message.indexOf(searchQuery)
         Text(
             text = AnnotatedString(
@@ -246,7 +246,7 @@ fun EmptySearchResultBody(searchQuery: String, onInterestsClick: () -> Unit) {
             modifier = Modifier.padding(vertical = 24.dp),
         )
         val tryAnotherSearchString = buildAnnotatedString {
-            append(stringResource(SearchApiRes.string.feature_search_api_try_another_search))
+            append(stringResource(SearchApiRes.strings.feature_search_api_try_another_search))
             append(" ")
             withLink(
                 LinkAnnotation.Clickable(
@@ -262,12 +262,12 @@ fun EmptySearchResultBody(searchQuery: String, onInterestsClick: () -> Unit) {
                         fontWeight = FontWeight.Bold,
                     ),
                 ) {
-                    append(stringResource(SearchApiRes.string.feature_search_api_interests))
+                    append(stringResource(SearchApiRes.strings.feature_search_api_interests))
                 }
             }
 
             append(" ")
-            append(stringResource(SearchApiRes.string.feature_search_api_to_browse_topics))
+            append(stringResource(SearchApiRes.strings.feature_search_api_to_browse_topics))
         }
         Text(
             text = tryAnotherSearchString,
@@ -290,7 +290,7 @@ private fun SearchNotReadyBody() {
         modifier = Modifier.padding(horizontal = 48.dp),
     ) {
         Text(
-            text = stringResource(SearchApiRes.string.feature_search_api_not_ready),
+            text = stringResource(SearchApiRes.strings.feature_search_api_not_ready),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(vertical = 24.dp),
@@ -331,7 +331,7 @@ private fun SearchResultBody(
                     Text(
                         text = buildAnnotatedString {
                             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append(stringResource(SearchApiRes.string.feature_search_api_topics))
+                                append(stringResource(SearchApiRes.strings.feature_search_api_topics))
                             }
                         },
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -367,7 +367,7 @@ private fun SearchResultBody(
                     Text(
                         text = buildAnnotatedString {
                             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append(stringResource(SearchApiRes.string.feature_search_api_updates))
+                                append(stringResource(SearchApiRes.strings.feature_search_api_updates))
                             }
                         },
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -419,7 +419,7 @@ private fun RecentSearchesBody(
             Text(
                 text = buildAnnotatedString {
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append(stringResource(SearchApiRes.string.feature_search_api_recent_searches))
+                        append(stringResource(SearchApiRes.strings.feature_search_api_recent_searches))
                     }
                 },
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -434,7 +434,7 @@ private fun RecentSearchesBody(
                     Icon(
                         imageVector = NiaIcons.Close,
                         contentDescription = stringResource(
-                            SearchApiRes.string.feature_search_api_clear_recent_searches_content_desc,
+                            SearchApiRes.strings.feature_search_api_clear_recent_searches_content_desc,
                         ),
                         tint = MaterialTheme.colorScheme.onSurface,
                     )
@@ -472,7 +472,7 @@ private fun SearchToolbar(
             Icon(
                 imageVector = NiaIcons.ArrowBack,
                 contentDescription = stringResource(
-                    CoreUiRes.string.core_ui_back,
+                    CoreUiRes.strings.core_ui_back,
                 ),
             )
         }
@@ -508,7 +508,7 @@ private fun SearchTextField(
             Icon(
                 imageVector = NiaIcons.Search,
                 contentDescription = stringResource(
-                    SearchApiRes.string.feature_search_api_title,
+                    SearchApiRes.strings.feature_search_api_title,
                 ),
                 tint = MaterialTheme.colorScheme.onSurface,
             )
@@ -523,7 +523,7 @@ private fun SearchTextField(
                     Icon(
                         imageVector = NiaIcons.Close,
                         contentDescription = stringResource(
-                            SearchApiRes.string.feature_search_api_clear_search_text_content_desc,
+                            SearchApiRes.strings.feature_search_api_clear_search_text_content_desc,
                         ),
                         tint = MaterialTheme.colorScheme.onSurface,
                     )

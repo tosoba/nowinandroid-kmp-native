@@ -95,17 +95,17 @@ import com.skydoves.nowinandroid.core.ui.newsFeed
 import com.skydoves.nowinandroid.core.ui.platform.NotificationPermissionEffect
 import com.skydoves.nowinandroid.core.ui.platform.ReportFullyDrawnWhen
 import com.skydoves.nowinandroid.core.ui.platform.rememberUrlLauncher
-import com.skydoves.nowinandroid.feature.foryou.api.generated.resources.feature_foryou_api_done
-import com.skydoves.nowinandroid.feature.foryou.api.generated.resources.feature_foryou_api_ic_icon_placeholder
-import com.skydoves.nowinandroid.feature.foryou.api.generated.resources.feature_foryou_api_loading
-import com.skydoves.nowinandroid.feature.foryou.api.generated.resources.feature_foryou_api_onboarding_guidance_subtitle
-import com.skydoves.nowinandroid.feature.foryou.api.generated.resources.feature_foryou_api_onboarding_guidance_title
+import com.skydoves.nowinandroid.feature.foryou.api.feature_foryou_api_done
+import com.skydoves.nowinandroid.feature.foryou.api.feature_foryou_api_ic_icon_placeholder
+import com.skydoves.nowinandroid.feature.foryou.api.feature_foryou_api_loading
+import com.skydoves.nowinandroid.feature.foryou.api.feature_foryou_api_onboarding_guidance_subtitle
+import com.skydoves.nowinandroid.feature.foryou.api.feature_foryou_api_onboarding_guidance_title
 import com.skydoves.nowinandroid.feature.foryou.api.navigation.ForYouNavKey
 import com.skydoves.nowinandroid.feature.topic.api.navigation.TopicNavKey
 import dev.zacsweers.metrox.viewmodel.metroViewModel
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.stringResource
-import com.skydoves.nowinandroid.feature.foryou.api.generated.resources.Res as ForYouApiRes
+import dev.icerock.moko.resources.compose.painterResource
+import dev.icerock.moko.resources.compose.stringResource
+import com.skydoves.nowinandroid.feature.foryou.api.MR as ForYouApiRes
 
 @NavGraphRoot
 @NavDestination(route = ForYouNavKey::class)
@@ -221,7 +221,7 @@ internal fun ForYouScreen(
                 targetOffsetY = { fullHeight -> -fullHeight },
             ) + fadeOut(),
         ) {
-            val loadingContentDescription = stringResource(ForYouApiRes.string.feature_foryou_api_loading)
+            val loadingContentDescription = stringResource(ForYouApiRes.strings.feature_foryou_api_loading)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -276,7 +276,7 @@ private fun LazyStaggeredGridScope.onboarding(
             item(span = StaggeredGridItemSpan.FullLine, contentType = "onboarding") {
                 Column(modifier = interestsItemModifier) {
                     Text(
-                        text = stringResource(ForYouApiRes.string.feature_foryou_api_onboarding_guidance_title),
+                        text = stringResource(ForYouApiRes.strings.feature_foryou_api_onboarding_guidance_title),
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -284,7 +284,7 @@ private fun LazyStaggeredGridScope.onboarding(
                         style = MaterialTheme.typography.titleMedium,
                     )
                     Text(
-                        text = stringResource(ForYouApiRes.string.feature_foryou_api_onboarding_guidance_subtitle),
+                        text = stringResource(ForYouApiRes.strings.feature_foryou_api_onboarding_guidance_subtitle),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 8.dp, start = 24.dp, end = 24.dp),
@@ -310,7 +310,7 @@ private fun LazyStaggeredGridScope.onboarding(
                                 .fillMaxWidth(),
                         ) {
                             Text(
-                                text = stringResource(ForYouApiRes.string.feature_foryou_api_done),
+                                text = stringResource(ForYouApiRes.strings.feature_foryou_api_done),
                             )
                         }
                     }
@@ -436,7 +436,7 @@ private fun SingleTopicButton(
 @Composable
 fun TopicIcon(imageUrl: String, modifier: Modifier = Modifier) {
     DynamicAsyncImage(
-        placeholder = painterResource(ForYouApiRes.drawable.feature_foryou_api_ic_icon_placeholder),
+        placeholder = painterResource(ForYouApiRes.images.feature_foryou_api_ic_icon_placeholder),
         imageUrl = imageUrl,
         // decorative
         contentDescription = null,

@@ -67,15 +67,15 @@ import com.skydoves.nowinandroid.core.ui.DevicePreviews
 import com.skydoves.nowinandroid.core.ui.TrackScreenViewEvent
 import com.skydoves.nowinandroid.core.ui.TrackScrollJank
 import com.skydoves.nowinandroid.core.ui.UserNewsResourcePreviewParameterProvider
-import com.skydoves.nowinandroid.core.ui.generated.resources.core_ui_back
+import com.skydoves.nowinandroid.core.ui.core_ui_back
 import com.skydoves.nowinandroid.core.ui.userNewsResourceCardItems
-import com.skydoves.nowinandroid.feature.topic.api.generated.resources.feature_topic_api_error
-import com.skydoves.nowinandroid.feature.topic.api.generated.resources.feature_topic_api_loading
+import com.skydoves.nowinandroid.feature.topic.api.feature_topic_api_error
+import com.skydoves.nowinandroid.feature.topic.api.feature_topic_api_loading
 import com.skydoves.nowinandroid.feature.topic.api.navigation.TopicNavKey
 import dev.zacsweers.metrox.viewmodel.metroViewModel
-import org.jetbrains.compose.resources.stringResource
-import com.skydoves.nowinandroid.core.ui.generated.resources.Res as CoreUiRes
-import com.skydoves.nowinandroid.feature.topic.api.generated.resources.Res as TopicApiRes
+import dev.icerock.moko.resources.compose.stringResource
+import com.skydoves.nowinandroid.core.ui.MR as CoreUiRes
+import com.skydoves.nowinandroid.feature.topic.api.MR as TopicApiRes
 
 @Composable
 fun TopicScreen(
@@ -131,13 +131,13 @@ internal fun TopicScreen(
                     TopicUiState.Loading -> item {
                         NiaLoadingWheel(
                             modifier = modifier,
-                            contentDesc = stringResource(TopicApiRes.string.feature_topic_api_loading),
+                            contentDesc = stringResource(TopicApiRes.strings.feature_topic_api_loading),
                         )
                     }
 
                     TopicUiState.Error -> item {
                         Text(
-                            text = stringResource(TopicApiRes.string.feature_topic_api_error),
+                            text = stringResource(TopicApiRes.strings.feature_topic_api_error),
                             style = MaterialTheme.typography.bodyLarge,
                             textAlign = TextAlign.Center,
                             modifier = Modifier
@@ -307,9 +307,7 @@ private fun TopicToolbar(
             IconButton(onClick = { onBackClick() }) {
                 Icon(
                     imageVector = NiaIcons.ArrowBack,
-                    contentDescription = stringResource(
-                        CoreUiRes.string.core_ui_back,
-                    ),
+                    contentDescription = stringResource(CoreUiRes.strings.core_ui_back),
                 )
             }
         } else {

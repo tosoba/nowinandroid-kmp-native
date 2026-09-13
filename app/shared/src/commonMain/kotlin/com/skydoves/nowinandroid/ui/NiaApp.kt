@@ -78,14 +78,14 @@ import com.skydoves.nowinandroid.feature.interests.impl.navigation.interestsEntr
 import com.skydoves.nowinandroid.feature.search.api.navigation.SearchNavKey
 import com.skydoves.nowinandroid.feature.search.impl.navigation.searchEntry
 import com.skydoves.nowinandroid.feature.settings.impl.SettingsDialog
-import com.skydoves.nowinandroid.feature.settings.impl.generated.resources.feature_settings_impl_top_app_bar_action_icon_description
-import com.skydoves.nowinandroid.feature.settings.impl.generated.resources.feature_settings_impl_top_app_bar_navigation_icon_description
+import com.skydoves.nowinandroid.feature.settings.impl.feature_settings_top_app_bar_action_icon_description
+import com.skydoves.nowinandroid.feature.settings.impl.feature_settings_top_app_bar_navigation_icon_description
 import com.skydoves.nowinandroid.feature.topic.impl.navigation.topicEntry
-import com.skydoves.nowinandroid.generated.resources.Res
-import com.skydoves.nowinandroid.generated.resources.not_connected
+import com.skydoves.nowinandroid.MR as Res
 import com.skydoves.nowinandroid.navigation.TOP_LEVEL_NAV_ITEMS
-import org.jetbrains.compose.resources.stringResource
-import com.skydoves.nowinandroid.feature.settings.impl.generated.resources.Res as SettingsRes
+import com.skydoves.nowinandroid.not_connected
+import dev.icerock.moko.resources.compose.stringResource
+import com.skydoves.nowinandroid.feature.settings.impl.MR as SettingsRes
 
 @Composable
 fun NiaApp(
@@ -106,7 +106,7 @@ fun NiaApp(
         ) {
             val snackbarHostState = remember { SnackbarHostState() }
             val isOffline by appState.isOffline.collectAsStateWithLifecycle()
-            val notConnectedMessage = stringResource(Res.string.not_connected)
+            val notConnectedMessage = stringResource(Res.strings.not_connected)
             LaunchedEffect(isOffline) {
                 if (isOffline) {
                     snackbarHostState.showSnackbar(
@@ -219,13 +219,13 @@ internal fun NiaApp(
                         titleRes = destination.titleText,
                         navigationIcon = NiaIcons.Search,
                         navigationIconContentDescription = stringResource(
-                            SettingsRes.string
-                                .feature_settings_impl_top_app_bar_navigation_icon_description,
+                            SettingsRes.strings
+                                .feature_settings_top_app_bar_navigation_icon_description,
                         ),
                         actionIcon = NiaIcons.Settings,
                         actionIconContentDescription = stringResource(
-                            SettingsRes.string
-                                .feature_settings_impl_top_app_bar_action_icon_description,
+                            SettingsRes.strings
+                                .feature_settings_top_app_bar_action_icon_description,
                         ),
                         colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = Color.Transparent,

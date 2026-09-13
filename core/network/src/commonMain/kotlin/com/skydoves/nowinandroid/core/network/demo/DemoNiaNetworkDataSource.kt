@@ -18,7 +18,6 @@ package com.skydoves.nowinandroid.core.network.demo
 
 import com.skydoves.nowinandroid.core.common.network.IoDispatcher
 import com.skydoves.nowinandroid.core.network.NiaNetworkDataSource
-import com.skydoves.nowinandroid.core.network.generated.resources.Res
 import com.skydoves.nowinandroid.core.network.model.NetworkChangeList
 import com.skydoves.nowinandroid.core.network.model.NetworkNewsResource
 import com.skydoves.nowinandroid.core.network.model.NetworkTopic
@@ -30,6 +29,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import org.jetbrains.compose.resources.ExperimentalResourceApi
+import nowinandroid_kmp.core.network.generated.resources.Res
 
 /**
  * [NiaNetworkDataSource] implementation that provides static news resources to aid development.
@@ -44,7 +44,8 @@ class DemoNiaNetworkDataSource(
     private val networkJson: Json,
 ) : NiaNetworkDataSource {
 
-    override suspend fun getTopics(ids: List<String>?): ApiResponse<List<NetworkTopic>> = readAsset(TOPICS_ASSET)
+    override suspend fun getTopics(ids: List<String>?): ApiResponse<List<NetworkTopic>> =
+        readAsset(TOPICS_ASSET)
 
     override suspend fun getNewsResources(ids: List<String>?): ApiResponse<List<NetworkNewsResource>> =
         readAsset(NEWS_ASSET)

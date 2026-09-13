@@ -19,24 +19,24 @@ package com.skydoves.nowinandroid.navigation
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation3.runtime.NavKey
 import androidx.savedstate.serialization.SavedStateConfiguration
+import com.skydoves.nowinandroid.app_name
 import com.skydoves.nowinandroid.core.designsystem.icon.NiaIcons
-import com.skydoves.nowinandroid.feature.bookmarks.api.generated.resources.feature_bookmarks_api_title
+import com.skydoves.nowinandroid.feature.bookmarks.api.feature_bookmarks_api_title
 import com.skydoves.nowinandroid.feature.bookmarks.api.navigation.BookmarksNavKey
-import com.skydoves.nowinandroid.feature.foryou.api.generated.resources.feature_foryou_api_title
+import com.skydoves.nowinandroid.feature.foryou.api.feature_foryou_api_title
 import com.skydoves.nowinandroid.feature.foryou.api.navigation.ForYouNavKey
 import com.skydoves.nowinandroid.feature.interests.api.navigation.InterestsNavKey
-import com.skydoves.nowinandroid.feature.search.api.generated.resources.feature_search_api_interests
+import com.skydoves.nowinandroid.feature.search.api.feature_search_api_interests
 import com.skydoves.nowinandroid.feature.search.api.navigation.SearchNavKey
 import com.skydoves.nowinandroid.feature.topic.api.navigation.TopicNavKey
-import com.skydoves.nowinandroid.generated.resources.Res
-import com.skydoves.nowinandroid.generated.resources.app_name
+import com.skydoves.nowinandroid.MR as Res
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
-import org.jetbrains.compose.resources.StringResource
-import com.skydoves.nowinandroid.feature.bookmarks.api.generated.resources.Res as BookmarksApiRes
-import com.skydoves.nowinandroid.feature.foryou.api.generated.resources.Res as ForYouApiRes
-import com.skydoves.nowinandroid.feature.search.api.generated.resources.Res as SearchApiRes
+import dev.icerock.moko.resources.StringResource
+import com.skydoves.nowinandroid.feature.bookmarks.api.MR as BookmarksApiRes
+import com.skydoves.nowinandroid.feature.foryou.api.MR as ForYouApiRes
+import com.skydoves.nowinandroid.feature.search.api.MR as SearchApiRes
 
 /**
  * Type for the top level navigation items in the application. Contains UI information about the
@@ -59,22 +59,22 @@ data class TopLevelNavItem(
 val FOR_YOU = TopLevelNavItem(
     selectedIcon = NiaIcons.Upcoming,
     unselectedIcon = NiaIcons.UpcomingBorder,
-    iconText = ForYouApiRes.string.feature_foryou_api_title,
-    titleText = Res.string.app_name,
+    iconText = ForYouApiRes.strings.feature_foryou_api_title,
+    titleText = Res.strings.app_name,
 )
 
 val BOOKMARKS = TopLevelNavItem(
     selectedIcon = NiaIcons.Bookmarks,
     unselectedIcon = NiaIcons.BookmarksBorder,
-    iconText = BookmarksApiRes.string.feature_bookmarks_api_title,
-    titleText = BookmarksApiRes.string.feature_bookmarks_api_title,
+    iconText = BookmarksApiRes.strings.feature_bookmarks_api_title,
+    titleText = BookmarksApiRes.strings.feature_bookmarks_api_title,
 )
 
 val INTERESTS = TopLevelNavItem(
     selectedIcon = NiaIcons.Grid3x3,
     unselectedIcon = NiaIcons.Grid3x3,
-    iconText = SearchApiRes.string.feature_search_api_interests,
-    titleText = SearchApiRes.string.feature_search_api_interests,
+    iconText = SearchApiRes.strings.feature_search_api_interests,
+    titleText = SearchApiRes.strings.feature_search_api_interests,
 )
 
 val TOP_LEVEL_NAV_ITEMS: Map<NavKey, TopLevelNavItem> = mapOf(

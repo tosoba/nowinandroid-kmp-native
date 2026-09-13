@@ -72,18 +72,18 @@ import com.skydoves.nowinandroid.core.ui.TrackScreenViewEvent
 import com.skydoves.nowinandroid.core.ui.TrackScrollJank
 import com.skydoves.nowinandroid.core.ui.UserNewsResourcePreviewParameterProvider
 import com.skydoves.nowinandroid.core.ui.newsFeed
-import com.skydoves.nowinandroid.feature.bookmarks.api.generated.resources.feature_bookmarks_api_empty_description
-import com.skydoves.nowinandroid.feature.bookmarks.api.generated.resources.feature_bookmarks_api_empty_error
-import com.skydoves.nowinandroid.feature.bookmarks.api.generated.resources.feature_bookmarks_api_loading
-import com.skydoves.nowinandroid.feature.bookmarks.api.generated.resources.feature_bookmarks_api_mg_empty_bookmarks
-import com.skydoves.nowinandroid.feature.bookmarks.api.generated.resources.feature_bookmarks_api_removed
-import com.skydoves.nowinandroid.feature.bookmarks.api.generated.resources.feature_bookmarks_api_undo
+import com.skydoves.nowinandroid.feature.bookmarks.api.feature_bookmarks_api_empty_description
+import com.skydoves.nowinandroid.feature.bookmarks.api.feature_bookmarks_api_empty_error
+import com.skydoves.nowinandroid.feature.bookmarks.api.feature_bookmarks_api_loading
+import com.skydoves.nowinandroid.feature.bookmarks.api.feature_bookmarks_api_mg_empty_bookmarks
+import com.skydoves.nowinandroid.feature.bookmarks.api.feature_bookmarks_api_removed
+import com.skydoves.nowinandroid.feature.bookmarks.api.feature_bookmarks_api_undo
 import com.skydoves.nowinandroid.feature.bookmarks.api.navigation.BookmarksNavKey
 import com.skydoves.nowinandroid.feature.topic.api.navigation.TopicNavKey
+import dev.icerock.moko.resources.compose.painterResource
+import dev.icerock.moko.resources.compose.stringResource
 import dev.zacsweers.metrox.viewmodel.metroViewModel
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.stringResource
-import com.skydoves.nowinandroid.feature.bookmarks.api.generated.resources.Res as BookmarksApiRes
+import com.skydoves.nowinandroid.feature.bookmarks.api.MR as BookmarksApiRes
 
 @NavDestination(route = BookmarksNavKey::class)
 @NavEdge(to = TopicNavKey::class, label = "Topic chip")
@@ -123,8 +123,9 @@ internal fun BookmarksScreen(
     undoBookmarkRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
 ) {
-    val bookmarkRemovedMessage = stringResource(BookmarksApiRes.string.feature_bookmarks_api_removed)
-    val undoText = stringResource(BookmarksApiRes.string.feature_bookmarks_api_undo)
+    val bookmarkRemovedMessage =
+        stringResource(BookmarksApiRes.strings.feature_bookmarks_api_removed)
+    val undoText = stringResource(BookmarksApiRes.strings.feature_bookmarks_api_undo)
 
     LaunchedEffect(shouldDisplayUndoBookmark) {
         if (shouldDisplayUndoBookmark) {
@@ -166,7 +167,7 @@ private fun LoadingState(modifier: Modifier = Modifier) {
             .fillMaxWidth()
             .wrapContentSize()
             .testTag("bookmarks:loading"),
-        contentDesc = stringResource(BookmarksApiRes.string.feature_bookmarks_api_loading),
+        contentDesc = stringResource(BookmarksApiRes.strings.feature_bookmarks_api_loading),
     )
 }
 
@@ -239,7 +240,7 @@ private fun EmptyState(modifier: Modifier = Modifier) {
         val iconTint = LocalTintTheme.current.iconTint
         Image(
             modifier = Modifier.fillMaxWidth(),
-            painter = painterResource(BookmarksApiRes.drawable.feature_bookmarks_api_mg_empty_bookmarks),
+            painter = painterResource(BookmarksApiRes.images.feature_bookmarks_api_mg_empty_bookmarks),
             colorFilter = if (iconTint != Color.Unspecified) ColorFilter.tint(iconTint) else null,
             contentDescription = null,
         )
@@ -247,7 +248,7 @@ private fun EmptyState(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(48.dp))
 
         Text(
-            text = stringResource(BookmarksApiRes.string.feature_bookmarks_api_empty_error),
+            text = stringResource(BookmarksApiRes.strings.feature_bookmarks_api_empty_error),
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.titleMedium,
@@ -257,7 +258,7 @@ private fun EmptyState(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = stringResource(BookmarksApiRes.string.feature_bookmarks_api_empty_description),
+            text = stringResource(BookmarksApiRes.strings.feature_bookmarks_api_empty_description),
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyMedium,

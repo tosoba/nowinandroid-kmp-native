@@ -17,7 +17,6 @@
 package com.skydoves.nowinandroid.core.ui
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -39,8 +38,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -60,39 +57,29 @@ import com.skydoves.landscapist.placeholder.shimmer.ShimmerPlugin
 import com.skydoves.nowinandroid.core.designsystem.component.NiaIconToggleButton
 import com.skydoves.nowinandroid.core.designsystem.component.NiaTopicTag
 import com.skydoves.nowinandroid.core.designsystem.component.rememberNiaShimmer
-import com.skydoves.nowinandroid.core.designsystem.generated.resources.core_designsystem_ic_placeholder_default
+import com.skydoves.nowinandroid.core.designsystem.core_designsystem_ic_placeholder_default
 import com.skydoves.nowinandroid.core.designsystem.icon.NiaIcons
 import com.skydoves.nowinandroid.core.designsystem.theme.NiaTheme
 import com.skydoves.nowinandroid.core.model.data.FollowableTopic
 import com.skydoves.nowinandroid.core.model.data.NewsResource
 import com.skydoves.nowinandroid.core.model.data.UserNewsResource
-import com.skydoves.nowinandroid.core.ui.generated.resources.Res
-import com.skydoves.nowinandroid.core.ui.generated.resources.core_ui_bookmark
-import com.skydoves.nowinandroid.core.ui.generated.resources.core_ui_card_meta_data_text
-import com.skydoves.nowinandroid.core.ui.generated.resources.core_ui_card_tap_action
-import com.skydoves.nowinandroid.core.ui.generated.resources.core_ui_feed_sharing
-import com.skydoves.nowinandroid.core.ui.generated.resources.core_ui_feed_sharing_data
-import com.skydoves.nowinandroid.core.ui.generated.resources.core_ui_topic_chip_content_description_when_followed
-import com.skydoves.nowinandroid.core.ui.generated.resources.core_ui_topic_chip_content_description_when_not_followed
-import com.skydoves.nowinandroid.core.ui.generated.resources.core_ui_unbookmark
-import com.skydoves.nowinandroid.core.ui.generated.resources.core_ui_unread_resource_dot_content_description
 import com.skydoves.nowinandroid.core.ui.platform.newsResourceDragAndDropSource
+import dev.icerock.moko.resources.compose.painterResource
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format
 import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Instant
-import com.skydoves.nowinandroid.core.designsystem.generated.resources.Res as DesignSystemRes
+import com.skydoves.nowinandroid.core.designsystem.MR as DesignSystemRes
+import com.skydoves.nowinandroid.core.ui.MR as Res
 
 /**
  * [NewsResource] card used on the following screens: For You, Saved
  */
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NewsResourceCardExpanded(
     userNewsResource: UserNewsResource,
@@ -103,10 +90,10 @@ fun NewsResourceCardExpanded(
     onTopicClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val clickActionLabel = stringResource(Res.string.core_ui_card_tap_action)
-    val sharingLabel = stringResource(Res.string.core_ui_feed_sharing)
+    val clickActionLabel = stringResource(Res.strings.core_ui_card_tap_action)
+    val sharingLabel = stringResource(Res.strings.core_ui_feed_sharing)
     val sharingContent = stringResource(
-        Res.string.core_ui_feed_sharing_data,
+        Res.strings.core_ui_feed_sharing_data,
         userNewsResource.title,
         userNewsResource.url,
     )
@@ -170,9 +157,8 @@ fun NewsResourceCardExpanded(
 
 @Composable
 fun NewsResourceHeaderImage(headerImageUrl: String?) {
-    val placeholder = painterResource(
-        DesignSystemRes.drawable.core_designsystem_ic_placeholder_default,
-    )
+    val placeholder =
+        painterResource(DesignSystemRes.images.core_designsystem_ic_placeholder_default)
     val isLocalInspection = LocalInspectionMode.current
     val shimmer = rememberNiaShimmer()
     Box(
@@ -232,13 +218,13 @@ fun BookmarkButton(isBookmarked: Boolean, onClick: () -> Unit, modifier: Modifie
         icon = {
             Icon(
                 imageVector = NiaIcons.BookmarkBorder,
-                contentDescription = stringResource(Res.string.core_ui_bookmark),
+                contentDescription = stringResource(Res.strings.core_ui_bookmark),
             )
         },
         checkedIcon = {
             Icon(
                 imageVector = NiaIcons.Bookmark,
-                contentDescription = stringResource(Res.string.core_ui_unbookmark),
+                contentDescription = stringResource(Res.strings.core_ui_unbookmark),
             )
         },
     )
@@ -246,7 +232,7 @@ fun BookmarkButton(isBookmarked: Boolean, onClick: () -> Unit, modifier: Modifie
 
 @Composable
 fun NotificationDot(color: Color, modifier: Modifier = Modifier) {
-    val description = stringResource(Res.string.core_ui_unread_resource_dot_content_description)
+    val description = stringResource(Res.strings.core_ui_unread_resource_dot_content_description)
     Canvas(
         modifier = modifier
             .semantics { contentDescription = description },
@@ -281,7 +267,7 @@ fun NewsResourceMetaData(publishDate: Instant, resourceType: String) {
     val formattedDate = dateFormatted(publishDate)
     Text(
         if (resourceType.isNotBlank()) {
-            stringResource(Res.string.core_ui_card_meta_data_text, formattedDate, resourceType)
+            stringResource(Res.strings.core_ui_card_meta_data_text, formattedDate, resourceType)
         } else {
             formattedDate
         },
@@ -295,7 +281,11 @@ fun NewsResourceShortDescription(newsResourceShortDescription: String) {
 }
 
 @Composable
-fun NewsResourceTopics(topics: List<FollowableTopic>, onTopicClick: (String) -> Unit, modifier: Modifier = Modifier) {
+fun NewsResourceTopics(
+    topics: List<FollowableTopic>,
+    onTopicClick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     Row(
         // causes narrow chips
         modifier = modifier.horizontalScroll(rememberScrollState()),
@@ -308,12 +298,12 @@ fun NewsResourceTopics(topics: List<FollowableTopic>, onTopicClick: (String) -> 
                 text = {
                     val contentDescription = if (followableTopic.isFollowed) {
                         stringResource(
-                            Res.string.core_ui_topic_chip_content_description_when_followed,
+                            Res.strings.core_ui_topic_chip_content_description_when_followed,
                             followableTopic.topic.name,
                         )
                     } else {
                         stringResource(
-                            Res.string.core_ui_topic_chip_content_description_when_not_followed,
+                            Res.strings.core_ui_topic_chip_content_description_when_not_followed,
                             followableTopic.topic.name,
                         )
                     }

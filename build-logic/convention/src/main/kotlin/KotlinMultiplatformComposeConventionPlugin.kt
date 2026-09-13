@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-import com.skydoves.nowinandroid.buildlogic.configureComposeResources
-import com.skydoves.nowinandroid.buildlogic.libs
+import com.skydoves.nowinandroid.buildlogic.configureMokoResources
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.dependencies
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
 
 class KotlinMultiplatformComposeConventionPlugin : Plugin<Project> {
@@ -28,18 +26,13 @@ class KotlinMultiplatformComposeConventionPlugin : Plugin<Project> {
             pluginManager.apply("nowinandroid.kmp.multiplatform")
             pluginManager.apply("org.jetbrains.compose")
             pluginManager.apply("org.jetbrains.kotlin.plugin.compose")
+            pluginManager.apply("dev.icerock.mobile.multiplatform-resources")
 
             extensions.configure<ComposeCompilerGradlePluginExtension> {
                 reportsDestination.set(layout.buildDirectory.dir("compose_compiler"))
             }
 
-            configureComposeResources()
-
-            // The generated `Res` class is compiled into every Compose module, and it references
-            // the Compose Resources runtime whether or not the module ships any resources.
-            dependencies {
-                add("commonMainApi", libs.findLibrary("compose-components-resources").get())
-            }
+            configureMokoResources()
         }
     }
 }

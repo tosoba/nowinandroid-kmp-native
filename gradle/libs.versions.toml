@@ -9,6 +9,7 @@ androidMinSdk = "24"
 androidTargetSdk = "36"
 
 composeMultiplatform = "1.12.0"
+mokoResources = "0.27.0"
 composeMaterial3 = "1.9.0"
 composeAdaptive = "1.3.0-beta02"
 androidxActivityCompose = "1.13.0"
@@ -62,6 +63,7 @@ compose-material-icons-core = { module = "org.jetbrains.compose.material:materia
 # JetBrains stopped publishing the icon packs after 1.7.3; this is the last release that has them.
 compose-material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version = "1.7.3" }
 compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
+
 compose-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
 compose-ui-test = { module = "org.jetbrains.compose.ui:ui-test", version.ref = "composeMultiplatform" }
 compose-adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "composeAdaptive" }
@@ -135,6 +137,11 @@ landscapist-svg = { module = "com.github.skydoves:landscapist-svg", version.ref 
 compose-nav-graph-annotations = { module = "com.github.skydoves:compose-nav-graph-annotations", version.ref = "composeNavGraph" }
 hotswan-preview = { module = "com.github.skydoves.compose.hotswan:preview", version.ref = "hotswan" }
 
+# moko-resources
+moko-resources = { module = "dev.icerock.moko:resources", version.ref = "mokoResources" }
+moko-resources-compose = { module = "dev.icerock.moko:resources-compose", version.ref = "mokoResources" }
+moko-resources-test = { module = "dev.icerock.moko:resources-test", version.ref = "mokoResources" }
+
 # Testing
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
@@ -146,6 +153,7 @@ kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", ve
 compose-gradlePlugin = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "composeMultiplatform" }
 compose-compiler-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 spotless-gradlePlugin = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
+moko-resources-gradlePlugin = { module = "dev.icerock.moko:resources-generator", version.ref = "mokoResources" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

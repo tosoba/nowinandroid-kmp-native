@@ -32,6 +32,7 @@ dependencies {
     compileOnly(libs.compose.gradlePlugin)
     compileOnly(libs.compose.compiler.gradlePlugin)
     compileOnly(libs.spotless.gradlePlugin)
+    implementation(libs.moko.resources.gradlePlugin)
 }
 
 gradlePlugin {

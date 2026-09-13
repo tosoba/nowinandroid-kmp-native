@@ -52,3 +52,22 @@ targets:
           fi
           cd "$SRCROOT/../.."
           ./gradlew :app:shared:embedAndSignAppleFrameworkForXcode
+      # moko-resources ships its strings/images/files inside a `.bundle` next to the framework;
+      # without this phase native iOS UI later cannot resolve `MR` resources at runtime.
+      - name: Copy MOKO Resources
+        basedOnDependencyAnalysis: false
+        script: |
+          if [ "YES" = "$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED" ]; then
+            echo "Skipping Gradle build task invocation"
+            exit 0
+          fi
+          cd "$SRCROOT/../.."
+          if [[ "$SDK_NAME" == iphonesimulator* ]]; then
+            MOKO_TARGET=IosSimulatorArm64
+          else
+            MOKO_TARGET=IosArm64
+          fi
+          ./gradlew \
+            ":app:shared:copyResources${CONFIGURATION}Framework${MOKO_TARGET}" \
+            -Pmoko.resources.BUILT_PRODUCTS_DIR="$BUILT_PRODUCTS_DIR" \
+            -Pmoko.resources.CONTENTS_FOLDER_PATH="$CONTENTS_FOLDER_PATH"
