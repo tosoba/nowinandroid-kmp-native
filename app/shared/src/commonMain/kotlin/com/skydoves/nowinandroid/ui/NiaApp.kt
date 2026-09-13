@@ -19,13 +19,13 @@ package com.skydoves.nowinandroid.ui
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -40,7 +40,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.Composable
@@ -189,10 +188,23 @@ internal fun NiaApp(
             modifier = modifier.enableTestTagsAsResourceId(),
             containerColor = Color.Transparent,
             contentColor = MaterialTheme.colorScheme.onBackground,
-            contentWindowInsets = WindowInsets(0, 0, 0, 0),
-            topBar = {
+            snackbarHost = {
+                SnackbarHost(
+                    snackbarHostState,
+                    modifier = Modifier.windowInsetsPadding(
+                        WindowInsets.safeDrawing.exclude(WindowInsets.ime),
+                    ),
+                )
+            },
+        ) { padding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .consumeWindowInsets(padding)
+            ) {
                 AnimatedVisibility(
-                    visible = appState.navigationState.currentKey in appState.navigationState.topLevelKeys,
+                    appState.navigationState.currentKey in appState.navigationState.topLevelKeys,
                     enter = expandVertically(),
                     exit = shrinkVertically()
                 ) {
@@ -222,36 +234,22 @@ internal fun NiaApp(
                         onNavigationClick = { navigator.navigate(SearchNavKey) },
                     )
                 }
-            },
-            snackbarHost = {
-                SnackbarHost(
-                    snackbarHostState,
-                    modifier = Modifier.windowInsetsPadding(
-                        WindowInsets.safeDrawing.exclude(WindowInsets.ime),
-                    ),
-                )
-            },
-        ) { padding ->
-            val entryProvider = entryProvider {
-                forYouEntry(navigator)
-                bookmarksEntry(navigator)
-                interestsEntry(navigator)
-                topicEntry(navigator)
-                searchEntry(navigator)
-            }
 
-            NavDisplay(
-                entries = appState.navigationState.toEntries(entryProvider),
-                sceneStrategies = listOf(rememberListDetailSceneStrategy()),
-                onBack = { navigator.goBack() },
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .consumeWindowInsets(padding)
-                    .windowInsetsPadding(
-                        WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
-                    )
-            )
+                val entryProvider = entryProvider {
+                    forYouEntry(navigator)
+                    bookmarksEntry(navigator)
+                    interestsEntry(navigator)
+                    topicEntry(navigator)
+                    searchEntry(navigator)
+                }
+
+                NavDisplay(
+                    entries = appState.navigationState.toEntries(entryProvider),
+                    sceneStrategies = listOf(rememberListDetailSceneStrategy()),
+                    onBack = { navigator.goBack() },
+                    modifier = Modifier.fillMaxWidth().weight(1f)
+                )
+            }
         }
     }
 }
