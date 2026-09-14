@@ -23,5 +23,4 @@ import kotlinx.coroutines.Dispatchers
  * Kotlin/Native has no dedicated IO pool, so this is `Default` widened enough that a handful of
  * concurrent blocking reads cannot starve CPU bound work.
  */
-@OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 actual val ioDispatcher: CoroutineDispatcher = Dispatchers.Default.limitedParallelism(64)

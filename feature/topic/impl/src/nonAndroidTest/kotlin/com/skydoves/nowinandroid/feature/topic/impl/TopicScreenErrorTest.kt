@@ -18,7 +18,7 @@ package com.skydoves.nowinandroid.feature.topic.impl
 
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.runComposeUiTest
+import androidx.compose.ui.test.v2.runComposeUiTest
 import kotlin.test.Test
 
 /**
@@ -29,7 +29,6 @@ import kotlin.test.Test
  * other `runComposeUiTest` cases.
  */
 class TopicScreenErrorTest {
-
   @OptIn(ExperimentalTestApi::class)
   @Test
   fun topicErrorStateRendersAMessageRatherThanCrashing() = runComposeUiTest {

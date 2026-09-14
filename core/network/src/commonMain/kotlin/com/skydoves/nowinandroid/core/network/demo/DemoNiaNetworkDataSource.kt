@@ -29,7 +29,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import nowinandroid_kmp.core.network.generated.resources.Res
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 /**
  * [NiaNetworkDataSource] implementation that provides static news resources to aid development.
@@ -59,7 +58,6 @@ class DemoNiaNetworkDataSource(
   ): ApiResponse<List<NetworkChangeList>> =
     getNewsResources().mapToChangeList(NetworkNewsResource::id)
 
-  @OptIn(ExperimentalResourceApi::class)
   private suspend inline fun <reified T> readAsset(fileName: String): ApiResponse<List<T>> =
     withContext(ioDispatcher) {
       try {

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.skydoves.nowinandroid.core.designsystem.component
 
 import androidx.compose.material3.CenterAlignedTopAppBar
