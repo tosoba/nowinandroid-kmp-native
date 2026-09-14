@@ -16,6 +16,9 @@
 
 package com.skydoves.nowinandroid.feature.foryou.impl.navigation
 
+import androidx.compose.foundation.background
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import com.skydoves.nowinandroid.core.navigation.Navigator
@@ -25,6 +28,9 @@ import com.skydoves.nowinandroid.feature.topic.api.navigation.navigateToTopic
 
 fun EntryProviderScope<NavKey>.forYouEntry(navigator: Navigator) {
   entry<ForYouNavKey> {
-    ForYouScreen(onTopicClick = navigator::navigateToTopic)
+    ForYouScreen(
+      modifier = Modifier.background(MaterialTheme.colorScheme.background),
+      onTopicClick = navigator::navigateToTopic,
+    )
   }
 }

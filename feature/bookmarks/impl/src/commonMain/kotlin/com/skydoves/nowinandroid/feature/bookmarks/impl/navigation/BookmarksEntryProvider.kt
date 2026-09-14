@@ -16,10 +16,13 @@
 
 package com.skydoves.nowinandroid.feature.bookmarks.impl.navigation
 
+import androidx.compose.foundation.background
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration.Short
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult.ActionPerformed
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import com.skydoves.nowinandroid.core.navigation.Navigator
@@ -32,6 +35,7 @@ fun EntryProviderScope<NavKey>.bookmarksEntry(navigator: Navigator) {
     val snackbarHostState = LocalSnackbarHostState.current
     BookmarksScreen(
       onTopicClick = navigator::navigateToTopic,
+      modifier = Modifier.background(MaterialTheme.colorScheme.background),
       onShowSnackbar = { message, action ->
         snackbarHostState.showSnackbar(
           message = message,

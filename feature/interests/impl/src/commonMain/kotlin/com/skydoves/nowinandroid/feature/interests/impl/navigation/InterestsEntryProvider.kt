@@ -16,8 +16,11 @@
 
 package com.skydoves.nowinandroid.feature.interests.impl.navigation
 
+import androidx.compose.foundation.background
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
+import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import com.skydoves.nowinandroid.core.navigation.Navigator
@@ -45,7 +48,7 @@ fun EntryProviderScope<NavKey>.interestsEntry(navigator: Navigator) {
     InterestsScreen(
       // TODO: This event should either be provided by the ViewModel or by the navigator, not both
       onTopicClick = navigator::navigateToTopic,
-
+      modifier = Modifier.background(MaterialTheme.colorScheme.background),
       // TODO: This should be dynamically calculated based on the rendering scene
       //  See
       // https://github.com/android/nav3-recipes/commit/488f4811791ca3ed7192f4fe3c86e7371b32ebdc#diff-374e02026cdd2f68057dd940f203dc4ba7319930b33e9555c61af7e072211cabR89

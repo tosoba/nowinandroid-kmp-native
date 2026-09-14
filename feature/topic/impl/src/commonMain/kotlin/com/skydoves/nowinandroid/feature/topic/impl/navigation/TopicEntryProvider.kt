@@ -16,8 +16,11 @@
 
 package com.skydoves.nowinandroid.feature.topic.impl.navigation
 
+import androidx.compose.foundation.background
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
+import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import com.skydoves.nowinandroid.core.navigation.Navigator
@@ -34,6 +37,7 @@ fun EntryProviderScope<NavKey>.topicEntry(navigator: Navigator) {
     val id = key.id
     TopicScreen(
       showBackButton = true,
+      modifier = Modifier.background(MaterialTheme.colorScheme.background),
       onBackClick = { navigator.goBack() },
       onTopicClick = navigator::navigateToTopic,
       viewModel =
