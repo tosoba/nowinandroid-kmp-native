@@ -6,13 +6,13 @@ struct iOSApp: App {
 
     var body: some Scene {
         WindowGroup {
-#if COMPOSE_UI
-            ContentView()
-                .ignoresSafeArea(.all)
-#else
-            NativeContentView()
-                .ignoresSafeArea(.all)
-#endif
+            #if COMPOSE_UI
+                ComposeContentView()
+                    .ignoresSafeArea(.all)
+            #else
+                NativeContentView()
+                    .ignoresSafeArea(.all)
+            #endif
         }
     }
 }
