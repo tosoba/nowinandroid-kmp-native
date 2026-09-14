@@ -85,17 +85,15 @@ fun NavigationState.toEntries(
   entryProvider: (NavKey) -> NavEntry<NavKey>
 ): SnapshotStateList<NavEntry<NavKey>> {
   val decoratedEntries = subStacks.mapValues { (_, stack) ->
-    val decorators =
-      listOf(
-        rememberSaveableStateHolderNavEntryDecorator<NavKey>(),
-        rememberViewModelStoreNavEntryDecorator<NavKey>(),
-      )
     rememberDecoratedNavEntries(
       backStack = stack,
-      entryDecorators = decorators,
+      entryDecorators =
+        listOf(
+          rememberSaveableStateHolderNavEntryDecorator(),
+          rememberViewModelStoreNavEntryDecorator(),
+        ),
       entryProvider = entryProvider,
     )
   }
-
   return topLevelStack.flatMap { decoratedEntries[it] ?: emptyList() }.toMutableStateList()
 }
