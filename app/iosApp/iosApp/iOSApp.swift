@@ -8,10 +8,8 @@ struct iOSApp: App {
         WindowGroup {
             #if COMPOSE_UI
                 ComposeContentView()
-                    .ignoresSafeArea(.all)
             #else
                 NativeContentView()
-                    .ignoresSafeArea(.all)
             #endif
         }
     }

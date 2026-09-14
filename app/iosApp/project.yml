@@ -2,7 +2,7 @@ name: NowInAndroid
 options:
   bundleIdPrefix: com.skydoves
   deploymentTarget:
-    iOS: "16.0"
+    iOS: "18.0"
   createIntermediateGroups: true
 configs:
   Debug: debug
