@@ -30,6 +30,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.skydoves.nowinandroid
         SWIFT_VERSION: "5.0"
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: "$(inherited) COMPOSE_UI"
         ENABLE_USER_SCRIPT_SANDBOXING: NO
         # Room 3 and androidx.sqlite 2.7 no longer publish `iosX64`, so the shared framework is
         # built for Apple Silicon only and the Intel simulator slice is excluded.
