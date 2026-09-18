@@ -66,3 +66,18 @@ extension String {
         )
     }
 }
+
+extension Image {
+    init(_ resource: NiaKit.ImageResource) {
+        self = Image(uiImage: resource.toUIImage() ?? UIImage()).renderingMode(.template)
+    }
+}
+
+extension Label where Title == Text, Icon == Image {
+    init(_ title: String, iconResource: NiaKit.ImageResource) {
+        self.init(
+            title: { Text(title) },
+            icon: { Image(iconResource) }
+        )
+    }
+}

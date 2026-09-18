@@ -28,19 +28,19 @@ struct NativeContentView: View {
             Tab(value: TabSelection.forYou) {
                 ForYouView()
             } label: {
-                Label(String(\.feature_foryou_api_title), systemImage: "house")
+                Label(String(\.feature_foryou_api_title), iconResource: NiaIcons.shared.Upcoming)
             }
 
             Tab(value: TabSelection.bookmarks) {
                 BookmarksView()
             } label: {
-                Label(String(\.feature_bookmarks_api_title), systemImage: "bookmark")
+                Label(String(\.feature_bookmarks_api_title), iconResource: NiaIcons.shared.Bookmarks)
             }
 
             Tab(value: TabSelection.interests) {
                 InterestsView()
             } label: {
-                Label(String(\.feature_interests_api_title), systemImage: "star")
+                Label(String(\.feature_interests_api_title), iconResource: NiaIcons.shared.Grid3x3)
             }
 
             Tab(value: TabSelection.search, role: .search) {
@@ -59,17 +59,17 @@ struct NativeContentView: View {
             TabView {
                 ForYouView()
                     .tabItem {
-                        Label(String(\.feature_foryou_api_title), systemImage: "house")
+                        Label(String(\.feature_foryou_api_title), iconResource: NiaIcons.shared.Upcoming)
                     }
 
                 BookmarksView()
                     .tabItem {
-                        Label(String(\.feature_bookmarks_api_title), systemImage: "bookmark")
+                        Label(String(\.feature_bookmarks_api_title), iconResource: NiaIcons.shared.Bookmarks)
                     }
 
                 InterestsView()
                     .tabItem {
-                        Label(String(\.feature_interests_api_title), systemImage: "star")
+                        Label(String(\.feature_interests_api_title), iconResource: NiaIcons.shared.Grid3x3)
                     }
             }
             .navigationTitle(String(\.app_name))
@@ -78,7 +78,7 @@ struct NativeContentView: View {
                     Button {
                         isSearchPresented = true
                     } label: {
-                        Image(systemName: "magnifyingglass")
+                        Image(NiaIcons.shared.Search)
                     }
                     .accessibilityLabel("Search")
                 }

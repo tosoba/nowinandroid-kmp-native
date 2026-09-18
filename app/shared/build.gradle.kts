@@ -40,6 +40,7 @@ kotlin {
       export(projects.feature.interests.api)
       export(projects.feature.search.api)
       export(projects.feature.topic.api)
+      export(projects.core.designsystem)
 
       export(libs.moko.resources)
     }
