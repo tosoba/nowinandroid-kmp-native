@@ -31,8 +31,7 @@ private val appGraph: IosAppGraph by lazy {
  * Entry point for the iOS app. `iosApp/ContentView.swift` wraps this in a
  * `UIViewControllerRepresentable`.
  */
-@Suppress("ktlint:standard:function-naming")
-fun MainViewController(): UIViewController = ComposeUIViewController {
+fun mainViewController(): UIViewController = ComposeUIViewController {
   NiaAppRoot(appGraph)
 }
 
