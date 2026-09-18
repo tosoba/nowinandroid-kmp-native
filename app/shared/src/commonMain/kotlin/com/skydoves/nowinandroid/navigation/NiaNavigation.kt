@@ -33,10 +33,10 @@ import dev.icerock.moko.resources.StringResource
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
-import com.skydoves.nowinandroid.MR as Res
-import com.skydoves.nowinandroid.feature.bookmarks.api.MR as BookmarksApiRes
-import com.skydoves.nowinandroid.feature.foryou.api.MR as ForYouApiRes
-import com.skydoves.nowinandroid.feature.search.api.MR as SearchApiRes
+import com.skydoves.nowinandroid.AppSharedMR as Res
+import com.skydoves.nowinandroid.feature.bookmarks.api.FeatureBookmarksApiMR as BookmarksApiRes
+import com.skydoves.nowinandroid.feature.foryou.api.FeatureForyouApiMR as ForYouApiRes
+import com.skydoves.nowinandroid.feature.search.api.FeatureSearchApiMR as SearchApiRes
 
 /**
  * Type for the top level navigation items in the application. Contains UI information about the

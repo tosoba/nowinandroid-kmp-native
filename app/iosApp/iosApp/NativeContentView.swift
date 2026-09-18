@@ -1,3 +1,4 @@
+import NiaKit
 import SwiftUI
 
 struct NativeContentView: View {
@@ -27,19 +28,19 @@ struct NativeContentView: View {
             Tab(value: TabSelection.forYou) {
                 ForYouView()
             } label: {
-                Label("For You", systemImage: "house")
+                Label(String(\.feature_foryou_api_title), systemImage: "house")
             }
 
             Tab(value: TabSelection.bookmarks) {
                 BookmarksView()
             } label: {
-                Label("Bookmarks", systemImage: "bookmark")
+                Label(String(\.feature_bookmarks_api_title), systemImage: "bookmark")
             }
 
             Tab(value: TabSelection.interests) {
                 InterestsView()
             } label: {
-                Label("Interests", systemImage: "star")
+                Label(String(\.feature_interests_api_title), systemImage: "star")
             }
 
             Tab(value: TabSelection.search, role: .search) {
@@ -58,20 +59,20 @@ struct NativeContentView: View {
             TabView {
                 ForYouView()
                     .tabItem {
-                        Label("For You", systemImage: "house")
+                        Label(String(\.feature_foryou_api_title), systemImage: "house")
                     }
 
                 BookmarksView()
                     .tabItem {
-                        Label("Bookmarks", systemImage: "bookmark")
+                        Label(String(\.feature_bookmarks_api_title), systemImage: "bookmark")
                     }
 
                 InterestsView()
                     .tabItem {
-                        Label("Interests", systemImage: "star")
+                        Label(String(\.feature_interests_api_title), systemImage: "star")
                     }
             }
-            .navigationTitle("Now in Android")
+            .navigationTitle(String(\.app_name))
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {

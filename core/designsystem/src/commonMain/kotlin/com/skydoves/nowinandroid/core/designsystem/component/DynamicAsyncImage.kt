@@ -34,7 +34,7 @@ import com.skydoves.landscapist.components.rememberImageComponent
 import com.skydoves.landscapist.image.LandscapistImage
 import com.skydoves.landscapist.placeholder.shimmer.Shimmer
 import com.skydoves.landscapist.placeholder.shimmer.ShimmerPlugin
-import com.skydoves.nowinandroid.core.designsystem.MR
+import com.skydoves.nowinandroid.core.designsystem.CoreDesignsystemMR
 import com.skydoves.nowinandroid.core.designsystem.core_designsystem_ic_placeholder_default
 import com.skydoves.nowinandroid.core.designsystem.theme.LocalTintTheme
 import dev.icerock.moko.resources.compose.painterResource
@@ -70,7 +70,7 @@ fun DynamicAsyncImage(
   imageUrl: String,
   contentDescription: String?,
   modifier: Modifier = Modifier,
-  placeholder: Painter = painterResource(MR.images.core_designsystem_ic_placeholder_default),
+  placeholder: Painter = painterResource(CoreDesignsystemMR.images.core_designsystem_ic_placeholder_default),
 ) {
   val iconTint = LocalTintTheme.current.iconTint
   val colorFilter = if (iconTint != Unspecified) ColorFilter.tint(iconTint) else null

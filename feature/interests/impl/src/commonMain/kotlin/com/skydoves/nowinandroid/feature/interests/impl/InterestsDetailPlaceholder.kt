@@ -35,7 +35,7 @@ import com.skydoves.nowinandroid.feature.interests.api.feature_interests_api_ic_
 import com.skydoves.nowinandroid.feature.interests.api.feature_interests_api_select_an_interest
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
-import com.skydoves.nowinandroid.feature.interests.api.MR as InterestsApiRes
+import com.skydoves.nowinandroid.feature.interests.api.FeatureInterestsApiMR as InterestsApiRes
 
 @Composable
 fun InterestsDetailPlaceholder(modifier: Modifier = Modifier) {

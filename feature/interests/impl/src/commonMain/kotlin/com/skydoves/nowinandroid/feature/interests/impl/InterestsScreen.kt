@@ -38,7 +38,7 @@ import com.skydoves.nowinandroid.feature.interests.api.feature_interests_api_loa
 import com.skydoves.nowinandroid.feature.interests.api.navigation.InterestsNavKey
 import com.skydoves.nowinandroid.feature.topic.api.navigation.TopicNavKey
 import dev.icerock.moko.resources.compose.stringResource
-import com.skydoves.nowinandroid.feature.interests.api.MR as InterestsApiRes
+import com.skydoves.nowinandroid.feature.interests.api.FeatureInterestsApiMR as InterestsApiRes
 
 @Composable
 fun InterestsScreen(

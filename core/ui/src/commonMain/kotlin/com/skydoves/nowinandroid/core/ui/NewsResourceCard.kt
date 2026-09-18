@@ -73,8 +73,8 @@ import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Instant
-import com.skydoves.nowinandroid.core.designsystem.MR as DesignSystemRes
-import com.skydoves.nowinandroid.core.ui.MR as Res
+import com.skydoves.nowinandroid.core.designsystem.CoreDesignsystemMR as DesignSystemRes
+import com.skydoves.nowinandroid.core.ui.CoreUiMR as Res
 
 /** [NewsResource] card used on the following screens: For You, Saved */
 @Composable

@@ -38,7 +38,7 @@ import com.skydoves.nowinandroid.core.designsystem.component.NiaIconToggleButton
 import com.skydoves.nowinandroid.core.designsystem.icon.NiaIcons
 import com.skydoves.nowinandroid.core.designsystem.theme.NiaTheme
 import dev.icerock.moko.resources.compose.stringResource
-import com.skydoves.nowinandroid.core.ui.MR as Res
+import com.skydoves.nowinandroid.core.ui.CoreUiMR as Res
 
 @Composable
 fun InterestsItem(

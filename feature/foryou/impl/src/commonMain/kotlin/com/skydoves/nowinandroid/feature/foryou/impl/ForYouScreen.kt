@@ -105,7 +105,7 @@ import com.skydoves.nowinandroid.feature.topic.api.navigation.TopicNavKey
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 import dev.zacsweers.metrox.viewmodel.metroViewModel
-import com.skydoves.nowinandroid.feature.foryou.api.MR as ForYouApiRes
+import com.skydoves.nowinandroid.feature.foryou.api.FeatureForyouApiMR as ForYouApiRes
 
 @NavGraphRoot
 @NavDestination(route = ForYouNavKey::class)

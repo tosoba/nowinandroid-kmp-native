@@ -83,7 +83,7 @@ import com.skydoves.nowinandroid.feature.topic.api.navigation.TopicNavKey
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 import dev.zacsweers.metrox.viewmodel.metroViewModel
-import com.skydoves.nowinandroid.feature.bookmarks.api.MR as BookmarksApiRes
+import com.skydoves.nowinandroid.feature.bookmarks.api.FeatureBookmarksApiMR as BookmarksApiRes
 
 @NavDestination(route = BookmarksNavKey::class)
 @NavEdge(to = TopicNavKey::class, label = "Topic chip")

@@ -32,6 +32,16 @@ kotlin {
       baseName = "NiaKit"
       isStatic = true
       binaryOption("bundleId", "com.skydoves.nowinandroid.shared")
+
+      // Each resource-owning module generates its own `MR`; exporting the api modules makes
+      // their `MR` (and the moko runtime types) visible to Swift from the NiaKit framework.
+      export(projects.feature.foryou.api)
+      export(projects.feature.bookmarks.api)
+      export(projects.feature.interests.api)
+      export(projects.feature.search.api)
+      export(projects.feature.topic.api)
+
+      export(libs.moko.resources)
     }
   }
 
@@ -87,8 +97,6 @@ kotlin {
   }
 }
 
-// The app shell owns the app-level strings, so its `MR` gets the root package rather than the
-// path-derived `...app.shared` the convention plugin would give it.
 multiplatformResources {
   resourcesPackage.set("com.skydoves.nowinandroid")
   resourcesVisibility = dev.icerock.gradle.MRVisibility.Public

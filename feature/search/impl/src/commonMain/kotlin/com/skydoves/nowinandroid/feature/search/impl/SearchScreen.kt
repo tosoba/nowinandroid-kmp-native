@@ -109,8 +109,8 @@ import com.skydoves.nowinandroid.feature.search.api.navigation.SearchNavKey
 import com.skydoves.nowinandroid.feature.topic.api.navigation.TopicNavKey
 import dev.icerock.moko.resources.compose.stringResource
 import dev.zacsweers.metrox.viewmodel.metroViewModel
-import com.skydoves.nowinandroid.core.ui.MR as CoreUiRes
-import com.skydoves.nowinandroid.feature.search.api.MR as SearchApiRes
+import com.skydoves.nowinandroid.core.ui.CoreUiMR as CoreUiRes
+import com.skydoves.nowinandroid.feature.search.api.FeatureSearchApiMR as SearchApiRes
 
 @NavDestination(route = SearchNavKey::class)
 @NavEdge(to = InterestsNavKey::class, label = "Interests")

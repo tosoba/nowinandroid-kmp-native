@@ -18,6 +18,16 @@ internal fun Project.configureMokoResources() {
   )
   resources.resourcesVisibility.set(MRVisibility.Public)
 
+  // Each module gets a unique generated class name instead of the default `MR`. Without this,
+  // every exported `MR` collides on its simple ObjC name in the iOS framework header and
+  // Kotlin/Native mangles them into unusable `MR_`, `MR__`, … names that also shift whenever
+  // a module is added or removed. `:feature:foryou:api` becomes `FeatureForyouApiMR`, etc.
+  resources.resourcesClassName.set(
+    path.split(":").filter(String::isNotEmpty).joinToString("") { segment ->
+      segment.split("-").joinToString("") { it.replaceFirstChar(Char::uppercaseChar) }
+    } + "MR"
+  )
+
   // The generated `MR` class references the moko runtime, and modules reach for the Compose
   // accessors of resources owned by their `api` dependencies, so both ship as `api`.
   dependencies {

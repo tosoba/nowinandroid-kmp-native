@@ -83,8 +83,8 @@ import com.skydoves.nowinandroid.feature.topic.impl.navigation.topicEntry
 import com.skydoves.nowinandroid.navigation.TOP_LEVEL_NAV_ITEMS
 import com.skydoves.nowinandroid.not_connected
 import dev.icerock.moko.resources.compose.stringResource
-import com.skydoves.nowinandroid.MR as Res
-import com.skydoves.nowinandroid.feature.settings.impl.MR as SettingsRes
+import com.skydoves.nowinandroid.AppSharedMR as Res
+import com.skydoves.nowinandroid.feature.settings.impl.FeatureSettingsImplMR as SettingsRes
 
 @Composable
 fun NiaApp(

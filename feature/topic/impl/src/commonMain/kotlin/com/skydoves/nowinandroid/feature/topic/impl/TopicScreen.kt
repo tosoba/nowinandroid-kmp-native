@@ -74,8 +74,8 @@ import com.skydoves.nowinandroid.feature.topic.api.feature_topic_api_loading
 import com.skydoves.nowinandroid.feature.topic.api.navigation.TopicNavKey
 import dev.icerock.moko.resources.compose.stringResource
 import dev.zacsweers.metrox.viewmodel.metroViewModel
-import com.skydoves.nowinandroid.core.ui.MR as CoreUiRes
-import com.skydoves.nowinandroid.feature.topic.api.MR as TopicApiRes
+import com.skydoves.nowinandroid.core.ui.CoreUiMR as CoreUiRes
+import com.skydoves.nowinandroid.feature.topic.api.FeatureTopicApiMR as TopicApiRes
 
 @Composable
 fun TopicScreen(

@@ -65,7 +65,7 @@ import com.skydoves.nowinandroid.feature.settings.impl.SettingsUiState.Loading
 import com.skydoves.nowinandroid.feature.settings.impl.SettingsUiState.Success
 import dev.icerock.moko.resources.compose.stringResource
 import dev.zacsweers.metrox.viewmodel.metroViewModel
-import com.skydoves.nowinandroid.feature.settings.impl.MR as Res
+import com.skydoves.nowinandroid.feature.settings.impl.FeatureSettingsImplMR as Res
 
 @Composable
 fun SettingsDialog(onDismiss: () -> Unit, viewModel: SettingsViewModel = metroViewModel()) {
