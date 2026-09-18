@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.skydoves.nowinandroid.core.designsystem.icon.NiaIcons
 import com.skydoves.nowinandroid.core.designsystem.theme.NiaTheme
+import dev.icerock.moko.resources.compose.painterResource
 
 /**
  * Now in Android filter chip with included leading checked icon as well as text content slot.
@@ -63,7 +64,7 @@ fun NiaFilterChip(
       if (selected) {
         {
           Icon(
-            imageVector = NiaIcons.Check,
+            painter = painterResource(NiaIcons.Check),
             contentDescription = null,
           )
         }

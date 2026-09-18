@@ -16,6 +16,7 @@
 
 package com.skydoves.nowinandroid.core.ui
 
+import dev.icerock.moko.resources.compose.painterResource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
@@ -68,14 +69,14 @@ fun InterestsItem(
         onCheckedChange = onFollowButtonClick,
         icon = {
           Icon(
-            imageVector = NiaIcons.Add,
+            painter = painterResource(NiaIcons.Add),
             contentDescription =
               stringResource(Res.strings.core_ui_interests_card_follow_button_content_desc),
           )
         },
         checkedIcon = {
           Icon(
-            imageVector = NiaIcons.Check,
+            painter = painterResource(NiaIcons.Check),
             contentDescription =
               stringResource(Res.strings.core_ui_interests_card_unfollow_button_content_desc),
           )
@@ -105,7 +106,7 @@ private fun InterestsIcon(topicImageUrl: String, modifier: Modifier = Modifier) 
   if (topicImageUrl.isEmpty()) {
     Icon(
       modifier = modifier.background(MaterialTheme.colorScheme.surface).padding(4.dp),
-      imageVector = NiaIcons.Person,
+      painter = painterResource(NiaIcons.Person),
       // decorative image
       contentDescription = null,
     )

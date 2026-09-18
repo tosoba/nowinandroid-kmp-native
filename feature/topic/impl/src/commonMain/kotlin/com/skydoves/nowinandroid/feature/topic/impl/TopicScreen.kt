@@ -16,6 +16,7 @@
 
 package com.skydoves.nowinandroid.feature.topic.impl
 
+import dev.icerock.moko.resources.compose.painterResource
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -298,7 +299,7 @@ private fun TopicToolbar(
     if (showBackButton) {
       IconButton(onClick = { onBackClick() }) {
         Icon(
-          imageVector = NiaIcons.ArrowBack,
+          painter = painterResource(NiaIcons.ArrowBack),
           contentDescription = stringResource(CoreUiRes.strings.core_ui_back),
         )
       }

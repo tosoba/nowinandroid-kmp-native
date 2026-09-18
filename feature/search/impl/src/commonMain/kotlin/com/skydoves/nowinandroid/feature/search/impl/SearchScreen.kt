@@ -16,6 +16,7 @@
 
 package com.skydoves.nowinandroid.feature.search.impl
 
+import dev.icerock.moko.resources.compose.painterResource
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
@@ -425,7 +426,7 @@ private fun RecentSearchesBody(
           modifier = Modifier.padding(horizontal = 16.dp),
         ) {
           Icon(
-            imageVector = NiaIcons.Close,
+            painter = painterResource(NiaIcons.Close),
             contentDescription =
               stringResource(
                 SearchApiRes.strings.feature_search_api_clear_recent_searches_content_desc
@@ -464,7 +465,7 @@ private fun SearchToolbar(
   ) {
     IconButton(onClick = { onBackClick() }) {
       Icon(
-        imageVector = NiaIcons.ArrowBack,
+        painter = painterResource(NiaIcons.ArrowBack),
         contentDescription = stringResource(CoreUiRes.strings.core_ui_back),
       )
     }
@@ -499,7 +500,7 @@ private fun SearchTextField(
       ),
     leadingIcon = {
       Icon(
-        imageVector = NiaIcons.Search,
+        painter = painterResource(NiaIcons.Search),
         contentDescription = stringResource(SearchApiRes.strings.feature_search_api_title),
         tint = MaterialTheme.colorScheme.onSurface,
       )
@@ -512,7 +513,7 @@ private fun SearchTextField(
           }
         ) {
           Icon(
-            imageVector = NiaIcons.Close,
+            painter = painterResource(NiaIcons.Close),
             contentDescription =
               stringResource(
                 SearchApiRes.strings.feature_search_api_clear_search_text_content_desc

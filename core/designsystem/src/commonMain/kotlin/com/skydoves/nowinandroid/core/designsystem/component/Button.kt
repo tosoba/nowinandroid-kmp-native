@@ -16,6 +16,7 @@
 
 package com.skydoves.nowinandroid.core.designsystem.component
 
+import dev.icerock.moko.resources.compose.painterResource
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -292,7 +293,7 @@ fun NiaButtonLeadingIconPreview() {
       NiaButton(
         onClick = {},
         text = { Text("Test button") },
-        leadingIcon = { Icon(imageVector = NiaIcons.Add, contentDescription = null) },
+        leadingIcon = { Icon(painter = painterResource(NiaIcons.Add), contentDescription = null) },
       )
     }
   }

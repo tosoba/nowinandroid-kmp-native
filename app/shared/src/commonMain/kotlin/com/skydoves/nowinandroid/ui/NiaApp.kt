@@ -16,6 +16,7 @@
 
 package com.skydoves.nowinandroid.ui
 
+import dev.icerock.moko.resources.compose.painterResource
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -159,13 +160,13 @@ internal fun NiaApp(
           onClick = { navigator.navigate(navKey) },
           icon = {
             Icon(
-              imageVector = navItem.unselectedIcon,
+              painter = painterResource(navItem.unselectedIcon),
               contentDescription = null,
             )
           },
           selectedIcon = {
             Icon(
-              imageVector = navItem.selectedIcon,
+              painter = painterResource(navItem.selectedIcon),
               contentDescription = null,
             )
           },

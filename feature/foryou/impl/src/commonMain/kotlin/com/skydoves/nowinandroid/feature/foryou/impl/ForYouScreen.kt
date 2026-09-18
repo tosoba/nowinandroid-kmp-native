@@ -382,13 +382,13 @@ private fun SingleTopicButton(
         onCheckedChange = { checked -> onClick(topicId, checked) },
         icon = {
           Icon(
-            imageVector = NiaIcons.Add,
+            painter = painterResource(NiaIcons.Add),
             contentDescription = name,
           )
         },
         checkedIcon = {
           Icon(
-            imageVector = NiaIcons.Check,
+            painter = painterResource(NiaIcons.Check),
             contentDescription = name,
           )
         },

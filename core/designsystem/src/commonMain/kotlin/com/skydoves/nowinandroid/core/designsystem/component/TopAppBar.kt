@@ -28,16 +28,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
-import dev.icerock.moko.resources.StringResource
+import dev.icerock.moko.resources.ImageResource
+import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
+import dev.icerock.moko.resources.StringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NiaTopAppBar(
   titleRes: StringResource,
-  navigationIcon: ImageVector,
+  navigationIcon: ImageResource,
   navigationIconContentDescription: String,
-  actionIcon: ImageVector,
+  actionIcon: ImageResource,
   actionIconContentDescription: String,
   modifier: Modifier = Modifier,
   colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
@@ -49,7 +51,7 @@ fun NiaTopAppBar(
     navigationIcon = {
       IconButton(onClick = onNavigationClick) {
         Icon(
-          imageVector = navigationIcon,
+          painter = painterResource(navigationIcon),
           contentDescription = navigationIconContentDescription,
           tint = MaterialTheme.colorScheme.onSurface,
         )
@@ -58,7 +60,7 @@ fun NiaTopAppBar(
     actions = {
       IconButton(onClick = onActionClick) {
         Icon(
-          imageVector = actionIcon,
+          painter = painterResource(actionIcon),
           contentDescription = actionIconContentDescription,
           tint = MaterialTheme.colorScheme.onSurface,
         )

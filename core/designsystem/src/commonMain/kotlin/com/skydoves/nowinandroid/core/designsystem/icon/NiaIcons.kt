@@ -16,45 +16,47 @@
 
 package com.skydoves.nowinandroid.core.designsystem.icon
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.automirrored.rounded.ShortText
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.outlined.Bookmarks
-import androidx.compose.material.icons.outlined.Upcoming
-import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.Bookmark
-import androidx.compose.material.icons.rounded.BookmarkBorder
-import androidx.compose.material.icons.rounded.Bookmarks
-import androidx.compose.material.icons.rounded.Check
-import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.Grid3x3
-import androidx.compose.material.icons.rounded.Person
-import androidx.compose.material.icons.rounded.Search
-import androidx.compose.material.icons.rounded.Settings
-import androidx.compose.material.icons.rounded.Upcoming
-import androidx.compose.material.icons.rounded.ViewDay
-import androidx.compose.ui.graphics.vector.ImageVector
+import com.skydoves.nowinandroid.core.designsystem.CoreDesignsystemMR
+import com.skydoves.nowinandroid.core.designsystem.ic_add
+import com.skydoves.nowinandroid.core.designsystem.ic_arrow_back
+import com.skydoves.nowinandroid.core.designsystem.ic_bookmark
+import com.skydoves.nowinandroid.core.designsystem.ic_bookmark_border
+import com.skydoves.nowinandroid.core.designsystem.ic_bookmarks
+import com.skydoves.nowinandroid.core.designsystem.ic_bookmarks_border
+import com.skydoves.nowinandroid.core.designsystem.ic_check
+import com.skydoves.nowinandroid.core.designsystem.ic_close
+import com.skydoves.nowinandroid.core.designsystem.ic_grid_3x3
+import com.skydoves.nowinandroid.core.designsystem.ic_more_vert
+import com.skydoves.nowinandroid.core.designsystem.ic_person
+import com.skydoves.nowinandroid.core.designsystem.ic_search
+import com.skydoves.nowinandroid.core.designsystem.ic_settings
+import com.skydoves.nowinandroid.core.designsystem.ic_short_text
+import com.skydoves.nowinandroid.core.designsystem.ic_upcoming
+import com.skydoves.nowinandroid.core.designsystem.ic_upcoming_border
+import com.skydoves.nowinandroid.core.designsystem.ic_view_day
+import dev.icerock.moko.resources.ImageResource
 
 /**
- * Now in Android icons. Material icons are [ImageVector]s, custom icons are drawable resource IDs.
+ * Now in Android icons. Every icon is a moko [ImageResource] backed by an SVG in
+ * `src/commonMain/moko-resources/images`, so it renders in Compose via `painterResource` and is
+ * available to native platforms (e.g. `UIImage` on iOS) from the generated `MR` class.
  */
 object NiaIcons {
-  val Add = Icons.Rounded.Add
-  val ArrowBack = Icons.AutoMirrored.Rounded.ArrowBack
-  val Bookmark = Icons.Rounded.Bookmark
-  val BookmarkBorder = Icons.Rounded.BookmarkBorder
-  val Bookmarks = Icons.Rounded.Bookmarks
-  val BookmarksBorder = Icons.Outlined.Bookmarks
-  val Check = Icons.Rounded.Check
-  val Close = Icons.Rounded.Close
-  val Grid3x3 = Icons.Rounded.Grid3x3
-  val MoreVert = Icons.Default.MoreVert
-  val Person = Icons.Rounded.Person
-  val Search = Icons.Rounded.Search
-  val Settings = Icons.Rounded.Settings
-  val ShortText = Icons.AutoMirrored.Rounded.ShortText
-  val Upcoming = Icons.Rounded.Upcoming
-  val UpcomingBorder = Icons.Outlined.Upcoming
-  val ViewDay = Icons.Rounded.ViewDay
+  val Add: ImageResource = CoreDesignsystemMR.images.ic_add
+  val ArrowBack: ImageResource = CoreDesignsystemMR.images.ic_arrow_back
+  val Bookmark: ImageResource = CoreDesignsystemMR.images.ic_bookmark
+  val BookmarkBorder: ImageResource = CoreDesignsystemMR.images.ic_bookmark_border
+  val Bookmarks: ImageResource = CoreDesignsystemMR.images.ic_bookmarks
+  val BookmarksBorder: ImageResource = CoreDesignsystemMR.images.ic_bookmarks_border
+  val Check: ImageResource = CoreDesignsystemMR.images.ic_check
+  val Close: ImageResource = CoreDesignsystemMR.images.ic_close
+  val Grid3x3: ImageResource = CoreDesignsystemMR.images.ic_grid_3x3
+  val MoreVert: ImageResource = CoreDesignsystemMR.images.ic_more_vert
+  val Person: ImageResource = CoreDesignsystemMR.images.ic_person
+  val Search: ImageResource = CoreDesignsystemMR.images.ic_search
+  val Settings: ImageResource = CoreDesignsystemMR.images.ic_settings
+  val ShortText: ImageResource = CoreDesignsystemMR.images.ic_short_text
+  val Upcoming: ImageResource = CoreDesignsystemMR.images.ic_upcoming
+  val UpcomingBorder: ImageResource = CoreDesignsystemMR.images.ic_upcoming_border
+  val ViewDay: ImageResource = CoreDesignsystemMR.images.ic_view_day
 }

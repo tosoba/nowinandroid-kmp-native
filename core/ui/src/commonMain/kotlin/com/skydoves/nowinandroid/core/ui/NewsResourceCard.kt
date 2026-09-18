@@ -57,7 +57,7 @@ import com.skydoves.landscapist.placeholder.shimmer.ShimmerPlugin
 import com.skydoves.nowinandroid.core.designsystem.component.NiaIconToggleButton
 import com.skydoves.nowinandroid.core.designsystem.component.NiaTopicTag
 import com.skydoves.nowinandroid.core.designsystem.component.rememberNiaShimmer
-import com.skydoves.nowinandroid.core.designsystem.core_designsystem_ic_placeholder_default
+import com.skydoves.nowinandroid.core.designsystem.ic_placeholder_default
 import com.skydoves.nowinandroid.core.designsystem.icon.NiaIcons
 import com.skydoves.nowinandroid.core.designsystem.theme.NiaTheme
 import com.skydoves.nowinandroid.core.model.data.FollowableTopic
@@ -154,7 +154,7 @@ fun NewsResourceCardExpanded(
 
 @Composable
 fun NewsResourceHeaderImage(headerImageUrl: String?) {
-  val placeholder = painterResource(DesignSystemRes.images.core_designsystem_ic_placeholder_default)
+  val placeholder = painterResource(DesignSystemRes.images.ic_placeholder_default)
   val isLocalInspection = LocalInspectionMode.current
   val shimmer = rememberNiaShimmer()
   Box(
@@ -206,13 +206,13 @@ fun BookmarkButton(isBookmarked: Boolean, onClick: () -> Unit, modifier: Modifie
     modifier = modifier,
     icon = {
       Icon(
-        imageVector = NiaIcons.BookmarkBorder,
+        painter = painterResource(NiaIcons.BookmarkBorder),
         contentDescription = stringResource(Res.strings.core_ui_bookmark),
       )
     },
     checkedIcon = {
       Icon(
-        imageVector = NiaIcons.Bookmark,
+        painter = painterResource(NiaIcons.Bookmark),
         contentDescription = stringResource(Res.strings.core_ui_unbookmark),
       )
     },

@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.skydoves.nowinandroid.core.designsystem.icon.NiaIcons
 import com.skydoves.nowinandroid.core.designsystem.theme.NiaTheme
+import dev.icerock.moko.resources.compose.painterResource
 
 /**
  * Now in Android toggle button with icon and checked icon content slots. Wraps Material 3
@@ -82,13 +83,13 @@ fun IconButtonPreview() {
       onCheckedChange = {},
       icon = {
         Icon(
-          imageVector = NiaIcons.BookmarkBorder,
+          painter = painterResource(NiaIcons.BookmarkBorder),
           contentDescription = null,
         )
       },
       checkedIcon = {
         Icon(
-          imageVector = NiaIcons.Bookmark,
+          painter = painterResource(NiaIcons.Bookmark),
           contentDescription = null,
         )
       },
@@ -105,13 +106,13 @@ fun IconButtonPreviewUnchecked() {
       onCheckedChange = {},
       icon = {
         Icon(
-          imageVector = NiaIcons.BookmarkBorder,
+          painter = painterResource(NiaIcons.BookmarkBorder),
           contentDescription = null,
         )
       },
       checkedIcon = {
         Icon(
-          imageVector = NiaIcons.Bookmark,
+          painter = painterResource(NiaIcons.Bookmark),
           contentDescription = null,
         )
       },

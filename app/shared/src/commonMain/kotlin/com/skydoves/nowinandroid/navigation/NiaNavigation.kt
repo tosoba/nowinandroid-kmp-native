@@ -16,7 +16,6 @@
 
 package com.skydoves.nowinandroid.navigation
 
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation3.runtime.NavKey
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.skydoves.nowinandroid.app_name
@@ -29,6 +28,7 @@ import com.skydoves.nowinandroid.feature.interests.api.navigation.InterestsNavKe
 import com.skydoves.nowinandroid.feature.search.api.feature_search_api_interests
 import com.skydoves.nowinandroid.feature.search.api.navigation.SearchNavKey
 import com.skydoves.nowinandroid.feature.topic.api.navigation.TopicNavKey
+import dev.icerock.moko.resources.ImageResource
 import dev.icerock.moko.resources.StringResource
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
@@ -50,8 +50,8 @@ import com.skydoves.nowinandroid.feature.search.api.FeatureSearchApiMR as Search
  * @param titleText Text that is displayed on the top app bar.
  */
 data class TopLevelNavItem(
-  val selectedIcon: ImageVector,
-  val unselectedIcon: ImageVector,
+  val selectedIcon: ImageResource,
+  val unselectedIcon: ImageResource,
   val iconText: StringResource,
   val titleText: StringResource,
 )

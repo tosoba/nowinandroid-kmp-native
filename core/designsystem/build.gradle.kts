@@ -28,8 +28,6 @@ kotlin {
       api(libs.compose.animation)
       api(libs.compose.ui)
       api(libs.compose.ui.tooling.preview)
-      api(libs.compose.material.icons.core)
-      api(libs.compose.material.icons.extended)
       api(libs.compose.adaptive)
       api(libs.compose.adaptive.layout)
       api(libs.compose.adaptive.navigation)
