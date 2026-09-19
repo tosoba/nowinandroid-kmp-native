@@ -103,6 +103,10 @@ struct ForYouView: View {
 class ForYouViewModel: ObservableObject {
     private let owner = IosViewModelStoreOwner()
     private let wrapper: ForYouViewModelWrapper
+    
+    var wrapped: NiaKit.ForYouViewModel {
+        wrapper.wrapped
+    }
 
     @Published private(set) var isSyncing: Bool = false
     @Published private(set) var deepLinkedNewsResource: ModelUserNewsResource? = nil

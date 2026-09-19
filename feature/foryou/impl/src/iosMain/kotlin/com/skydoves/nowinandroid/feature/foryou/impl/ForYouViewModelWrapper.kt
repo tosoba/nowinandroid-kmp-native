@@ -6,7 +6,7 @@ import com.skydoves.nowinandroid.core.ui.NewsFeedUiState
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class ForYouViewModelWrapper(private val wrapped: ForYouViewModel) {
+class ForYouViewModelWrapper(val wrapped: ForYouViewModel) {
   fun observeIsSyncing(onChange: (Boolean) -> Unit) {
     wrapped.isSyncing.onEach { onChange(it) }.launchIn(wrapped.viewModelScope)
   }
