@@ -16,7 +16,6 @@
 
 plugins {
   id("nowinandroid.kmp.multiplatform")
-  alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
