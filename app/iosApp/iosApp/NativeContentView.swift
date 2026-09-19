@@ -105,6 +105,9 @@ class ForYouViewModel: ObservableObject {
     private let wrapper: ForYouViewModelWrapper
 
     @Published private(set) var isSyncing: Bool = false
+    @Published private(set) var deepLinkedNewsResource: ModelUserNewsResource? = nil
+    @Published private(set) var feedState: any NewsFeedUiState = NewsFeedUiStateLoading.shared
+    @Published private(set) var onboardingUiState: any OnboardingUiState = OnboardingUiStateLoading.shared
 
     init() {
         let viewModel = IosViewModelProvider.shared.createForYouViewModel()
@@ -112,6 +115,9 @@ class ForYouViewModel: ObservableObject {
         owner.put(viewModel: viewModel)
 
         wrapper.observeIsSyncing(onChange: { [weak self] value in self?.isSyncing = value.boolValue })
+        wrapper.observeDeepLinkedNewsResource(onChange: { [weak self] value in self?.deepLinkedNewsResource = value })
+        wrapper.observeFeedState(onChange: { [weak self] state in self?.feedState = state })
+        wrapper.observeOnboardingUiState(onChange: { [weak self] state in self?.onboardingUiState = state })
     }
 
     deinit {
