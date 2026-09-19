@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl::class)
+
 plugins {
   id("nowinandroid.kmp.multiplatform.compose")
   alias(libs.plugins.kotlin.serialization)
@@ -25,26 +27,42 @@ plugins {
 }
 
 kotlin {
-  // The Xcode project links against this framework; `embedAndSignAppleFrameworkForXcode` is what
-  // the "Compile Kotlin" build phase runs.
-  listOf(iosArm64(), iosSimulatorArm64()).forEach { target ->
-    target.binaries.framework {
-      baseName = "NiaKit"
-      isStatic = true
-      binaryOption("bundleId", "com.skydoves.nowinandroid.shared")
+  swiftExport {
+    moduleName = "NiaKit"
+    flattenPackage = "com.skydoves.nowinandroid"
 
-      // Each resource-owning module generates its own `MR`; exporting the api modules makes
-      // their `MR` (and the moko runtime types) visible to Swift from the NiaKit framework.
-      export(projects.feature.foryou.api)
-      export(projects.feature.foryou.impl)
-      export(projects.feature.bookmarks.api)
-      export(projects.feature.interests.api)
-      export(projects.feature.search.api)
-      export(projects.feature.topic.api)
-      export(projects.core.designsystem)
-      export(projects.core.ui)
+    export(projects.core.model) {
+      moduleName = "CoreModel"
+      flattenPackage = "com.skydoves.nowinandroid.core.model"
+    }
+    export(projects.core.ui) {
+      moduleName = "CoreUi"
+      flattenPackage = "com.skydoves.nowinandroid.core.ui"
+    }
 
-      export(libs.moko.resources)
+    export(projects.feature.foryou.impl) {
+      moduleName = "FeatureForYou"
+      flattenPackage = "com.skydoves.nowinandroid.feature.foryou.impl"
+    }
+    export(projects.feature.interests.impl) {
+      moduleName = "FeatureInterests"
+      flattenPackage = "com.skydoves.nowinandroid.feature.interests.impl"
+    }
+    export(projects.feature.bookmarks.impl) {
+      moduleName = "FeatureBookmarks"
+      flattenPackage = "com.skydoves.nowinandroid.feature.bookmarks.impl"
+    }
+    export(projects.feature.topic.impl) {
+      moduleName = "FeatureTopic"
+      flattenPackage = "com.skydoves.nowinandroid.feature.topic.impl"
+    }
+    export(projects.feature.search.impl) {
+      moduleName = "FeatureSearch"
+      flattenPackage = "com.skydoves.nowinandroid.feature.search.impl"
+    }
+    export(projects.feature.settings.impl) {
+      moduleName = "FeatureSettings"
+      flattenPackage = "com.skydoves.nowinandroid.feature.settings.impl"
     }
   }
 

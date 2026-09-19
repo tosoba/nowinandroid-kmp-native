@@ -52,7 +52,7 @@ targets:
             exit 0
           fi
           cd "$SRCROOT/../.."
-          ./gradlew :app:shared:embedAndSignAppleFrameworkForXcode
+          ./gradlew :app:shared:embedSwiftExportForXcode
       # moko-resources ships its strings/images/files inside a `.bundle` next to the framework;
       # without this phase native iOS UI later cannot resolve `MR` resources at runtime.
       - name: Copy MOKO Resources

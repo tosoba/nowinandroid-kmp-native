@@ -1,5 +1,12 @@
+import CoreModel
+import CoreUi
+import FeatureForYou
 import NiaKit
 import SwiftUI
+
+private typealias UserNewsResource = CoreModel.data.UserNewsResource
+private typealias NewsFeedUiState = CoreUi.NewsFeedUiState
+private typealias OnboardingUiState = FeatureForYou.OnboardingUiState
 
 struct NativeContentView: View {
     enum TabSelection: Hashable {
@@ -96,32 +103,59 @@ struct ForYouView: View {
 
     var body: some View {
         Text("ForYouView")
+            .task {
+                await viewModel.observeState()
+            }
     }
 }
 
 @MainActor
 class ForYouViewModel: ObservableObject {
     private let owner = IosViewModelStoreOwner()
-    private let wrapper: ForYouViewModelWrapper
-    
-    var wrapped: NiaKit.ForYouViewModel {
-        wrapper.wrapped
-    }
+    private let wrapped: FeatureForYou.ForYouViewModel
 
     @Published private(set) var isSyncing: Bool = false
-    @Published private(set) var deepLinkedNewsResource: ModelUserNewsResource? = nil
+    @Published private(set) var deepLinkedNewsResource: UserNewsResource? = nil
     @Published private(set) var feedState: any NewsFeedUiState = NewsFeedUiStateLoading.shared
     @Published private(set) var onboardingUiState: any OnboardingUiState = OnboardingUiStateLoading.shared
 
     init() {
-        let viewModel = IosViewModelProvider.shared.createForYouViewModel()
-        wrapper = ForYouViewModelWrapper(wrapped: viewModel)
-        owner.put(viewModel: viewModel)
+        wrapped = IosViewModelProvider.shared.createForYouViewModel()
+        owner.put(viewModel: wrapped)
+    }
 
-        wrapper.observeIsSyncing(onChange: { [weak self] value in self?.isSyncing = value.boolValue })
-        wrapper.observeDeepLinkedNewsResource(onChange: { [weak self] value in self?.deepLinkedNewsResource = value })
-        wrapper.observeFeedState(onChange: { [weak self] state in self?.feedState = state })
-        wrapper.observeOnboardingUiState(onChange: { [weak self] state in self?.onboardingUiState = state })
+    func observeState() async {
+        await withTaskGroup(of: Void.self) { group in
+            group.addTask { [wrapped] in
+                try? await self.collect(wrapped.isSyncing.asAsyncSequence()) { value in
+                    self.isSyncing = value
+                }
+            }
+            group.addTask { [wrapped] in
+                try? await self.collect(wrapped.deepLinkedNewsResource.asAsyncSequence()) { value in
+                    self.deepLinkedNewsResource = value
+                }
+            }
+            group.addTask { [wrapped] in
+                try? await self.collect(wrapped.feedState.asAsyncSequence()) { value in
+                    self.feedState = value
+                }
+            }
+            group.addTask { [wrapped] in
+                try? await self.collect(wrapped.onboardingUiState.asAsyncSequence()) { value in
+                    self.onboardingUiState = value
+                }
+            }
+        }
+    }
+
+    private func collect<Sequence: AsyncSequence>(
+        _ sequence: Sequence,
+        onValue: @escaping (Sequence.Element) -> Void
+    ) async throws {
+        for try await value in sequence {
+            onValue(value)
+        }
     }
 
     deinit {
