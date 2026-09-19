@@ -14,4 +14,3 @@ object IosViewModelProvider {
       CreationExtras.Empty,
     )
 }
-

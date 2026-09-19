@@ -36,6 +36,7 @@ kotlin {
       // Each resource-owning module generates its own `MR`; exporting the api modules makes
       // their `MR` (and the moko runtime types) visible to Swift from the NiaKit framework.
       export(projects.feature.foryou.api)
+      export(projects.feature.foryou.impl)
       export(projects.feature.bookmarks.api)
       export(projects.feature.interests.api)
       export(projects.feature.search.api)

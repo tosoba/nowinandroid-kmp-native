@@ -93,22 +93,27 @@ struct NativeContentView: View {
 
 struct ForYouView: View {
     @StateObject private var viewModel = ForYouViewModel()
-    
+
     var body: some View {
         Text("ForYouView")
     }
 }
 
 @MainActor
-class ForYouViewModel : ObservableObject {
+class ForYouViewModel: ObservableObject {
     private let owner = IosViewModelStoreOwner()
-    private let wrapped: ImplForYouViewModel
-    
+    private let wrapper: ForYouViewModelWrapper
+
+    @Published private(set) var isSyncing: Bool = false
+
     init() {
-        wrapped = IosViewModelProvider.shared.createForYouViewModel()
-        owner.put(viewModel: wrapped)
+        let viewModel = IosViewModelProvider.shared.createForYouViewModel()
+        wrapper = ForYouViewModelWrapper(wrapped: viewModel)
+        owner.put(viewModel: viewModel)
+
+        wrapper.observeIsSyncing(onChange: { [weak self] value in self?.isSyncing = value.boolValue })
     }
-    
+
     deinit {
         owner.clear()
     }
