@@ -17,15 +17,13 @@
 package com.skydoves.nowinandroid
 
 import androidx.compose.ui.window.ComposeUIViewController
-import com.skydoves.nowinandroid.core.data.sync.initializeSync
-import com.skydoves.nowinandroid.di.IosAppGraph
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.CreationExtras
+import com.skydoves.nowinandroid.di.appGraph
+import com.skydoves.nowinandroid.feature.foryou.impl.ForYouViewModel
 import com.skydoves.nowinandroid.ui.NiaAppRoot
-import dev.zacsweers.metro.createGraph
 import platform.UIKit.UIViewController
-
-private val appGraph: IosAppGraph by lazy {
-  createGraph<IosAppGraph>().also { it.syncManager.initializeSync() }
-}
+import kotlin.reflect.KClass
 
 /**
  * Entry point for the iOS app. `iosApp/ContentView.swift` wraps this in a
@@ -38,4 +36,14 @@ fun mainViewController(): UIViewController = ComposeUIViewController {
 /** Called from `AppDelegate.swift` when the user taps a news notification. */
 fun submitDeepLink(newsResourceId: String) {
   appGraph.deepLinkStore.submit(newsResourceId)
+}
+
+object IosViewModelProvider {
+  fun createForYouViewModel(): ForYouViewModel = createViewModel(ForYouViewModel::class)
+
+  private fun <T : ViewModel> createViewModel(modelClass: KClass<T>) =
+    appGraph.metroViewModelFactory.create(
+      modelClass,
+      CreationExtras.Empty,
+    )
 }

@@ -16,8 +16,15 @@
 
 package com.skydoves.nowinandroid.di
 
+import com.skydoves.nowinandroid.core.data.sync.initializeSync
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
 import dev.zacsweers.metro.SingleIn
+import dev.zacsweers.metro.createGraph
 
 @DependencyGraph(AppScope::class) @SingleIn(AppScope::class) interface IosAppGraph : AppGraph
+
+internal val appGraph: IosAppGraph by lazy(::createAppGraph)
+
+private fun createAppGraph(): IosAppGraph =
+  createGraph<IosAppGraph>().also { it.syncManager.initializeSync() }

@@ -92,8 +92,25 @@ struct NativeContentView: View {
 }
 
 struct ForYouView: View {
+    @StateObject private var viewModel = ForYouViewModel()
+    
     var body: some View {
         Text("ForYouView")
+    }
+}
+
+@MainActor
+class ForYouViewModel : ObservableObject {
+    private let owner = IosViewModelStoreOwner()
+    private let wrapped: ImplForYouViewModel
+    
+    init() {
+        wrapped = IosViewModelProvider.shared.createForYouViewModel()
+        owner.put(viewModel: wrapped)
+    }
+    
+    deinit {
+        owner.clear()
     }
 }
 

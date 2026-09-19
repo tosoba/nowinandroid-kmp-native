@@ -1,3 +1,4 @@
+import NiaKit
 import SwiftUI
 
 @main
