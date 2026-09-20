@@ -26,14 +26,11 @@ import com.skydoves.nowinandroid.core.designsystem.ic_bookmarks_border
 import com.skydoves.nowinandroid.core.designsystem.ic_check
 import com.skydoves.nowinandroid.core.designsystem.ic_close
 import com.skydoves.nowinandroid.core.designsystem.ic_grid_3x3
-import com.skydoves.nowinandroid.core.designsystem.ic_more_vert
 import com.skydoves.nowinandroid.core.designsystem.ic_person
 import com.skydoves.nowinandroid.core.designsystem.ic_search
 import com.skydoves.nowinandroid.core.designsystem.ic_settings
-import com.skydoves.nowinandroid.core.designsystem.ic_short_text
 import com.skydoves.nowinandroid.core.designsystem.ic_upcoming
 import com.skydoves.nowinandroid.core.designsystem.ic_upcoming_border
-import com.skydoves.nowinandroid.core.designsystem.ic_view_day
 import dev.icerock.moko.resources.ImageResource
 
 /**
@@ -51,12 +48,9 @@ object NiaIcons {
   val Check: ImageResource = CoreDesignsystemMR.images.ic_check
   val Close: ImageResource = CoreDesignsystemMR.images.ic_close
   val Grid3x3: ImageResource = CoreDesignsystemMR.images.ic_grid_3x3
-  val MoreVert: ImageResource = CoreDesignsystemMR.images.ic_more_vert
   val Person: ImageResource = CoreDesignsystemMR.images.ic_person
   val Search: ImageResource = CoreDesignsystemMR.images.ic_search
   val Settings: ImageResource = CoreDesignsystemMR.images.ic_settings
-  val ShortText: ImageResource = CoreDesignsystemMR.images.ic_short_text
   val Upcoming: ImageResource = CoreDesignsystemMR.images.ic_upcoming
   val UpcomingBorder: ImageResource = CoreDesignsystemMR.images.ic_upcoming_border
-  val ViewDay: ImageResource = CoreDesignsystemMR.images.ic_view_day
 }
