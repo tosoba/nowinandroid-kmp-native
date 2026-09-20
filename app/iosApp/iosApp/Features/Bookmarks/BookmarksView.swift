@@ -94,7 +94,7 @@ struct BookmarksView: View {
                 .renderingMode(.original)
                 .resizable()
                 .scaledToFit()
-                .frame(maxWidth: .infinity)
+                .frame(maxWidth: 64)
                 .padding(.horizontal, 16)
 
             Spacer().frame(height: 40)
