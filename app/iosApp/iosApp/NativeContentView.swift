@@ -2,6 +2,10 @@ import NiaKit
 import SwiftUI
 
 struct NativeContentView: View {
+    private enum TopicDestination: Hashable {
+        case topic(id: String)
+    }
+
     enum TabSelection: Hashable {
         case forYou
         case bookmarks
@@ -10,6 +14,10 @@ struct NativeContentView: View {
     }
 
     @State private var selection: TabSelection = .forYou
+    @State private var forYouPath: [TopicDestination] = []
+    @State private var bookmarksPath: [TopicDestination] = []
+    @State private var interestsPath: [TopicDestination] = []
+    @State private var searchPath: [TopicDestination] = []
 
     var body: some View {
         Group {
@@ -76,26 +84,42 @@ struct NativeContentView: View {
     }
 
     private var forYouContent: some View {
-        NavigationStack {
-            ForYouView()
+        navigationStack(path: $forYouPath) {
+            ForYouView(
+                onTopicClick: { topicID in
+                    forYouPath.append(.topic(id: topicID))
+                }
+            )
         }
     }
 
     private var bookmarksContent: some View {
-        NavigationStack {
+        navigationStack(path: $bookmarksPath) {
             BookmarksView()
         }
     }
 
     private var interestsContent: some View {
-        NavigationStack {
+        navigationStack(path: $interestsPath) {
             InterestsView()
         }
     }
 
     private var searchContent: some View {
-        NavigationStack {
+        navigationStack(path: $searchPath) {
             SearchView()
+        }
+    }
+
+    private func navigationStack<Content: View>(
+        path: Binding<[TopicDestination]>,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        NavigationStack(path: path) {
+            content()
+                .navigationDestination(for: TopicDestination.self) { _ in
+                    TopicView()
+                }
         }
     }
 }

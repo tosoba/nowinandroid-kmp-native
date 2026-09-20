@@ -27,10 +27,10 @@ struct NiaTopicTagView: View {
     var body: some View {
         Button(action: onClick) {
             Text(text)
-                .font(.caption2)
+                .font(.caption)
                 .foregroundColor(colors.onSurface)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
                 .background(Capsule().fill(containerColor))
                 .overlay(
                     Capsule().strokeBorder(

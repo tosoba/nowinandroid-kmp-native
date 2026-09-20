@@ -2,9 +2,16 @@ import NiaKit
 import SwiftUI
 
 struct ForYouView: View {
+    let onTopicClick: (String) -> Void
+
     @StateObject private var viewModel = ForYouViewModel()
+
     @Environment(\.niaColors) private var colors
     @Environment(\.openURL) private var openURL
+
+    init(onTopicClick: @escaping (String) -> Void) {
+        self.onTopicClick = onTopicClick
+    }
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -95,7 +102,7 @@ struct ForYouView: View {
                         }
                         viewModel.wrapped.setNewsResourceViewed(newsResourceId: news.id, viewed: true)
                     },
-                    onTopicClick: { _ in } // TODO: navigate to topic
+                    onTopicClick: onTopicClick
                 )
                 .transition(.opacity)
             }
