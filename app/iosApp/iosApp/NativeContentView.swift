@@ -15,11 +15,14 @@ struct NativeContentView: View {
     @State private var isSearchPresented = false
 
     var body: some View {
-        if #available(iOS 26.0, *) {
-            modernTabView
-        } else {
-            legacyTabView
+        Group {
+            if #available(iOS 26.0, *) {
+                modernTabView
+            } else {
+                legacyTabView
+            }
         }
+        .niaTheme()
     }
 
     @available(iOS 26.0, *)
@@ -103,7 +106,7 @@ struct ForYouView: View {
 class ForYouViewModel: ObservableObject {
     private let owner = IosViewModelStoreOwner()
     private let wrapper: ForYouViewModelWrapper
-    
+
     var wrapped: NiaKit.ForYouViewModel {
         wrapper.wrapped
     }
