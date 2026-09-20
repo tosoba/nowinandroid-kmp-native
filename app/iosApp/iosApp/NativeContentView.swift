@@ -1,6 +1,9 @@
 import NiaKit
 import SwiftUI
 
+/// Root view of the native (SwiftUI) UI: owns the main tab navigation and
+/// hosts one destination view per shared Kotlin feature module (the feature
+/// views live under `Features/`, mirroring the shared module layout).
 struct NativeContentView: View {
     enum TabSelection: Hashable {
         case forYou
@@ -91,69 +94,5 @@ struct NativeContentView: View {
             }
             .tabViewStyle(.sidebarAdaptable)
         }
-    }
-}
-
-struct ForYouView: View {
-    @StateObject private var viewModel = ForYouViewModel()
-
-    var body: some View {
-        Text("ForYouView")
-    }
-}
-
-@MainActor
-class ForYouViewModel: ObservableObject {
-    private let owner = IosViewModelStoreOwner()
-    private let wrapper: ForYouViewModelWrapper
-
-    var wrapped: NiaKit.ForYouViewModel {
-        wrapper.wrapped
-    }
-
-    @Published private(set) var isSyncing: Bool = false
-    @Published private(set) var deepLinkedNewsResource: ModelUserNewsResource? = nil
-    @Published private(set) var feedState: any NewsFeedUiState = NewsFeedUiStateLoading.shared
-    @Published private(set) var onboardingUiState: any OnboardingUiState = OnboardingUiStateLoading.shared
-
-    init() {
-        let viewModel = IosViewModelProvider.shared.createForYouViewModel()
-        wrapper = ForYouViewModelWrapper(wrapped: viewModel)
-        owner.put(viewModel: viewModel)
-
-        wrapper.observeIsSyncing(onChange: { [weak self] value in self?.isSyncing = value.boolValue })
-        wrapper.observeDeepLinkedNewsResource(onChange: { [weak self] value in self?.deepLinkedNewsResource = value })
-        wrapper.observeFeedState(onChange: { [weak self] state in self?.feedState = state })
-        wrapper.observeOnboardingUiState(onChange: { [weak self] state in self?.onboardingUiState = state })
-    }
-
-    deinit {
-        owner.clear()
-    }
-}
-
-struct BookmarksView: View {
-    var body: some View {
-        Text("BookmarksView")
-    }
-}
-
-struct InterestsView: View {
-    var body: some View {
-        Text("InterestsView")
-    }
-}
-
-struct TopicView: View {
-    var body: some View {
-        Text("TopicView")
-    }
-}
-
-struct SearchView: View {
-    @Binding var query: String
-
-    var body: some View {
-        Text(query.isEmpty ? "SearchView" : "SearchView: \(query)")
     }
 }
