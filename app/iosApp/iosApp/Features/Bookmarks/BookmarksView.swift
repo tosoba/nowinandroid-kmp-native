@@ -29,7 +29,7 @@ struct BookmarksView: View {
                                     viewed: true
                                 )
                             },
-                            onTopicClick: { topicId in }
+                            onTopicClick: { _ in }
                         )
                         .padding(16)
                         .padding(.bottom, 8)

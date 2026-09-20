@@ -64,6 +64,7 @@ struct TopicView: View {
                     default:
                         EmptyView()
                     }
+
                 default:
                     EmptyView()
                 }

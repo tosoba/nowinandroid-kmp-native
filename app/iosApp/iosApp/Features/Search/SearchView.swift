@@ -22,7 +22,7 @@ struct SearchView: View {
             case is NiaKit.SearchResultUiStateEmptyQuery:
                 if case let recentState as NiaKit.RecentSearchQueriesUiStateSuccess = viewModel.recentSearchesUiState {
                     RecentSearchesBodyView(
-                        recentSearchQueries: recentState.recentQueries.map {query in query.query},
+                        recentSearchQueries: recentState.recentQueries.map { query in query.query },
                         onClearRecentSearches: { viewModel.wrapped.clearRecentSearches() },
                         onRecentSearchClicked: { searchQuery in
                             query = searchQuery
@@ -38,7 +38,7 @@ struct SearchView: View {
                             EmptySearchResultBodyView(searchQuery: query)
                             if case let recentState as NiaKit.RecentSearchQueriesUiStateSuccess = viewModel.recentSearchesUiState {
                                 RecentSearchesBodyView(
-                                    recentSearchQueries: recentState.recentQueries.map {query in query.query},
+                                    recentSearchQueries: recentState.recentQueries.map { query in query.query },
                                     onClearRecentSearches: { viewModel.wrapped.clearRecentSearches() },
                                     onRecentSearchClicked: { searchQuery in
                                         query = searchQuery
@@ -90,7 +90,6 @@ struct SearchView: View {
     }
 }
 
-
 private struct SearchNotReadyBodyView: View {
     var body: some View {
         Text(String(\.feature_search_api_not_ready))
@@ -116,18 +115,17 @@ private struct EmptySearchResultBodyView: View {
 
             (Text(String(\.feature_search_api_try_another_search) + " ")
                 .foregroundColor(.secondary)
-             + Text(String(\.feature_search_api_interests))
+                + Text(String(\.feature_search_api_interests))
                 .foregroundColor(.accentColor)
                 .underline()
                 .bold()
-             + Text(" " + String(\.feature_search_api_to_browse_topics))
-                .foregroundColor(.secondary)
-            )
-            .font(.body)
-            .multilineTextAlignment(.center)
-            .padding(.horizontal, 36)
-            .padding(.bottom, 24)
-            .onTapGesture { } // TODO: navigate to interests
+                + Text(" " + String(\.feature_search_api_to_browse_topics))
+                .foregroundColor(.secondary))
+                .font(.body)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 36)
+                .padding(.bottom, 24)
+                .onTapGesture {} // TODO: navigate to interests
         }
         .padding(.horizontal, 48)
     }

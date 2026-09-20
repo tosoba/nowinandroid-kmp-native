@@ -3,7 +3,7 @@ import SwiftUI
 
 struct InterestsView: View {
     let onTopicClick: (String) -> Void
-    
+
     @StateObject private var viewModel = InterestsViewModel()
 
     var body: some View {
@@ -42,6 +42,7 @@ struct InterestsView: View {
                 .padding(.horizontal, 24)
                 .padding(.vertical, 16)
             }
+
         default:
             EmptyView()
         }
