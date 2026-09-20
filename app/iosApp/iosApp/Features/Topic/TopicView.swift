@@ -21,15 +21,12 @@ struct TopicView: View {
             LazyVStack(alignment: .center, spacing: 0) {
                 switch viewModel.topicUiState {
                 case let state as NiaKit.TopicUiStateSuccess:
-                    TopicToolbarView(isFollowed: state.followableTopic.isFollowed) { newValue in
-                        viewModel.wrapped.followTopicToggle(followed: newValue)
-                    }
-
                     TopicHeaderView(
                         name: state.followableTopic.topic.name,
                         description: state.followableTopic.topic.longDescription,
                         imageUrl: state.followableTopic.topic.imageUrl
                     )
+                    .padding(.top, 16)
 
                     switch viewModel.newsUiState {
                     case let newsState as NiaKit.NewsUiStateSuccess:
@@ -71,34 +68,18 @@ struct TopicView: View {
             .padding(.bottom, 8)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-}
-
-private struct TopicToolbarView: View {
-    @State private var isFollowed: Bool
-
-    let onFollowClick: (Bool) -> Void
-
-    init(isFollowed: Bool, onFollowClick: @escaping (Bool) -> Void) {
-        _isFollowed = State(initialValue: isFollowed)
-        self.onFollowClick = onFollowClick
-    }
-
-    var body: some View {
-        HStack {
-            Spacer()
-
-            NiaFilterChipView(
-                selected: isFollowed,
-                text: isFollowed ? "FOLLOWING" : "NOT FOLLOWING"
-            ) { newValue in
-                isFollowed = newValue
-                onFollowClick(newValue)
+        .toolbar {
+            if let state = viewModel.topicUiState as? NiaKit.TopicUiStateSuccess {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NiaFilterChipView(
+                        selected: state.followableTopic.isFollowed,
+                        text: state.followableTopic.isFollowed ? "FOLLOWING" : "NOT FOLLOWING"
+                    ) { newValue in
+                        viewModel.wrapped.followTopicToggle(followed: newValue)
+                    }
+                }
             }
-            .padding(.trailing, 24)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.bottom, 32)
     }
 }
 
