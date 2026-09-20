@@ -2,17 +2,19 @@ import NiaKit
 import SwiftUI
 
 struct SearchView: View {
+    let onTopicClick: (String) -> Void
+    
     @StateObject private var viewModel = SearchViewModel()
     @State private var query = ""
+    
+    init(onTopicClick: @escaping (String) -> Void) {
+        self.onTopicClick = onTopicClick
+    }
 
     var body: some View {
         Group {
             switch viewModel.searchResultUiState {
-            case let state as NiaKit.SearchResultUiStateLoading:
-                NiaLoadingWheelView(contentDescription: String(\.feature_search_api_loading))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-            case let state as NiaKit.SearchResultUiStateLoadFailed:
+            case is NiaKit.SearchResultUiStateLoadFailed:
                 Text(String(\.feature_search_api_load_failed))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
 
@@ -36,6 +38,7 @@ struct SearchView: View {
                     ScrollView {
                         VStack {
                             EmptySearchResultBodyView(searchQuery: query)
+                            
                             if case let recentState as NiaKit.RecentSearchQueriesUiStateSuccess = viewModel.recentSearchesUiState {
                                 RecentSearchesBodyView(
                                     recentSearchQueries: recentState.recentQueries.map { query in query.query },
@@ -72,7 +75,8 @@ struct SearchView: View {
                 }
 
             default:
-                EmptyView()
+                NiaLoadingWheelView(contentDescription: String(\.feature_search_api_loading))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

@@ -8,10 +8,6 @@ struct InterestsView: View {
 
     var body: some View {
         switch viewModel.uiState {
-        case _ as NiaKit.InterestsUiStateLoading:
-            NiaLoadingWheelView(contentDescription: String(\.feature_interests_api_loading))
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-
         case _ as NiaKit.InterestsUiStateEmpty:
             Text(String(\.feature_interests_api_empty_header))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -44,7 +40,8 @@ struct InterestsView: View {
             }
 
         default:
-            EmptyView()
+            NiaLoadingWheelView(contentDescription: String(\.feature_interests_api_loading))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 }

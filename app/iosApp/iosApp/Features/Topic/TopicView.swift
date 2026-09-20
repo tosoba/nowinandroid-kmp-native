@@ -4,6 +4,7 @@ import SwiftUI
 struct TopicView: View {
     let topicId: String
     @StateObject private var viewModel: TopicViewModel
+    
     @Environment(\.openURL) private var openURL
 
     init(topicId: String) {
@@ -15,16 +16,6 @@ struct TopicView: View {
         ScrollView {
             LazyVStack(alignment: .center, spacing: 0) {
                 switch viewModel.topicUiState {
-                case let state as NiaKit.TopicUiStateLoading:
-                    NiaLoadingWheelView(contentDescription: String(\.feature_topic_api_loading))
-
-                case is NiaKit.TopicUiStateError:
-                    Text(String(\.feature_topic_api_error))
-                        .font(.body)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 48)
-
                 case let state as NiaKit.TopicUiStateSuccess:
                     TopicToolbarView(isFollowed: state.followableTopic.isFollowed) { newValue in
                         viewModel.wrapped.followTopicToggle(followed: newValue)
@@ -37,10 +28,6 @@ struct TopicView: View {
                     )
 
                     switch viewModel.newsUiState {
-                    case let newsState as NiaKit.NewsUiStateLoading:
-                        NiaLoadingWheelView(contentDescription: "Loading news")
-                            .padding(24)
-
                     case let newsState as NiaKit.NewsUiStateSuccess:
                         NewsFeedListView(
                             feed: newsState.news,
@@ -62,11 +49,19 @@ struct TopicView: View {
                             .padding(24)
 
                     default:
-                        EmptyView()
+                        NiaLoadingWheelView(contentDescription: "Loading news")
+                            .padding(24)
                     }
-
+                    
+                case is NiaKit.TopicUiStateError:
+                    Text(String(\.feature_topic_api_error))
+                        .font(.body)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 48)
+                
                 default:
-                    EmptyView()
+                    NiaLoadingWheelView(contentDescription: String(\.feature_topic_api_loading))
                 }
             }
             .padding(.bottom, 8)

@@ -115,7 +115,21 @@ struct NativeContentView: View {
 
     private var searchContent: some View {
         navigationStack(path: $searchPath) {
-            SearchView()
+            SearchView(
+                onTopicClick: { topicID in
+                    let topic = TabDestination.topic(id: topicID)
+                    switch selection {
+                    case .forYou:
+                        forYouPath.append(topic)
+                    case .bookmarks:
+                        bookmarksPath.append(topic)
+                    case .interests:
+                        interestsPath.append(topic)
+                    case .search:
+                        searchPath.append(topic)
+                    }
+                }
+            )
         }
     }
 
