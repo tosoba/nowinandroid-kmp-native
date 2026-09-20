@@ -38,9 +38,13 @@ kotlin {
       export(projects.feature.foryou.api)
       export(projects.feature.foryou.impl)
       export(projects.feature.bookmarks.api)
+      export(projects.feature.bookmarks.impl)
       export(projects.feature.interests.api)
+      export(projects.feature.interests.impl)
       export(projects.feature.search.api)
+      export(projects.feature.search.impl)
       export(projects.feature.topic.api)
+      export(projects.feature.topic.impl)
       export(projects.core.designsystem)
       export(projects.core.ui)
 

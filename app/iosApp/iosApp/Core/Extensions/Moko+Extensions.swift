@@ -76,6 +76,16 @@ extension String {
                 .localized()
         )
     }
+    
+    init(_ resourceKeyPath: KeyPath<SearchStrings, StringResource>, parameter: Any) {
+        self.init(
+            NiaResourcesKt.getString(
+                stringResource: SearchStrings()[keyPath: resourceKeyPath],
+                parameter: parameter
+            )
+            .localized()
+        )
+    }
 
     init(_ resourceKeyPath: KeyPath<TopicStrings, StringResource>) {
         self.init(

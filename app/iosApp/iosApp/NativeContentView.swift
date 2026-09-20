@@ -2,11 +2,11 @@ import NiaKit
 import SwiftUI
 
 struct NativeContentView: View {
-    private enum TopicDestination: Hashable {
+    private enum TabDestination: Hashable {
         case topic(id: String)
     }
 
-    enum TabSelection: Hashable {
+    private enum TabSelection: Hashable {
         case forYou
         case bookmarks
         case interests
@@ -14,10 +14,10 @@ struct NativeContentView: View {
     }
 
     @State private var selection: TabSelection = .forYou
-    @State private var forYouPath: [TopicDestination] = []
-    @State private var bookmarksPath: [TopicDestination] = []
-    @State private var interestsPath: [TopicDestination] = []
-    @State private var searchPath: [TopicDestination] = []
+    @State private var forYouPath: [TabDestination] = []
+    @State private var bookmarksPath: [TabDestination] = []
+    @State private var interestsPath: [TabDestination] = []
+    @State private var searchPath: [TabDestination] = []
 
     var body: some View {
         Group {
@@ -101,7 +101,11 @@ struct NativeContentView: View {
 
     private var interestsContent: some View {
         navigationStack(path: $interestsPath) {
-            InterestsView()
+            InterestsView(
+                onTopicClick: { topicID in
+                    interestsPath.append(.topic(id: topicID))
+                }
+            )
         }
     }
 
@@ -112,13 +116,16 @@ struct NativeContentView: View {
     }
 
     private func navigationStack<Content: View>(
-        path: Binding<[TopicDestination]>,
+        path: Binding<[TabDestination]>,
         @ViewBuilder content: () -> Content
     ) -> some View {
         NavigationStack(path: path) {
             content()
-                .navigationDestination(for: TopicDestination.self) { _ in
-                    TopicView()
+                .navigationDestination(for: TabDestination.self) { destination in
+                    switch destination {
+                    case let .topic(id):
+                        TopicView(topicId: id)
+                    }
                 }
         }
     }

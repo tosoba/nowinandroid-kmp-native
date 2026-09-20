@@ -9,6 +9,7 @@ struct NiaIconToggleButtonView: View {
     let enabled: Bool
     let checkedIcon: NiaKit.ImageResource?
     let contentDescription: String?
+    let checkedContentDescription: String?
     let onCheckedChange: (Bool) -> Void
 
     init(
@@ -17,6 +18,7 @@ struct NiaIconToggleButtonView: View {
         enabled: Bool = true,
         checkedIcon: NiaKit.ImageResource? = nil,
         contentDescription: String? = nil,
+        checkedContentDescription: String? = nil,
         onCheckedChange: @escaping (Bool) -> Void
     ) {
         self.checked = checked
@@ -24,6 +26,7 @@ struct NiaIconToggleButtonView: View {
         self.enabled = enabled
         self.checkedIcon = checkedIcon
         self.contentDescription = contentDescription
+        self.checkedContentDescription = checkedContentDescription
         self.onCheckedChange = onCheckedChange
     }
 
@@ -38,7 +41,9 @@ struct NiaIconToggleButtonView: View {
         }
         .buttonStyle(.plain)
         .disabled(!enabled)
-        .accessibilityLabel(contentDescription ?? "")
+        .accessibilityLabel(
+            (checked ? (checkedContentDescription ?? contentDescription) : contentDescription) ?? ""
+        )
         .accessibilityAddTraits(checked ? .isSelected : [])
     }
 }
