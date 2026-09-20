@@ -3,6 +3,7 @@ import SwiftUI
 
 typealias AppStrings = AppSharedMR.strings
 typealias BookmarksStrings = FeatureBookmarksApiMR.strings
+typealias CoreUiStrings = CoreUiMR.strings
 typealias ForYouStrings = FeatureForyouApiMR.strings
 typealias InterestsStrings = FeatureInterestsApiMR.strings
 typealias SearchStrings = FeatureSearchApiMR.strings
@@ -31,6 +32,23 @@ extension String {
         self.init(
             NiaResourcesKt.getString(
                 stringResource: BookmarksStrings()[keyPath: resourceKeyPath]
+            )
+            .localized()
+        )
+    }
+
+    init(_ resourceKeyPath: KeyPath<CoreUiStrings, StringResource>) {
+        self.init(
+            NiaResourcesKt.getString(stringResource: CoreUiStrings()[keyPath: resourceKeyPath])
+                .localized()
+        )
+    }
+
+    init(_ resourceKeyPath: KeyPath<CoreUiStrings, StringResource>, parameter: Any) {
+        self.init(
+            NiaResourcesKt.getString(
+                stringResource: CoreUiStrings()[keyPath: resourceKeyPath],
+                parameter: parameter
             )
             .localized()
         )

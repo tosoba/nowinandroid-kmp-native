@@ -1,4 +1,11 @@
 name: NowInAndroid
+packages:
+  SDWebImageSwiftUI:
+    url: https://github.com/SDWebImage/SDWebImageSwiftUI.git
+    from: 3.1.3
+  SDWebImageSVGCoder:
+    url: https://github.com/SDWebImage/SDWebImageSVGCoder.git
+    from: 1.7.0
 options:
   bundleIdPrefix: com.skydoves
   deploymentTarget:
@@ -11,6 +18,9 @@ targets:
   NowInAndroid:
     type: application
     platform: iOS
+    dependencies:
+      - package: SDWebImageSwiftUI
+      - package: SDWebImageSVGCoder
     sources:
       - path: iosApp
     info:
