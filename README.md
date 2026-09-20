@@ -9,6 +9,10 @@
 </p>
 
 <p align="center">
+This is a fork of <b><a href="https://github.com/skydoves/nowinandroid-kmp">NowInAndroid KMP</a></b> repository whose sole purpose is to provide <b>native UI on iOS</b>. Original compose-based UI can be brought back by adding `COMPOSE_UI` flag to iOS build. 
+</p>
+
+<p align="center">
 📱 Now in Android KMP is a full Kotlin Multiplatform port of Google's Now in Android sample, running the same screens, ViewModels, navigation, and data layer on <b>Android, iOS, desktop, and the browser</b> from one shared codebase.
 </p>
 
