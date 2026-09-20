@@ -3,12 +3,16 @@ import SwiftUI
 
 struct TopicView: View {
     let topicId: String
+    let onTopicClick: (String) -> Void
+
     @StateObject private var viewModel: TopicViewModel
-    
+
     @Environment(\.openURL) private var openURL
 
-    init(topicId: String) {
+    init(topicId: String, onTopicClick: @escaping (String) -> Void) {
         self.topicId = topicId
+        self.onTopicClick = onTopicClick
+
         _viewModel = StateObject(wrappedValue: TopicViewModel(topicId: topicId))
     }
 
@@ -40,7 +44,7 @@ struct TopicView: View {
                                 }
                                 viewModel.wrapped.setNewsResourceViewed(newsResourceId: newsItem.id, viewed: true)
                             },
-                            onTopicClick: { _ in }
+                            onTopicClick: { id in onTopicClick(id) }
                         )
                         .padding(24)
 
@@ -52,14 +56,14 @@ struct TopicView: View {
                         NiaLoadingWheelView(contentDescription: "Loading news")
                             .padding(24)
                     }
-                    
+
                 case is NiaKit.TopicUiStateError:
                     Text(String(\.feature_topic_api_error))
                         .font(.body)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 24)
                         .padding(.vertical, 48)
-                
+
                 default:
                     NiaLoadingWheelView(contentDescription: String(\.feature_topic_api_loading))
                 }

@@ -3,10 +3,10 @@ import SwiftUI
 
 struct SearchView: View {
     let onTopicClick: (String) -> Void
-    
+
     @StateObject private var viewModel = SearchViewModel()
     @State private var query = ""
-    
+
     init(onTopicClick: @escaping (String) -> Void) {
         self.onTopicClick = onTopicClick
     }
@@ -38,7 +38,7 @@ struct SearchView: View {
                     ScrollView {
                         VStack {
                             EmptySearchResultBodyView(searchQuery: query)
-                            
+
                             if case let recentState as NiaKit.RecentSearchQueriesUiStateSuccess = viewModel.recentSearchesUiState {
                                 RecentSearchesBodyView(
                                     recentSearchQueries: recentState.recentQueries.map { query in query.query },

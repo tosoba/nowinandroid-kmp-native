@@ -13,7 +13,8 @@ struct NativeContentView: View {
         case search
     }
 
-    @State private var selection: TabSelection = .forYou
+    @State private var tabSelection: TabSelection = .forYou
+
     @State private var forYouPath: [TabDestination] = []
     @State private var bookmarksPath: [TabDestination] = []
     @State private var interestsPath: [TabDestination] = []
@@ -33,7 +34,7 @@ struct NativeContentView: View {
 
     @available(iOS 26.0, *)
     private var modernTabs: some View {
-        TabView(selection: $selection) {
+        TabView(selection: $tabSelection) {
             Tab(value: TabSelection.forYou) {
                 forYouContent
             } label: {
@@ -60,7 +61,7 @@ struct NativeContentView: View {
     }
 
     private var legacyTabs: some View {
-        TabView(selection: $selection) {
+        TabView(selection: $tabSelection) {
             forYouContent
                 .tabItem {
                     Label(String(\.feature_foryou_api_title), iconResource: NiaIcons.shared.Upcoming)
@@ -117,17 +118,7 @@ struct NativeContentView: View {
         navigationStack(path: $searchPath) {
             SearchView(
                 onTopicClick: { topicID in
-                    let topic = TabDestination.topic(id: topicID)
-                    switch selection {
-                    case .forYou:
-                        forYouPath.append(topic)
-                    case .bookmarks:
-                        bookmarksPath.append(topic)
-                    case .interests:
-                        interestsPath.append(topic)
-                    case .search:
-                        searchPath.append(topic)
-                    }
+                    searchPath.append(.topic(id: topicID))
                 }
             )
         }
@@ -142,9 +133,48 @@ struct NativeContentView: View {
                 .navigationDestination(for: TabDestination.self) { destination in
                     switch destination {
                     case let .topic(id):
-                        TopicView(topicId: id)
+                        TopicView(
+                            topicId: id,
+                            onTopicClick: { topicID in
+                                switch currentTabDestination {
+                                case let .topic(id):
+                                    if id == topicID {
+                                        return
+                                    }
+                                    fallthrough
+                                default:
+                                    appendToCurrentPath(destination: .topic(id: topicID))
+                                }
+                            }
+                        )
                     }
                 }
+        }
+    }
+
+    private var currentTabDestination: TabDestination? {
+        switch tabSelection {
+        case .forYou:
+            forYouPath.last
+        case .bookmarks:
+            bookmarksPath.last
+        case .interests:
+            interestsPath.last
+        case .search:
+            searchPath.last
+        }
+    }
+
+    private func appendToCurrentPath(destination: TabDestination) {
+        switch tabSelection {
+        case .forYou:
+            forYouPath.append(destination)
+        case .bookmarks:
+            bookmarksPath.append(destination)
+        case .interests:
+            interestsPath.append(destination)
+        case .search:
+            searchPath.append(destination)
         }
     }
 }
