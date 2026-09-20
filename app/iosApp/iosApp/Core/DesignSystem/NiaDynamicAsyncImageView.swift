@@ -4,9 +4,21 @@ import SwiftUI
 
 struct NiaDynamicAsyncImageView: View {
     let imageUrl: String
-    var contentDescription: String? = nil
-    var placeholder: NiaKit.ImageResource = CoreDesignsystemMR.images().ic_placeholder_default
-    var contentMode: ContentMode = .fill
+    let contentDescription: String?
+    let placeholder: NiaKit.ImageResource
+    let contentMode: ContentMode
+
+    init(
+        imageUrl: String,
+        contentDescription: String? = nil,
+        placeholder: NiaKit.ImageResource = CoreDesignsystemMR.images().ic_placeholder_default,
+        contentMode: ContentMode = .fill
+    ) {
+        self.imageUrl = imageUrl
+        self.contentDescription = contentDescription
+        self.placeholder = placeholder
+        self.contentMode = contentMode
+    }
 
     var body: some View {
         WebImage(

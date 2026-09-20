@@ -6,10 +6,26 @@ struct NiaIconToggleButtonView: View {
 
     let checked: Bool
     let icon: NiaKit.ImageResource
-    var enabled: Bool = true
-    var checkedIcon: NiaKit.ImageResource? = nil
-    var contentDescription: String? = nil
+    let enabled: Bool
+    let checkedIcon: NiaKit.ImageResource?
+    let contentDescription: String?
     let onCheckedChange: (Bool) -> Void
+
+    init(
+        checked: Bool,
+        icon: NiaKit.ImageResource,
+        enabled: Bool = true,
+        checkedIcon: NiaKit.ImageResource? = nil,
+        contentDescription: String? = nil,
+        onCheckedChange: @escaping (Bool) -> Void
+    ) {
+        self.checked = checked
+        self.icon = icon
+        self.enabled = enabled
+        self.checkedIcon = checkedIcon
+        self.contentDescription = contentDescription
+        self.onCheckedChange = onCheckedChange
+    }
 
     var body: some View {
         Button(action: { onCheckedChange(!checked) }) {

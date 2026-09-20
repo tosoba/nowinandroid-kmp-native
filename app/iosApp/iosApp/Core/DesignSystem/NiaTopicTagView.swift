@@ -6,8 +6,20 @@ struct NiaTopicTagView: View {
 
     let followed: Bool
     let text: String
-    var enabled: Bool = true
+    let enabled: Bool
     let onClick: () -> Void
+
+    init(
+        followed: Bool,
+        text: String,
+        enabled: Bool = true,
+        onClick: @escaping () -> Void
+    ) {
+        self.followed = followed
+        self.text = text
+        self.enabled = enabled
+        self.onClick = onClick
+    }
 
     private enum NiaTagDefaults {
         static let unfollowedTopicTagContainerAlpha = 0.5

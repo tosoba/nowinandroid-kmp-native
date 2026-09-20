@@ -4,9 +4,21 @@ struct NiaFilledButtonView: View {
     @Environment(\.niaColors) private var colors
 
     let title: String
-    var enabled: Bool = true
-    var maxWidth: CGFloat? = nil
+    let enabled: Bool
+    let maxWidth: CGFloat?
     let action: () -> Void
+
+    init(
+        title: String,
+        enabled: Bool = true,
+        maxWidth: CGFloat? = nil,
+        action: @escaping () -> Void
+    ) {
+        self.title = title
+        self.enabled = enabled
+        self.maxWidth = maxWidth
+        self.action = action
+    }
 
     var body: some View {
         Button(action: action) {

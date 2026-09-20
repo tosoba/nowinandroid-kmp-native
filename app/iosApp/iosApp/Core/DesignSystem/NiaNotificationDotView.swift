@@ -2,7 +2,12 @@ import SwiftUI
 
 struct NiaNotificationDotView: View {
     let color: Color
-    var size: CGFloat = 8
+    let size: CGFloat
+
+    init(color: Color, size: CGFloat = 8) {
+        self.color = color
+        self.size = size
+    }
 
     var body: some View {
         Circle()
