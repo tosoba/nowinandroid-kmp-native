@@ -104,9 +104,3 @@ multiplatformResources {
   resourcesPackage.set("com.skydoves.nowinandroid")
   resourcesVisibility = dev.icerock.gradle.MRVisibility.Public
 }
-
-tasks
-  .matching { it.name == "syncComposeResourcesForIos" }
-  .configureEach {
-    enabled = false
-  }
