@@ -73,7 +73,11 @@ struct TopicView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     NiaFilterChipView(
                         selected: state.followableTopic.isFollowed,
-                        text: state.followableTopic.isFollowed ? "FOLLOWING" : "NOT FOLLOWING"
+                        text: String(
+                            state.followableTopic.isFollowed
+                                ? \.feature_topic_api_following
+                                : \.feature_topic_api_not_following
+                        )
                     ) { newValue in
                         viewModel.wrapped.followTopicToggle(followed: newValue)
                     }

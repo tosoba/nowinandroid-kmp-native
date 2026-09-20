@@ -71,7 +71,9 @@ import com.skydoves.nowinandroid.core.ui.UserNewsResourcePreviewParameterProvide
 import com.skydoves.nowinandroid.core.ui.core_ui_back
 import com.skydoves.nowinandroid.core.ui.userNewsResourceCardItems
 import com.skydoves.nowinandroid.feature.topic.api.feature_topic_api_error
+import com.skydoves.nowinandroid.feature.topic.api.feature_topic_api_following
 import com.skydoves.nowinandroid.feature.topic.api.feature_topic_api_loading
+import com.skydoves.nowinandroid.feature.topic.api.feature_topic_api_not_following
 import com.skydoves.nowinandroid.feature.topic.api.navigation.TopicNavKey
 import dev.icerock.moko.resources.compose.stringResource
 import dev.zacsweers.metrox.viewmodel.metroViewModel
@@ -314,9 +316,9 @@ private fun TopicToolbar(
       modifier = Modifier.padding(end = 24.dp),
     ) {
       if (selected) {
-        Text("FOLLOWING")
+        Text(stringResource(TopicApiRes.strings.feature_topic_api_following))
       } else {
-        Text("NOT FOLLOWING")
+        Text(stringResource(TopicApiRes.strings.feature_topic_api_not_following))
       }
     }
   }
