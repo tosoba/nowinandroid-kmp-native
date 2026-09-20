@@ -1,9 +1,6 @@
 import NiaKit
 import SwiftUI
 
-/// SwiftUI bridge around the shared `ForYouViewModel` created by
-/// `IosViewModelProvider`. Exposes shared flows as `@Published` properties and
-/// keeps the view model alive in an `IosViewModelStoreOwner` until deinit.
 @MainActor
 final class ForYouViewModel: ObservableObject {
     private let owner = IosViewModelStoreOwner()

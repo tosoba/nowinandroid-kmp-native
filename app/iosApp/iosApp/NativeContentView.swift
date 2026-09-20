@@ -1,9 +1,6 @@
 import NiaKit
 import SwiftUI
 
-/// Root view of the native (SwiftUI) UI: owns the main tab navigation and
-/// hosts one destination view per shared Kotlin feature module (the feature
-/// views live under `Features/`, mirroring the shared module layout).
 struct NativeContentView: View {
     enum TabSelection: Hashable {
         case forYou
@@ -13,86 +10,92 @@ struct NativeContentView: View {
     }
 
     @State private var selection: TabSelection = .forYou
-    @State private var searchQuery = ""
-    /// Fallback state for iOS < 26 (pre search-tab activation).
-    @State private var isSearchPresented = false
 
     var body: some View {
         Group {
             if #available(iOS 26.0, *) {
-                modernTabView
+                modernTabs
             } else {
-                legacyTabView
+                legacyTabs
             }
         }
+        .tabViewStyle(.sidebarAdaptable)
         .niaTheme()
     }
 
     @available(iOS 26.0, *)
-    private var modernTabView: some View {
+    private var modernTabs: some View {
         TabView(selection: $selection) {
             Tab(value: TabSelection.forYou) {
-                ForYouView()
+                forYouContent
             } label: {
                 Label(String(\.feature_foryou_api_title), iconResource: NiaIcons.shared.Upcoming)
             }
 
             Tab(value: TabSelection.bookmarks) {
-                BookmarksView()
+                bookmarksContent
             } label: {
                 Label(String(\.feature_bookmarks_api_title), iconResource: NiaIcons.shared.Bookmarks)
             }
 
             Tab(value: TabSelection.interests) {
-                InterestsView()
+                interestsContent
             } label: {
                 Label(String(\.feature_interests_api_title), iconResource: NiaIcons.shared.Grid3x3)
             }
 
             Tab(value: TabSelection.search, role: .search) {
-                NavigationStack {
-                    SearchView(query: $searchQuery)
-                }
+                searchContent
             }
         }
-        .searchable(text: $searchQuery)
         .tabViewSearchActivation(.searchTabSelection)
-        .tabViewStyle(.sidebarAdaptable)
     }
 
-    private var legacyTabView: some View {
-        NavigationStack {
-            TabView {
-                ForYouView()
-                    .tabItem {
-                        Label(String(\.feature_foryou_api_title), iconResource: NiaIcons.shared.Upcoming)
-                    }
-
-                BookmarksView()
-                    .tabItem {
-                        Label(String(\.feature_bookmarks_api_title), iconResource: NiaIcons.shared.Bookmarks)
-                    }
-
-                InterestsView()
-                    .tabItem {
-                        Label(String(\.feature_interests_api_title), iconResource: NiaIcons.shared.Grid3x3)
-                    }
-            }
-            .navigationTitle(String(\.app_name))
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        isSearchPresented = true
-                    } label: {
-                        Image(NiaIcons.shared.Search)
-                    }
-                    .accessibilityLabel("Search")
+    private var legacyTabs: some View {
+        TabView(selection: $selection) {
+            forYouContent
+                .tabItem {
+                    Label(String(\.feature_foryou_api_title), iconResource: NiaIcons.shared.Upcoming)
                 }
-            }
-            .navigationDestination(isPresented: $isSearchPresented) {
-                SearchView(query: $searchQuery)
-            }
-            .tabViewStyle(.sidebarAdaptable)
+
+            bookmarksContent
+                .tabItem {
+                    Label(String(\.feature_bookmarks_api_title), iconResource: NiaIcons.shared.Bookmarks)
+                }
+
+            interestsContent
+                .tabItem {
+                    Label(String(\.feature_interests_api_title), iconResource: NiaIcons.shared.Grid3x3)
+                }
+
+            searchContent
+                .tabItem {
+                    Label(String(\.feature_search_api_title), iconResource: NiaIcons.shared.Search)
+                }
+        }
+    }
+
+    private var forYouContent: some View {
+        NavigationStack {
+            ForYouView()
+        }
+    }
+
+    private var bookmarksContent: some View {
+        NavigationStack {
+            BookmarksView()
+        }
+    }
+
+    private var interestsContent: some View {
+        NavigationStack {
+            InterestsView()
+        }
+    }
+
+    private var searchContent: some View {
+        NavigationStack {
+            SearchView()
         }
     }
 }
