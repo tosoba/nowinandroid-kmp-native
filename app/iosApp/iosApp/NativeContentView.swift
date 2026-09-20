@@ -95,7 +95,11 @@ struct NativeContentView: View {
 
     private var bookmarksContent: some View {
         navigationStack(path: $bookmarksPath) {
-            BookmarksView()
+            BookmarksView(
+                onTopicClick: { topicID in
+                    bookmarksPath.append(.topic(id: topicID))
+                }
+            )
         }
     }
 

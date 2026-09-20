@@ -2,10 +2,17 @@ import NiaKit
 import SwiftUI
 
 struct BookmarksView: View {
+    let onTopicClick: (String) -> Void
+
     @StateObject private var viewModel = BookmarksViewModel()
+    @State private var showUndoBanner = false
+
     @Environment(\.openURL) private var openURL
     @Environment(\.niaColors) private var colors
-    @State private var showUndoBanner = false
+
+    init(onTopicClick: @escaping (String) -> Void) {
+        self.onTopicClick = onTopicClick
+    }
 
     var body: some View {
         Group {
@@ -29,7 +36,7 @@ struct BookmarksView: View {
                                     viewed: true
                                 )
                             },
-                            onTopicClick: { _ in }
+                            onTopicClick: { id in onTopicClick(id) }
                         )
                         .padding(16)
                         .padding(.bottom, 8)
