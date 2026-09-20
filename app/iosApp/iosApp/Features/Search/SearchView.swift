@@ -17,40 +17,61 @@ struct SearchView: View {
             case is NiaKit.SearchResultUiStateLoadFailed:
                 Text(String(\.feature_search_api_load_failed))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .transition(.opacity)
 
             case is NiaKit.SearchResultUiStateSearchNotReady:
                 SearchNotReadyBodyView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    .transition(.opacity)
 
             case is NiaKit.SearchResultUiStateEmptyQuery:
                 if case let recentState as NiaKit.RecentSearchQueriesUiStateSuccess = viewModel.recentSearchesUiState {
-                    RecentSearchesBodyView(
-                        recentSearchQueries: recentState.recentQueries.map { query in query.query },
-                        onClearRecentSearches: { viewModel.wrapped.clearRecentSearches() },
-                        onRecentSearchClicked: { searchQuery in
-                            query = searchQuery
-                            viewModel.wrapped.onSearchTriggered(query: searchQuery)
+                    GeometryReader { geometry in
+                        ScrollView {
+                            RecentSearchesBodyView(
+                                recentSearchQueries: recentState.recentQueries.map { query in query.query },
+                                onClearRecentSearches: { viewModel.wrapped.clearRecentSearches() },
+                                onRecentSearchClicked: { searchQuery in
+                                    query = searchQuery
+                                    viewModel.wrapped.onSearchTriggered(query: searchQuery)
+                                }
+                            )
+                            .frame(minHeight: geometry.size.height, alignment: .top)
+                            .transition(.opacity)
                         }
-                    )
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
+                    .transition(.opacity)
+                } else {
+                    Spacer()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
 
             case let state as NiaKit.SearchResultUiStateSuccess:
                 if state.topics.isEmpty && state.newsResources.isEmpty {
-                    ScrollView {
-                        VStack {
-                            EmptySearchResultBodyView(searchQuery: query)
+                    GeometryReader { geometry in
+                        ScrollView {
+                            VStack {
+                                EmptySearchResultBodyView(searchQuery: query)
+                                    .transition(.opacity)
 
-                            if case let recentState as NiaKit.RecentSearchQueriesUiStateSuccess = viewModel.recentSearchesUiState {
-                                RecentSearchesBodyView(
-                                    recentSearchQueries: recentState.recentQueries.map { query in query.query },
-                                    onClearRecentSearches: { viewModel.wrapped.clearRecentSearches() },
-                                    onRecentSearchClicked: { searchQuery in
-                                        query = searchQuery
-                                        viewModel.wrapped.onSearchTriggered(query: searchQuery)
-                                    }
-                                )
+                                if case let recentState as NiaKit.RecentSearchQueriesUiStateSuccess = viewModel.recentSearchesUiState {
+                                    RecentSearchesBodyView(
+                                        recentSearchQueries: recentState.recentQueries.map { query in query.query },
+                                        onClearRecentSearches: { viewModel.wrapped.clearRecentSearches() },
+                                        onRecentSearchClicked: { searchQuery in
+                                            query = searchQuery
+                                            viewModel.wrapped.onSearchTriggered(query: searchQuery)
+                                        }
+                                    )
+                                    .transition(.opacity)
+                                }
                             }
+                            .frame(minHeight: geometry.size.height, alignment: .top)
                         }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
+                    .transition(.opacity)
                 } else {
                     SearchResultBodyView(
                         searchQuery: query,
@@ -72,14 +93,18 @@ struct SearchView: View {
                         },
                         onTopicClick: { _ in }
                     )
+                    .transition(.opacity)
                 }
 
             default:
                 NiaLoadingWheelView(contentDescription: String(\.feature_search_api_loading))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .transition(.opacity)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .animation(.easeInOut(duration: 0.25), value: searchResultAnimationKey)
+        .animation(.easeInOut(duration: 0.25), value: recentSearchesAnimationKey)
         .searchable(
             text: $query,
             placement: .navigationBarDrawer(displayMode: .always),
@@ -91,6 +116,26 @@ struct SearchView: View {
         .onSubmit(of: .search) {
             viewModel.wrapped.onSearchTriggered(query: query)
         }
+    }
+
+    private var searchResultAnimationKey: String {
+        let state = String(describing: type(of: viewModel.searchResultUiState))
+        guard let success = viewModel.searchResultUiState as? NiaKit.SearchResultUiStateSuccess else {
+            return state
+        }
+
+        let topicIds = success.topics.map { $0.topic.id }.joined(separator: ",")
+        let newsResourceIds = success.newsResources.map { $0.id }.joined(separator: ",")
+        return "\(state)|topics:\(topicIds)|news:\(newsResourceIds)"
+    }
+
+    private var recentSearchesAnimationKey: String {
+        let state = String(describing: type(of: viewModel.recentSearchesUiState))
+        let queries = (viewModel.recentSearchesUiState as? NiaKit.RecentSearchQueriesUiStateSuccess)?
+            .recentQueries
+            .map { $0.query }
+            .joined(separator: "\u{1f}") ?? ""
+        return "\(state)|queries:\(queries)"
     }
 }
 
@@ -145,7 +190,6 @@ private struct RecentSearchesBodyView: View {
             HStack {
                 Text(String(\.feature_search_api_recent_searches))
                     .font(.headline)
-                    .padding(.leading, 16)
                     .padding(.vertical, 8)
 
                 Spacer()
@@ -155,11 +199,11 @@ private struct RecentSearchesBodyView: View {
                         Image(NiaIcons.shared.Close)
                     }
                     .accessibilityLabel(String(\.feature_search_api_clear_recent_searches_content_desc))
-                    .padding(.trailing, 16)
+                    .transition(.opacity)
                 }
             }
 
-            LazyVStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 0) {
                 ForEach(recentSearchQueries, id: \.self) { recentSearch in
                     Button(action: { onRecentSearchClicked(recentSearch) }) {
                         Text(recentSearch)
@@ -168,10 +212,12 @@ private struct RecentSearchesBodyView: View {
                             .padding(.vertical, 16)
                     }
                     .buttonStyle(.plain)
+                    .transition(.opacity)
                 }
             }
-            .padding(.horizontal, 16)
         }
+        .padding(.horizontal, 16)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 }
 
@@ -193,6 +239,7 @@ private struct SearchResultBodyView: View {
             LazyVStack(alignment: .leading, spacing: 24) {
                 if !topics.isEmpty {
                     sectionHeader(String(\.feature_search_api_topics))
+                        .transition(.opacity)
 
                     ForEach(topics, id: \.topic.id) { followableTopic in
                         InterestsItemView(
@@ -207,11 +254,13 @@ private struct SearchResultBodyView: View {
                             },
                             description: followableTopic.topic.shortDescription
                         )
+                        .transition(.opacity)
                     }
                 }
 
                 if !newsResources.isEmpty {
                     sectionHeader(String(\.feature_search_api_updates))
+                        .transition(.opacity)
 
                     NewsFeedListView(
                         feed: newsResources,
