@@ -16,13 +16,17 @@ struct TopicView: View {
         _viewModel = StateObject(wrappedValue: TopicViewModel(topicId: topicId))
     }
 
+    var navigationTitleText: String {
+        guard let state = viewModel.topicUiState as? NiaKit.TopicUiStateSuccess else { return "" }
+        return state.followableTopic.topic.name
+    }
+
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .center, spacing: 0) {
                 switch viewModel.topicUiState {
                 case let state as NiaKit.TopicUiStateSuccess:
                     TopicHeaderView(
-                        name: state.followableTopic.topic.name,
                         description: state.followableTopic.topic.longDescription,
                         imageUrl: state.followableTopic.topic.imageUrl
                     )
@@ -68,6 +72,7 @@ struct TopicView: View {
             .padding(.bottom, 8)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .navigationTitle(navigationTitleText)
         .toolbar {
             if let state = viewModel.topicUiState as? NiaKit.TopicUiStateSuccess {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -88,24 +93,20 @@ struct TopicView: View {
 }
 
 private struct TopicHeaderView: View {
-    let name: String
     let description: String
     let imageUrl: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .center, spacing: 0) {
             NiaDynamicAsyncImageView(imageUrl: imageUrl)
                 .frame(width: 132, height: 132)
                 .padding(.bottom, 12)
-
-            Text(name)
-                .font(.system(size: 34, weight: .regular))
-                .frame(maxWidth: .infinity, alignment: .leading)
 
             if !description.isEmpty {
                 Text(description)
                     .font(.body)
                     .padding(.top, 24)
+                    .frame(maxWidth: .infinity)
             }
         }
         .padding(.horizontal, 24)
