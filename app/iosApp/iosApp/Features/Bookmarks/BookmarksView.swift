@@ -14,19 +14,33 @@ struct BookmarksView: View {
         self.onTopicClick = onTopicClick
     }
 
+    private var feedAnimationKey: String {
+        let state = String(describing: type(of: viewModel.feedState))
+        guard let success = viewModel.feedState as? NiaKit.NewsFeedUiStateSuccess else {
+            return state
+        }
+
+        let resourceIds = success.feed.map { $0.id }.joined(separator: ",")
+        return "\(state)|resources:\(resourceIds)"
+    }
+
     var body: some View {
         Group {
             if let success = viewModel.feedState as? NiaKit.NewsFeedUiStateSuccess {
                 if success.feed.isEmpty {
                     emptyState
+                        .transition(.opacity)
                 } else {
                     bookmarksList(success)
+                        .transition(.opacity)
                 }
             } else {
                 loadingState
+                    .transition(.opacity)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .animation(.easeInOut(duration: 0.25), value: feedAnimationKey)
         .navigationTitle(String(\.feature_bookmarks_api_title))
         .overlay(alignment: .bottom) {
             Group {
@@ -40,6 +54,7 @@ struct BookmarksView: View {
         }
         .onChange(of: showUndoBanner) { _, shown in
             guard shown else { return }
+
             Task {
                 try? await Task.sleep(nanoseconds: 4_000_000_000)
                 if showUndoBanner {

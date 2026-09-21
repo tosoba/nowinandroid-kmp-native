@@ -12,6 +12,7 @@ struct InterestsView: View {
             case _ as NiaKit.InterestsUiStateEmpty:
                 Text(String(\.feature_interests_api_empty_header))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .transition(.opacity)
 
             case let state as NiaKit.InterestsUiStateInterests:
                 ScrollView {
@@ -34,6 +35,7 @@ struct InterestsView: View {
                                 description: followableTopic.topic.shortDescription,
                                 isSelected: followableTopic.topic.id == state.selectedTopicId
                             )
+                            .transition(.opacity)
                         }
                     }
                     .padding(.horizontal, 24)
@@ -43,8 +45,20 @@ struct InterestsView: View {
             default:
                 NiaLoadingWheelView(contentDescription: String(\.feature_interests_api_loading))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .transition(.opacity)
             }
         }
+        .animation(.easeInOut(duration: 0.25), value: interestsAnimationKey)
         .navigationTitle(String(\.feature_interests_api_title))
+    }
+
+    private var interestsAnimationKey: String {
+        let state = String(describing: type(of: viewModel.uiState))
+        guard let interests = viewModel.uiState as? NiaKit.InterestsUiStateInterests else {
+            return state
+        }
+
+        let topicIds = interests.topics.map { $0.topic.id }.joined(separator: ",")
+        return "\(state)|topics:\(topicIds)"
     }
 }

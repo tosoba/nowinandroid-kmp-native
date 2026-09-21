@@ -32,7 +32,7 @@ struct ForYouView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .animation(.easeInOut(duration: 0.25), value: isLoading)
         .animation(.easeInOut(duration: 0.25), value: showsOnboarding)
-        .animation(.easeInOut(duration: 0.25), value: feedCount)
+        .animation(.easeInOut(duration: 0.25), value: feedAnimationKey)
         .navigationTitle(String(\.feature_foryou_api_title))
     }
 
@@ -40,8 +40,14 @@ struct ForYouView: View {
         viewModel.onboardingUiState is OnboardingUiStateShown
     }
 
-    private var feedCount: Int {
-        (viewModel.feedState as? NewsFeedUiStateSuccess)?.feed.count ?? 0
+    private var feedAnimationKey: String {
+        let state = String(describing: type(of: viewModel.feedState))
+        guard let success = viewModel.feedState as? NewsFeedUiStateSuccess else {
+            return state
+        }
+
+        let resourceIds = success.feed.map { $0.id }.joined(separator: ",")
+        return "\(state)|resources:\(resourceIds)"
     }
 
     private var isLoading: Bool {

@@ -72,6 +72,8 @@ struct TopicView: View {
             .padding(.bottom, 8)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .animation(.easeInOut(duration: 0.25), value: topicAnimationKey)
+        .animation(.easeInOut(duration: 0.25), value: newsAnimationKey)
         .navigationTitle(navigationTitleText)
         .toolbar {
             if let state = viewModel.topicUiState as? NiaKit.TopicUiStateSuccess {
@@ -89,6 +91,20 @@ struct TopicView: View {
                 }
             }
         }
+    }
+
+    private var topicAnimationKey: String {
+        String(describing: type(of: viewModel.topicUiState))
+    }
+
+    private var newsAnimationKey: String {
+        let state = String(describing: type(of: viewModel.newsUiState))
+        guard let success = viewModel.newsUiState as? NiaKit.NewsUiStateSuccess else {
+            return state
+        }
+
+        let resourceIds = success.news.map { $0.id }.joined(separator: ",")
+        return "\(state)|resources:\(resourceIds)"
     }
 }
 
