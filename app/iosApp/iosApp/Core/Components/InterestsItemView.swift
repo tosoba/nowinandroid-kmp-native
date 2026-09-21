@@ -9,8 +9,8 @@ struct InterestsItemView: View {
     let topicImageUrl: String
     let onClick: () -> Void
     let onFollowButtonClick: (Bool) -> Void
-    var description: String = ""
-    var isSelected: Bool = false
+    let description: String
+    let isSelected: Bool
 
     init(
         name: String,
