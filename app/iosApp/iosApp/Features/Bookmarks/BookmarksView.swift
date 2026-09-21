@@ -49,13 +49,15 @@ struct BookmarksView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .navigationTitle(String(\.feature_bookmarks_api_title))
         .overlay(alignment: .bottom) {
-            if showUndoBanner {
-                undoBanner
-                    .padding(.bottom, 16)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            Group {
+                if showUndoBanner {
+                    undoBanner
+                        .padding(.bottom, 16)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
             }
+            .animation(.easeInOut(duration: 0.25), value: showUndoBanner)
         }
-        .animation(.easeInOut(duration: 0.25), value: showUndoBanner)
         .onChange(of: showUndoBanner) { _, shown in
             guard shown else { return }
             Task {
