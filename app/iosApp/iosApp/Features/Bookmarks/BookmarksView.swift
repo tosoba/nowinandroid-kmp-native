@@ -20,27 +20,7 @@ struct BookmarksView: View {
                 if success.feed.isEmpty {
                     emptyState
                 } else {
-                    ScrollView {
-                        NewsFeedListView(
-                            feed: success.feed,
-                            onToggleBookmark: { news in
-                                viewModel.wrapped.removeFromSavedResources(newsResourceId: news.id)
-                                showUndoBanner = true
-                            },
-                            onClick: { news in
-                                if let url = URL(string: news.url) {
-                                    openURL(url)
-                                }
-                                viewModel.wrapped.setNewsResourceViewed(
-                                    newsResourceId: news.id,
-                                    viewed: true
-                                )
-                            },
-                            onTopicClick: { id in onTopicClick(id) }
-                        )
-                        .padding(16)
-                        .padding(.bottom, 8)
-                    }
+                    bookmarksList(success)
                 }
             } else {
                 loadingState
@@ -70,26 +50,28 @@ struct BookmarksView: View {
         }
     }
 
-    private var undoBanner: some View {
-        HStack {
-            Text(String(\.feature_bookmarks_api_removed))
-
-            Spacer()
-
-            Button(String(\.feature_bookmarks_api_undo)) {
-                showUndoBanner = false
-                viewModel.wrapped.undoBookmarkRemoval()
-            }
-            .bold()
+    private func bookmarksList(_ state: NewsFeedUiStateSuccess) -> some View {
+        ScrollView {
+            NewsFeedListView(
+                feed: state.feed,
+                onToggleBookmark: { news in
+                    viewModel.wrapped.removeFromSavedResources(newsResourceId: news.id)
+                    showUndoBanner = true
+                },
+                onClick: { news in
+                    if let url = URL(string: news.url) {
+                        openURL(url)
+                    }
+                    viewModel.wrapped.setNewsResourceViewed(
+                        newsResourceId: news.id,
+                        viewed: true
+                    )
+                },
+                onTopicClick: { id in onTopicClick(id) }
+            )
+            .padding(16)
+            .padding(.bottom, 8)
         }
-        .font(.subheadline)
-        .foregroundStyle(colors.inverseOnSurface)
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .background(
-            Capsule().fill(colors.inverseSurface.shadow(.drop(color: .black.opacity(0.3), radius: 8, y: 2)))
-        )
-        .padding(.horizontal, 16)
     }
 
     private var loadingState: some View {
@@ -121,5 +103,27 @@ struct BookmarksView: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private var undoBanner: some View {
+        HStack {
+            Text(String(\.feature_bookmarks_api_removed))
+
+            Spacer()
+
+            Button(String(\.feature_bookmarks_api_undo)) {
+                showUndoBanner = false
+                viewModel.wrapped.undoBookmarkRemoval()
+            }
+            .bold()
+        }
+        .font(.subheadline)
+        .foregroundStyle(colors.inverseOnSurface)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(
+            Capsule().fill(colors.inverseSurface.shadow(.drop(color: .black.opacity(0.3), radius: 8, y: 2)))
+        )
+        .padding(.horizontal, 16)
     }
 }
