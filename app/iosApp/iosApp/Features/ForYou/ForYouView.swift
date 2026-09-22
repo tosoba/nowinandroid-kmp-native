@@ -65,14 +65,15 @@ struct ForYouView: View {
     private var loadingOverlay: some View {
         HStack {
             Spacer()
-            NiaOverlayLoadingWheel(contentDescription: String(\.feature_foryou_api_loading))
+            NiaLoadingWheelView(
+                contentDescription: String(\.feature_foryou_api_loading),
+                style: .overlay
+            )
             Spacer()
         }
         .padding(.top, 8)
         .transition(.move(edge: .top).combined(with: .opacity))
     }
-
-    // MARK: - Onboarding
 
     @ViewBuilder
     private var onboarding: some View {
@@ -87,8 +88,6 @@ struct ForYouView: View {
             .transition(.opacity)
         }
     }
-
-    // MARK: - News feed
 
     @ViewBuilder
     private var newsFeed: some View {
@@ -112,8 +111,6 @@ struct ForYouView: View {
         }
     }
 }
-
-// MARK: - Onboarding
 
 private struct ForYouOnboardingView: View {
     let shown: OnboardingUiStateShown
@@ -156,8 +153,6 @@ private struct ForYouOnboardingView: View {
         }
     }
 }
-
-// MARK: - Topic selection
 
 private struct TopicSelectionView: View {
     @Environment(\.niaColors) private var colors
