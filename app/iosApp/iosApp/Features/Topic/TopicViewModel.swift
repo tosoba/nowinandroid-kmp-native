@@ -3,6 +3,8 @@ import SwiftUI
 
 @MainActor
 final class TopicViewModel: ObservableObject {
+    private let topicId: String
+
     private let owner = IosViewModelStoreOwner()
     private let wrapper: TopicViewModelWrapper
 
@@ -10,13 +12,12 @@ final class TopicViewModel: ObservableObject {
         wrapper.wrapped
     }
 
-    let topicId: String
-
     @Published private(set) var topicUiState: any TopicUiState = TopicUiStateLoading.shared
     @Published private(set) var newsUiState: any NewsUiState = NewsUiStateLoading.shared
 
     init(topicId: String) {
         self.topicId = topicId
+
         let viewModel = IosViewModelProvider.shared.createTopicViewModel(topicId: topicId)
         wrapper = TopicViewModelWrapper(wrapped: viewModel)
         owner.put(viewModel: viewModel)

@@ -16,9 +16,21 @@ struct TopicView: View {
         _viewModel = StateObject(wrappedValue: TopicViewModel(topicId: topicId))
     }
 
-    var navigationTitleText: String {
+    private var navigationTitleText: String {
         guard let state = viewModel.topicUiState as? NiaKit.TopicUiStateSuccess else { return "" }
         return state.followableTopic.topic.name
+    }
+
+    private var topicAnimationKey: String {
+        String(describing: type(of: viewModel.topicUiState))
+    }
+
+    private var newsAnimationKey: String {
+        let state = String(describing: type(of: viewModel.newsUiState))
+        guard let success = viewModel.newsUiState as? NiaKit.NewsUiStateSuccess else { return state }
+
+        let resourceIds = success.news.map { $0.id }.joined(separator: ",")
+        return "\(state)|resources:\(resourceIds)"
     }
 
     var body: some View {
@@ -34,20 +46,7 @@ struct TopicView: View {
 
                     switch viewModel.newsUiState {
                     case let newsState as NiaKit.NewsUiStateSuccess:
-                        NewsFeedListView(
-                            feed: newsState.news,
-                            onToggleBookmark: { newsItem in
-                                viewModel.wrapped.bookmarkNews(newsResourceId: newsItem.id, bookmarked: !newsItem.isSaved)
-                            },
-                            onClick: { newsItem in
-                                if let url = URL(string: newsItem.url) {
-                                    openURL(url)
-                                }
-                                viewModel.wrapped.setNewsResourceViewed(newsResourceId: newsItem.id, viewed: true)
-                            },
-                            onTopicClick: { id in onTopicClick(id) }
-                        )
-                        .padding(24)
+                        newsFeedList(newsState)
 
                     case is NiaKit.NewsUiStateError:
                         Text(String(\.feature_topic_api_error))
@@ -93,18 +92,21 @@ struct TopicView: View {
         }
     }
 
-    private var topicAnimationKey: String {
-        String(describing: type(of: viewModel.topicUiState))
-    }
-
-    private var newsAnimationKey: String {
-        let state = String(describing: type(of: viewModel.newsUiState))
-        guard let success = viewModel.newsUiState as? NiaKit.NewsUiStateSuccess else {
-            return state
-        }
-
-        let resourceIds = success.news.map { $0.id }.joined(separator: ",")
-        return "\(state)|resources:\(resourceIds)"
+    private func newsFeedList(_ newsState: NewsUiStateSuccess) -> some View {
+        NewsFeedListView(
+            feed: newsState.news,
+            onToggleBookmark: { newsItem in
+                viewModel.wrapped.bookmarkNews(newsResourceId: newsItem.id, bookmarked: !newsItem.isSaved)
+            },
+            onClick: { newsItem in
+                if let url = URL(string: newsItem.url) {
+                    openURL(url)
+                }
+                viewModel.wrapped.setNewsResourceViewed(newsResourceId: newsItem.id, viewed: true)
+            },
+            onTopicClick: { id in onTopicClick(id) }
+        )
+        .padding(24)
     }
 }
 
