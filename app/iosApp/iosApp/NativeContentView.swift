@@ -86,41 +86,33 @@ struct NativeContentView: View {
 
     private var forYouContent: some View {
         navigationStack(path: $forYouPath) {
-            ForYouView(
-                onTopicClick: { topicID in
-                    forYouPath.append(.topic(id: topicID))
-                }
-            )
+            ForYouView { topicID in
+                forYouPath.append(.topic(id: topicID))
+            }
         }
     }
 
     private var bookmarksContent: some View {
         navigationStack(path: $bookmarksPath) {
-            BookmarksView(
-                onTopicClick: { topicID in
-                    bookmarksPath.append(.topic(id: topicID))
-                }
-            )
+            BookmarksView { topicID in
+                bookmarksPath.append(.topic(id: topicID))
+            }
         }
     }
 
     private var interestsContent: some View {
         navigationStack(path: $interestsPath) {
-            InterestsView(
-                onTopicClick: { topicID in
-                    interestsPath.append(.topic(id: topicID))
-                }
-            )
+            InterestsView { topicID in
+                interestsPath.append(.topic(id: topicID))
+            }
         }
     }
 
     private var searchContent: some View {
         navigationStack(path: $searchPath) {
-            SearchView(
-                onTopicClick: { topicID in
-                    searchPath.append(.topic(id: topicID))
-                }
-            )
+            SearchView { topicID in
+                searchPath.append(.topic(id: topicID))
+            }
         }
     }
 
@@ -128,53 +120,24 @@ struct NativeContentView: View {
         path: Binding<[TabDestination]>,
         @ViewBuilder content: () -> Content
     ) -> some View {
-        NavigationStack(path: path) {
+        let navigateToTopic: (String) -> Void = { topicID in
+            guard case let .topic(id) = path.wrappedValue.last, id == topicID else {
+                path.wrappedValue.append(.topic(id: topicID))
+                return
+            }
+        }
+
+        return NavigationStack(path: path) {
             content()
                 .navigationDestination(for: TabDestination.self) { destination in
                     switch destination {
                     case let .topic(id):
                         TopicView(
                             topicId: id,
-                            onTopicClick: { topicID in
-                                switch currentTabDestination {
-                                case let .topic(id):
-                                    if id == topicID {
-                                        return
-                                    }
-                                    fallthrough
-                                default:
-                                    appendToCurrentPath(destination: .topic(id: topicID))
-                                }
-                            }
+                            onTopicClick: navigateToTopic
                         )
                     }
                 }
-        }
-    }
-
-    private var currentTabDestination: TabDestination? {
-        switch tabSelection {
-        case .forYou:
-            forYouPath.last
-        case .bookmarks:
-            bookmarksPath.last
-        case .interests:
-            interestsPath.last
-        case .search:
-            searchPath.last
-        }
-    }
-
-    private func appendToCurrentPath(destination: TabDestination) {
-        switch tabSelection {
-        case .forYou:
-            forYouPath.append(destination)
-        case .bookmarks:
-            bookmarksPath.append(destination)
-        case .interests:
-            interestsPath.append(destination)
-        case .search:
-            searchPath.append(destination)
         }
     }
 }
