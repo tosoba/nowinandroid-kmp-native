@@ -34,6 +34,9 @@ struct ForYouView: View {
         .animation(.easeInOut(duration: 0.25), value: showsOnboarding)
         .animation(.easeInOut(duration: 0.25), value: feedAnimationKey)
         .navigationTitle(String(\.feature_foryou_api_title))
+        .onChange(of: viewModel.deepLinkedNewsResource?.id) { _, _ in
+            handleDeepLink()
+        }
     }
 
     private var showsOnboarding: Bool {
@@ -106,6 +109,17 @@ struct ForYouView: View {
             )
             .transition(.opacity)
         }
+    }
+    
+    private func handleDeepLink() {
+        guard let newsResource = viewModel.deepLinkedNewsResource else { return }
+
+        if !newsResource.hasBeenViewed {
+            viewModel.wrapped.onDeepLinkOpened(newsResourceId: newsResource.id)
+        }
+
+        guard let url = URL(string: newsResource.url) else { return }
+        openURL(url)
     }
 }
 
