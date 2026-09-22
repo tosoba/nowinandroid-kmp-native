@@ -2,7 +2,7 @@ import NiaKit
 import SwiftUI
 
 struct ForYouView: View {
-    let onTopicClick: (String) -> Void
+    private let onTopicClick: (String) -> Void
 
     @StateObject private var viewModel = ForYouViewModel()
 
@@ -77,9 +77,9 @@ struct ForYouView: View {
 
     @ViewBuilder
     private var onboarding: some View {
-        if let shown = viewModel.onboardingUiState as? OnboardingUiStateShown {
+        if let state = viewModel.onboardingUiState as? OnboardingUiStateShown {
             ForYouOnboardingView(
-                shown: shown,
+                state: state,
                 onTopicCheckedChanged: { topicId, isChecked in
                     viewModel.wrapped.updateTopicSelection(topicId: topicId, isChecked: isChecked)
                 },
@@ -91,9 +91,9 @@ struct ForYouView: View {
 
     @ViewBuilder
     private var newsFeed: some View {
-        if let success = viewModel.feedState as? NewsFeedUiStateSuccess {
+        if let state = viewModel.feedState as? NewsFeedUiStateSuccess {
             NewsFeedListView(
-                feed: success.feed,
+                feed: state.feed,
                 onToggleBookmark: { news in
                     viewModel.wrapped.updateNewsResourceSaved(
                         newsResourceId: news.id,
@@ -101,19 +101,19 @@ struct ForYouView: View {
                     )
                 },
                 onClick: { news in
-                    if let url = URL(string: news.url) {
-                        openURL(url)
-                    }
+                    guard let url = URL(string: news.url) else { return }
+                    openURL(url)
                     viewModel.wrapped.setNewsResourceViewed(newsResourceId: news.id, viewed: true)
                 },
                 onTopicClick: onTopicClick
             )
+            .transition(.opacity)
         }
     }
 }
 
 private struct ForYouOnboardingView: View {
-    let shown: OnboardingUiStateShown
+    let state: OnboardingUiStateShown
     let onTopicCheckedChanged: (String, Bool) -> Void
     let saveFollowedTopics: () -> Void
 
@@ -133,7 +133,7 @@ private struct ForYouOnboardingView: View {
                 .padding(.horizontal, 24)
 
             TopicSelectionView(
-                topics: shown.topics,
+                topics: state.topics,
                 onTopicCheckedChanged: onTopicCheckedChanged
             )
             .padding(.bottom, 8)
@@ -143,7 +143,7 @@ private struct ForYouOnboardingView: View {
 
                 NiaFilledButtonView(
                     title: String(\.feature_foryou_api_done),
-                    enabled: shown.isDismissable,
+                    enabled: state.isDismissable,
                     maxWidth: 364
                 ) {
                     saveFollowedTopics()
