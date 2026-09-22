@@ -120,21 +120,19 @@ struct NativeContentView: View {
         path: Binding<[TabDestination]>,
         @ViewBuilder content: () -> Content
     ) -> some View {
-        let navigateToTopic: (String) -> Void = { topicID in
-            guard case let .topic(id) = path.wrappedValue.last, id == topicID else {
-                path.wrappedValue.append(.topic(id: topicID))
-                return
-            }
-        }
-
-        return NavigationStack(path: path) {
+        NavigationStack(path: path) {
             content()
                 .navigationDestination(for: TabDestination.self) { destination in
                     switch destination {
                     case let .topic(id):
                         TopicView(
                             topicId: id,
-                            onTopicClick: navigateToTopic
+                            onTopicClick: { topicID in
+                                guard case let .topic(id) = path.wrappedValue.last, id == topicID else {
+                                    path.wrappedValue.append(.topic(id: topicID))
+                                    return
+                                }
+                            }
                         )
                     }
                 }

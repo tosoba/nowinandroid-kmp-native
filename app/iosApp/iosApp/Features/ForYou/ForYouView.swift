@@ -110,7 +110,7 @@ struct ForYouView: View {
             .transition(.opacity)
         }
     }
-    
+
     private func handleDeepLink() {
         guard let newsResource = viewModel.deepLinkedNewsResource else { return }
 
