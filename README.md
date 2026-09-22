@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-This is a fork of <b><a href="https://github.com/skydoves/nowinandroid-kmp">NowInAndroid KMP</a></b> repository whose sole purpose is to provide <b>native UI on iOS</b>. Original compose-based UI can be brought back by adding `COMPOSE_UI` flag to iOS build. 
+This is a fork of <b><a href="https://github.com/skydoves/nowinandroid-kmp">NowInAndroid KMP</a></b> repository whose sole purpose is to provide <b>native UI on iOS</b>. The iOS build uses native SwiftUI by default; the original Compose-based UI remains available as an opt-in through the `COMPOSE_UI` flag described below.
 </p>
 
 <p align="center">
@@ -230,6 +230,19 @@ spelling is kept so behaviour matches.
 # iOS: generate the Xcode project, then build or open it
 ./scripts/generate-xcodeproj.sh
 open app/iosApp/NowInAndroid.xcodeproj
+```
+
+The iOS project uses native SwiftUI by default. To use the original Compose-based UI instead,
+add `COMPOSE_UI` to `SWIFT_ACTIVE_COMPILATION_CONDITIONS` in `app/iosApp/project.yml`:
+
+```yaml
+SWIFT_ACTIVE_COMPILATION_CONDITIONS: "$(inherited) COMPOSE_UI"
+```
+
+Regenerate the Xcode project after changing this setting:
+
+```bash
+./scripts/generate-xcodeproj.sh
 ```
 
 Requires JDK 21 (the Gradle daemon toolchain is pinned in `gradle/gradle-daemon-jvm.properties`),
