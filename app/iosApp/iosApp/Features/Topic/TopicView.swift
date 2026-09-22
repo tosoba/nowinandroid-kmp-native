@@ -2,8 +2,8 @@ import NiaKit
 import SwiftUI
 
 struct TopicView: View {
-    let topicId: String
-    let onTopicClick: (String) -> Void
+    private let topicId: String
+    private let onTopicClick: (String) -> Void
 
     @StateObject private var viewModel: TopicViewModel
 
@@ -26,11 +26,10 @@ struct TopicView: View {
     }
 
     private var newsAnimationKey: String {
-        let state = String(describing: type(of: viewModel.newsUiState))
-        guard let success = viewModel.newsUiState as? NiaKit.NewsUiStateSuccess else { return state }
-
-        let resourceIds = success.news.map { $0.id }.joined(separator: ",")
-        return "\(state)|resources:\(resourceIds)"
+        let prefix = String(describing: type(of: viewModel.newsUiState))
+        guard let state = viewModel.newsUiState as? NiaKit.NewsUiStateSuccess else { return prefix }
+        let resourceIds = state.news.map { $0.id }.joined(separator: ",")
+        return "\(prefix)|resources:\(resourceIds)"
     }
 
     var body: some View {
@@ -45,8 +44,8 @@ struct TopicView: View {
                     .padding(.top, 16)
 
                     switch viewModel.newsUiState {
-                    case let newsState as NiaKit.NewsUiStateSuccess:
-                        newsFeedList(newsState)
+                    case let state as NiaKit.NewsUiStateSuccess:
+                        newsFeedList(state)
 
                     case is NiaKit.NewsUiStateError:
                         Text(String(\.feature_topic_api_error))
@@ -92,9 +91,9 @@ struct TopicView: View {
         }
     }
 
-    private func newsFeedList(_ newsState: NewsUiStateSuccess) -> some View {
+    private func newsFeedList(_ state: NewsUiStateSuccess) -> some View {
         NewsFeedListView(
-            feed: newsState.news,
+            feed: state.news,
             onToggleBookmark: { newsItem in
                 viewModel.wrapped.bookmarkNews(newsResourceId: newsItem.id, bookmarked: !newsItem.isSaved)
             },

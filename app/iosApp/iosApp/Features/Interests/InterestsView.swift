@@ -15,32 +15,7 @@ struct InterestsView: View {
                     .transition(.opacity)
 
             case let state as NiaKit.InterestsUiStateInterests:
-                ScrollView {
-                    LazyVStack(alignment: .leading, spacing: 0) {
-                        ForEach(state.topics, id: \.topic.id) { followableTopic in
-                            InterestsItemView(
-                                name: followableTopic.topic.name,
-                                following: followableTopic.isFollowed,
-                                topicImageUrl: followableTopic.topic.imageUrl,
-                                onClick: {
-                                    viewModel.wrapped.onTopicClick(topicId: followableTopic.topic.id)
-                                    onTopicClick(followableTopic.topic.id)
-                                },
-                                onFollowButtonClick: { _ in
-                                    viewModel.wrapped.followTopic(
-                                        followedTopicId: followableTopic.topic.id,
-                                        followed: !followableTopic.isFollowed
-                                    )
-                                },
-                                description: followableTopic.topic.shortDescription,
-                                isSelected: followableTopic.topic.id == state.selectedTopicId
-                            )
-                            .transition(.opacity)
-                        }
-                    }
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 16)
-                }
+                interestsList(state)
 
             default:
                 NiaLoadingWheelView(contentDescription: String(\.feature_interests_api_loading))
@@ -50,6 +25,35 @@ struct InterestsView: View {
         }
         .animation(.easeInOut(duration: 0.25), value: interestsAnimationKey)
         .navigationTitle(String(\.feature_interests_api_title))
+    }
+
+    private func interestsList(_ state: InterestsUiStateInterests) -> some View {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 0) {
+                ForEach(state.topics, id: \.topic.id) { followableTopic in
+                    InterestsItemView(
+                        name: followableTopic.topic.name,
+                        following: followableTopic.isFollowed,
+                        topicImageUrl: followableTopic.topic.imageUrl,
+                        onClick: {
+                            viewModel.wrapped.onTopicClick(topicId: followableTopic.topic.id)
+                            onTopicClick(followableTopic.topic.id)
+                        },
+                        onFollowButtonClick: { _ in
+                            viewModel.wrapped.followTopic(
+                                followedTopicId: followableTopic.topic.id,
+                                followed: !followableTopic.isFollowed
+                            )
+                        },
+                        description: followableTopic.topic.shortDescription,
+                        isSelected: followableTopic.topic.id == state.selectedTopicId
+                    )
+                    .transition(.opacity)
+                }
+            }
+            .padding(.horizontal, 24)
+            .padding(.vertical, 16)
+        }
     }
 
     private var interestsAnimationKey: String {

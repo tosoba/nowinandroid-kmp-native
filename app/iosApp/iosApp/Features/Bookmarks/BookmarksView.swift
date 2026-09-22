@@ -2,7 +2,7 @@ import NiaKit
 import SwiftUI
 
 struct BookmarksView: View {
-    let onTopicClick: (String) -> Void
+    private let onTopicClick: (String) -> Void
 
     @StateObject private var viewModel = BookmarksViewModel()
     @State private var showUndoBanner = false
@@ -15,23 +15,20 @@ struct BookmarksView: View {
     }
 
     private var feedAnimationKey: String {
-        let state = String(describing: type(of: viewModel.feedState))
-        guard let success = viewModel.feedState as? NiaKit.NewsFeedUiStateSuccess else {
-            return state
-        }
-
-        let resourceIds = success.feed.map { $0.id }.joined(separator: ",")
-        return "\(state)|resources:\(resourceIds)"
+        let prefix = String(describing: type(of: viewModel.feedState))
+        guard let state = viewModel.feedState as? NiaKit.NewsFeedUiStateSuccess else { return prefix }
+        let resourceIds = state.feed.map { $0.id }.joined(separator: ",")
+        return "\(prefix)|resources:\(resourceIds)"
     }
 
     var body: some View {
         Group {
-            if let success = viewModel.feedState as? NiaKit.NewsFeedUiStateSuccess {
-                if success.feed.isEmpty {
+            if let state = viewModel.feedState as? NiaKit.NewsFeedUiStateSuccess {
+                if state.feed.isEmpty {
                     emptyState
                         .transition(.opacity)
                 } else {
-                    bookmarksList(success)
+                    bookmarksList(state)
                         .transition(.opacity)
                 }
             } else {

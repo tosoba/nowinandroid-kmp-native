@@ -41,13 +41,10 @@ struct ForYouView: View {
     }
 
     private var feedAnimationKey: String {
-        let state = String(describing: type(of: viewModel.feedState))
-        guard let success = viewModel.feedState as? NewsFeedUiStateSuccess else {
-            return state
-        }
-
-        let resourceIds = success.feed.map { $0.id }.joined(separator: ",")
-        return "\(state)|resources:\(resourceIds)"
+        let prefix = String(describing: type(of: viewModel.feedState))
+        guard let state = viewModel.feedState as? NewsFeedUiStateSuccess else { return prefix }
+        let resourceIds = state.feed.map { $0.id }.joined(separator: ",")
+        return "\(prefix)|resources:\(resourceIds)"
     }
 
     private var isLoading: Bool {

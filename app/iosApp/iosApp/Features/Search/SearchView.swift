@@ -8,8 +8,8 @@ struct SearchView: View {
     @State private var query = ""
 
     private var recentSearchQueries: [String] {
-        guard let success = viewModel.recentSearchesUiState as? NiaKit.RecentSearchQueriesUiStateSuccess else { return [] }
-        return success.recentQueries.map { query in query.query }
+        guard let state = viewModel.recentSearchesUiState as? NiaKit.RecentSearchQueriesUiStateSuccess else { return [] }
+        return state.recentQueries.map { query in query.query }
     }
 
     init(onTopicClick: @escaping (String) -> Void) {
@@ -38,15 +38,7 @@ struct SearchView: View {
 
             case let state as NiaKit.SearchResultUiStateSuccess:
                 if state.topics.isEmpty && state.newsResources.isEmpty {
-                    ScrollView {
-                        VStack {
-                            EmptySearchResultBodyView(searchQuery: query)
-
-                            recentSearchesListView
-                        }
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .transition(.opacity)
+                    emptySearchResultView
                 } else {
                     searchResultListView(state)
                 }
@@ -84,6 +76,18 @@ struct SearchView: View {
         )
     }
 
+    private var emptySearchResultView: some View {
+        ScrollView {
+            VStack {
+                EmptySearchResultBodyView(searchQuery: query)
+
+                recentSearchesListView
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .transition(.opacity)
+    }
+
     private func searchResultListView(_ state: SearchResultUiStateSuccess) -> some View {
         SearchResultListView(
             searchQuery: query,
@@ -109,23 +113,20 @@ struct SearchView: View {
     }
 
     private var searchResultAnimationKey: String {
-        let state = String(describing: type(of: viewModel.searchResultUiState))
-        guard let success = viewModel.searchResultUiState as? NiaKit.SearchResultUiStateSuccess else {
-            return state
-        }
-
-        let topicIds = success.topics.map { $0.topic.id }.joined(separator: ",")
-        let newsResourceIds = success.newsResources.map { $0.id }.joined(separator: ",")
-        return "\(state)|topics:\(topicIds)|news:\(newsResourceIds)"
+        let prefix = String(describing: type(of: viewModel.searchResultUiState))
+        guard let state = viewModel.searchResultUiState as? NiaKit.SearchResultUiStateSuccess else { return prefix }
+        let topicIds = state.topics.map { $0.topic.id }.joined(separator: ",")
+        let newsResourceIds = state.newsResources.map { $0.id }.joined(separator: ",")
+        return "\(prefix)|topics:\(topicIds)|news:\(newsResourceIds)"
     }
 
     private var recentSearchesAnimationKey: String {
-        let state = String(describing: type(of: viewModel.recentSearchesUiState))
+        let prefix = String(describing: type(of: viewModel.recentSearchesUiState))
         let queries = (viewModel.recentSearchesUiState as? NiaKit.RecentSearchQueriesUiStateSuccess)?
             .recentQueries
             .map { $0.query }
             .joined(separator: "\u{1f}") ?? ""
-        return "\(state)|queries:\(queries)"
+        return "\(prefix)|queries:\(queries)"
     }
 }
 
