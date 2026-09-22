@@ -169,7 +169,7 @@ private struct TopicSelectionView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHGrid(rows: [GridItem(), GridItem(), GridItem()], spacing: 12) {
                 ForEach(topics, id: \.topic.id) { followableTopic in
-                    SingleTopicButtonView(
+                    TopicButtonView(
                         topic: followableTopic.topic,
                         isSelected: followableTopic.isFollowed,
                         onClick: { checked in
@@ -186,7 +186,7 @@ private struct TopicSelectionView: View {
     }
 }
 
-private struct SingleTopicButtonView: View {
+private struct TopicButtonView: View {
     @Environment(\.niaColors) private var colors
 
     let topic: ModelTopic
