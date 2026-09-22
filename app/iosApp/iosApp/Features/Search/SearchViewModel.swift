@@ -23,9 +23,7 @@ final class SearchViewModel: ObservableObject {
 
         wrapper.observeSearchQuery { [weak self] query in self?.searchQuery = query }
         wrapper.observeSearchResultUiState { [weak self] state in self?.searchResultUiState = state }
-        wrapper.observeRecentSearchQueriesUiState { [weak self] state in
-            self?.recentSearchesUiState = state
-        }
+        wrapper.observeRecentSearchQueriesUiState { [weak self] state in self?.recentSearchesUiState = state }
     }
 
     deinit {

@@ -2,10 +2,15 @@ import NiaKit
 import SwiftUI
 
 struct SearchView: View {
-    let onTopicClick: (String) -> Void
+    private let onTopicClick: (String) -> Void
 
     @StateObject private var viewModel = SearchViewModel()
     @State private var query = ""
+
+    private var recentSearchQueries: [String] {
+        guard let success = viewModel.recentSearchesUiState as? NiaKit.RecentSearchQueriesUiStateSuccess else { return [] }
+        return success.recentQueries.map { query in query.query }
+    }
 
     init(onTopicClick: @escaping (String) -> Void) {
         self.onTopicClick = onTopicClick
@@ -25,75 +30,25 @@ struct SearchView: View {
                     .transition(.opacity)
 
             case is NiaKit.SearchResultUiStateEmptyQuery:
-                if case let recentState as NiaKit.RecentSearchQueriesUiStateSuccess = viewModel.recentSearchesUiState {
-                    GeometryReader { geometry in
-                        ScrollView {
-                            RecentSearchesBodyView(
-                                recentSearchQueries: recentState.recentQueries.map { query in query.query },
-                                onClearRecentSearches: { viewModel.wrapped.clearRecentSearches() },
-                                onRecentSearchClicked: { searchQuery in
-                                    query = searchQuery
-                                    viewModel.wrapped.onSearchTriggered(query: searchQuery)
-                                }
-                            )
-                            .frame(minHeight: geometry.size.height, alignment: .top)
-                            .transition(.opacity)
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    }
-                    .transition(.opacity)
-                } else {
-                    Spacer()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                ScrollView {
+                    recentSearchesListView
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .transition(.opacity)
 
             case let state as NiaKit.SearchResultUiStateSuccess:
                 if state.topics.isEmpty && state.newsResources.isEmpty {
-                    GeometryReader { geometry in
-                        ScrollView {
-                            VStack {
-                                EmptySearchResultBodyView(searchQuery: query)
-                                    .transition(.opacity)
+                    ScrollView {
+                        VStack {
+                            EmptySearchResultBodyView(searchQuery: query)
 
-                                if case let recentState as NiaKit.RecentSearchQueriesUiStateSuccess = viewModel.recentSearchesUiState {
-                                    RecentSearchesBodyView(
-                                        recentSearchQueries: recentState.recentQueries.map { query in query.query },
-                                        onClearRecentSearches: { viewModel.wrapped.clearRecentSearches() },
-                                        onRecentSearchClicked: { searchQuery in
-                                            query = searchQuery
-                                            viewModel.wrapped.onSearchTriggered(query: searchQuery)
-                                        }
-                                    )
-                                    .transition(.opacity)
-                                }
-                            }
-                            .frame(minHeight: geometry.size.height, alignment: .top)
+                            recentSearchesListView
                         }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .transition(.opacity)
                 } else {
-                    SearchResultBodyView(
-                        searchQuery: query,
-                        topics: state.topics,
-                        newsResources: state.newsResources,
-                        onClearRecentSearches: { viewModel.wrapped.clearRecentSearches() },
-                        onRecentSearchClicked: { searchQuery in
-                            query = searchQuery
-                            viewModel.wrapped.onSearchTriggered(query: searchQuery)
-                        },
-                        onFollowTopic: { topicId, followed in
-                            viewModel.wrapped.followTopic(followedTopicId: topicId, followed: followed)
-                        },
-                        onToggleBookmark: { newsResourceId, isChecked in
-                            viewModel.wrapped.setNewsResourceBookmarked(newsResourceId: newsResourceId, isChecked: isChecked)
-                        },
-                        onNewsResourceViewed: { newsResourceId in
-                            viewModel.wrapped.setNewsResourceViewed(newsResourceId: newsResourceId, viewed: true)
-                        },
-                        onTopicClick: { _ in }
-                    )
-                    .transition(.opacity)
+                    searchResultListView(state)
                 }
 
             default:
@@ -116,6 +71,41 @@ struct SearchView: View {
         .onSubmit(of: .search) {
             viewModel.wrapped.onSearchTriggered(query: query)
         }
+    }
+
+    private var recentSearchesListView: some View {
+        RecentSearchesListView(
+            recentSearchQueries: recentSearchQueries,
+            onClearRecentSearches: { viewModel.wrapped.clearRecentSearches() },
+            onRecentSearchClicked: { searchQuery in
+                query = searchQuery
+                viewModel.wrapped.onSearchTriggered(query: searchQuery)
+            }
+        )
+    }
+
+    private func searchResultListView(_ state: SearchResultUiStateSuccess) -> some View {
+        SearchResultListView(
+            searchQuery: query,
+            topics: state.topics,
+            newsResources: state.newsResources,
+            onClearRecentSearches: { viewModel.wrapped.clearRecentSearches() },
+            onRecentSearchClicked: { searchQuery in
+                query = searchQuery
+                viewModel.wrapped.onSearchTriggered(query: searchQuery)
+            },
+            onFollowTopic: { topicId, followed in
+                viewModel.wrapped.followTopic(followedTopicId: topicId, followed: followed)
+            },
+            onToggleBookmark: { newsResourceId, isChecked in
+                viewModel.wrapped.setNewsResourceBookmarked(newsResourceId: newsResourceId, isChecked: isChecked)
+            },
+            onNewsResourceViewed: { newsResourceId in
+                viewModel.wrapped.setNewsResourceViewed(newsResourceId: newsResourceId, viewed: true)
+            },
+            onTopicClick: { _ in }
+        )
+        .transition(.opacity)
     }
 
     private var searchResultAnimationKey: String {
@@ -180,7 +170,7 @@ private struct EmptySearchResultBodyView: View {
     }
 }
 
-private struct RecentSearchesBodyView: View {
+private struct RecentSearchesListView: View {
     let recentSearchQueries: [String]
     let onClearRecentSearches: () -> Void
     let onRecentSearchClicked: (String) -> Void
@@ -221,7 +211,7 @@ private struct RecentSearchesBodyView: View {
     }
 }
 
-private struct SearchResultBodyView: View {
+private struct SearchResultListView: View {
     @Environment(\.openURL) private var openURL
 
     let searchQuery: String
