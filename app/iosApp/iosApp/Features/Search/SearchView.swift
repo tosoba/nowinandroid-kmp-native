@@ -9,7 +9,7 @@ struct SearchView: View {
 
     private var recentSearchQueries: [String] {
         guard let state = viewModel.recentSearchesUiState as? NiaKit.RecentSearchQueriesUiStateSuccess else { return [] }
-        return state.recentQueries.map { query in query.query }
+        return state.recentQueries.map(\.query)
     }
 
     init(onTopicClick: @escaping (String) -> Void) {
