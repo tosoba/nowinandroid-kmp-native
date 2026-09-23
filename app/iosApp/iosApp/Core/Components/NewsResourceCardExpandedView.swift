@@ -9,11 +9,6 @@ struct NewsResourceCardExpandedView: View {
     let onClick: () -> Void
     let onTopicClick: (String) -> Void
 
-    private enum LayoutMetrics {
-        static let sectionSpacing: CGFloat = 14
-        static let metadataSpacing: CGFloat = 6
-    }
-
     private var formattedDate: String {
         NiaDateFormatter.mediumDateString(epochMilliseconds: news.publishDate.toEpochMilliseconds())
     }
@@ -45,7 +40,7 @@ struct NewsResourceCardExpandedView: View {
                     }
                     .padding(.top, NiaSpacing.mediumSmall)
 
-                    HStack(spacing: LayoutMetrics.metadataSpacing) {
+                    HStack(spacing: NiaSpacing.small) {
                         if !news.hasBeenViewed {
                             NiaNotificationDotView(color: colors.tertiary, size: 8)
                                 .accessibilityLabel(String(\.core_ui_unread_resource_dot_content_description))
@@ -59,12 +54,12 @@ struct NewsResourceCardExpandedView: View {
                     }
                     .font(.caption)
                     .foregroundColor(colors.onSurfaceVariant)
-                    .padding(.top, LayoutMetrics.sectionSpacing)
+                    .padding(.top, NiaSpacing.medium)
 
                     Text(news.content)
                         .font(.body)
                         .foregroundColor(colors.onSurface)
-                        .padding(.top, LayoutMetrics.sectionSpacing)
+                        .padding(.top, NiaSpacing.medium)
 
                     topicsRow
                         .padding(.top, NiaSpacing.mediumSmall)

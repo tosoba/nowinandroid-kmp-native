@@ -166,10 +166,6 @@ private struct TopicButtonView: View {
     let isSelected: Bool
     let onClick: (Bool) -> Void
 
-    private enum LayoutMetrics {
-        static let iconPadding: CGFloat = 10
-    }
-
     var body: some View {
         Button(action: { onClick(!isSelected) }) {
             HStack(spacing: NiaSpacing.none) {
@@ -179,7 +175,7 @@ private struct TopicButtonView: View {
                 )
                 .frame(width: 32, height: 32)
                 .clipShape(RoundedRectangle(cornerRadius: 4))
-                .padding(LayoutMetrics.iconPadding)
+                .padding(NiaSpacing.mediumSmall)
 
                 Text(topic.name)
                     .font(.system(.body, design: .default).weight(.medium))
