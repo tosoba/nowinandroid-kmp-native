@@ -9,6 +9,10 @@ typealias InterestsStrings = FeatureInterestsApiMR.strings
 typealias SearchStrings = FeatureSearchApiMR.strings
 typealias TopicStrings = FeatureTopicApiMR.strings
 
+typealias BookmarksImages = FeatureBookmarksApiMR.images
+typealias CoreDesignsystemImages = CoreDesignsystemMR.images
+typealias ForYouImages = FeatureForyouApiMR.images
+
 extension String {
     init(_ resource: StringResource) {
         self.init(NiaResourcesKt.getString(stringResource: resource).localized())

@@ -11,7 +11,7 @@ struct NiaDynamicAsyncImageView: View {
     init(
         imageUrl: String,
         contentDescription: String? = nil,
-        placeholder: NiaKit.ImageResource = CoreDesignsystemMR.images().ic_placeholder_default,
+        placeholder: NiaKit.ImageResource = CoreDesignsystemImages().ic_placeholder_default,
         contentMode: ContentMode = .fill
     ) {
         self.imageUrl = imageUrl

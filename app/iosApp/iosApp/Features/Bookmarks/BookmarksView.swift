@@ -86,7 +86,7 @@ struct BookmarksView: View {
 
     private var emptyState: some View {
         VStack(spacing: NiaSpacing.small) {
-            Image(FeatureBookmarksApiMR.images().feature_bookmarks_api_mg_empty_bookmarks)
+            Image(BookmarksImages().feature_bookmarks_api_mg_empty_bookmarks)
                 .renderingMode(.original)
                 .resizable()
                 .scaledToFit()
