@@ -107,7 +107,7 @@ struct SearchView: View {
             onNewsResourceViewed: { newsResourceId in
                 viewModel.wrapped.setNewsResourceViewed(newsResourceId: newsResourceId, viewed: true)
             },
-            onTopicClick: { _ in }
+            onTopicClick: onTopicClick
         )
         .transition(.opacity)
     }
@@ -264,7 +264,7 @@ private struct SearchResultListView: View {
                             }
                             onNewsResourceViewed(news.id)
                         },
-                        onTopicClick: { _ in }
+                        onTopicClick: onTopicClick
                     )
                 }
             }

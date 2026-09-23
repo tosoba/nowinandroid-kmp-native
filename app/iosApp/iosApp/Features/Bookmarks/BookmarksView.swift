@@ -79,7 +79,7 @@ struct BookmarksView: View {
                         viewed: true
                     )
                 },
-                onTopicClick: { id in onTopicClick(id) }
+                onTopicClick: onTopicClick
             )
             .padding(16)
             .padding(.bottom, 8)

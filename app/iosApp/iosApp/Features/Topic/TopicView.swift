@@ -103,7 +103,7 @@ struct TopicView: View {
                 }
                 viewModel.wrapped.setNewsResourceViewed(newsResourceId: newsItem.id, viewed: true)
             },
-            onTopicClick: { id in onTopicClick(id) }
+            onTopicClick: onTopicClick
         )
         .padding(24)
     }
