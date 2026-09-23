@@ -110,9 +110,14 @@ struct NativeContentView: View {
 
     private var searchContent: some View {
         navigationStack(path: $searchPath) {
-            SearchView { topicID in
-                searchPath.append(.topic(id: topicID))
-            }
+            SearchView(
+                onTopicClick: { topicID in
+                    searchPath.append(.topic(id: topicID))
+                },
+                onNavigateToInterests: {
+                    tabSelection = .interests
+                }
+            )
         }
     }
 

@@ -3,12 +3,17 @@ import SwiftUI
 
 struct SearchView: View {
     private let onTopicClick: (String) -> Void
+    private let onNavigateToInterests: () -> Void
 
     @StateObject private var viewModel = SearchViewModel()
     @State private var query = ""
 
-    init(onTopicClick: @escaping (String) -> Void) {
+    init(
+        onTopicClick: @escaping (String) -> Void,
+        onNavigateToInterests: @escaping () -> Void
+    ) {
         self.onTopicClick = onTopicClick
+        self.onNavigateToInterests = onNavigateToInterests
     }
 
     var body: some View {
@@ -74,7 +79,10 @@ struct SearchView: View {
     private var emptySearchResultView: some View {
         ScrollView {
             VStack {
-                EmptySearchResultBodyView(searchQuery: query)
+                EmptySearchResultBodyView(
+                    searchQuery: query,
+                    onNavigateToInterests: onNavigateToInterests
+                )
 
                 recentSearchesListView
             }
@@ -121,6 +129,7 @@ private struct SearchNotReadyBodyView: View {
 
 private struct EmptySearchResultBodyView: View {
     let searchQuery: String
+    let onNavigateToInterests: () -> Void
 
     var body: some View {
         let message = String(\.feature_search_api_result_not_found, parameter: searchQuery)
@@ -143,7 +152,8 @@ private struct EmptySearchResultBodyView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, NiaSpacing.large)
                 .padding(.bottom, NiaSpacing.mediumLarge)
-                .onTapGesture {} // TODO: navigate to interests
+                .onTapGesture { onNavigateToInterests() }
+                .accessibilityAddTraits(.isButton)
         }
         .padding(.horizontal, NiaSpacing.extraLarge)
     }
