@@ -28,7 +28,7 @@ struct TopicView: View {
     private var newsAnimationKey: String {
         let prefix = String(describing: type(of: viewModel.newsUiState))
         guard let state = viewModel.newsUiState as? NiaKit.NewsUiStateSuccess else { return prefix }
-        let resourceIds = state.news.map { $0.id }.joined(separator: ",")
+        let resourceIds = state.news.map(\.id).joined(separator: ",")
         return "\(prefix)|resources:\(resourceIds)"
     }
 

@@ -17,7 +17,7 @@ struct BookmarksView: View {
     private var feedAnimationKey: String {
         let prefix = String(describing: type(of: viewModel.feedState))
         guard let state = viewModel.feedState as? NiaKit.NewsFeedUiStateSuccess else { return prefix }
-        let resourceIds = state.feed.map { $0.id }.joined(separator: ",")
+        let resourceIds = state.feed.map(\.id).joined(separator: ",")
         return "\(prefix)|resources:\(resourceIds)"
     }
 

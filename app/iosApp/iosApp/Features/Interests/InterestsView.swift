@@ -62,7 +62,7 @@ struct InterestsView: View {
             return state
         }
 
-        let topicIds = interests.topics.map { $0.topic.id }.joined(separator: ",")
+        let topicIds = interests.topics.map(\.topic.id).joined(separator: ",")
         return "\(state)|topics:\(topicIds)"
     }
 }

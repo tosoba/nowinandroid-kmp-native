@@ -115,17 +115,15 @@ struct SearchView: View {
     private var searchResultAnimationKey: String {
         let prefix = String(describing: type(of: viewModel.searchResultUiState))
         guard let state = viewModel.searchResultUiState as? NiaKit.SearchResultUiStateSuccess else { return prefix }
-        let topicIds = state.topics.map { $0.topic.id }.joined(separator: ",")
-        let newsResourceIds = state.newsResources.map { $0.id }.joined(separator: ",")
+        let topicIds = state.topics.map(\.topic.id).joined(separator: ",")
+        let newsResourceIds = state.newsResources.map(\.id).joined(separator: ",")
         return "\(prefix)|topics:\(topicIds)|news:\(newsResourceIds)"
     }
 
     private var recentSearchesAnimationKey: String {
         let prefix = String(describing: type(of: viewModel.recentSearchesUiState))
-        let queries = (viewModel.recentSearchesUiState as? NiaKit.RecentSearchQueriesUiStateSuccess)?
-            .recentQueries
-            .map { $0.query }
-            .joined(separator: "\u{1f}") ?? ""
+        guard let state = viewModel.recentSearchesUiState as? NiaKit.RecentSearchQueriesUiStateSuccess else { return prefix }
+        let queries = state.recentQueries.map(\.query).joined(separator: "\u{1f}")
         return "\(prefix)|queries:\(queries)"
     }
 }
