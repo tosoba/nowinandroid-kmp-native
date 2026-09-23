@@ -171,7 +171,7 @@ private struct TopicButtonView: View {
             HStack(spacing: NiaSpacing.none) {
                 NiaDynamicAsyncImageView(
                     imageUrl: topic.imageUrl,
-                    placeholder: ForYouImages().feature_foryou_api_ic_icon_placeholder
+                    placeholder: NiaResources.forYouImages.feature_foryou_api_ic_icon_placeholder
                 )
                 .frame(width: 32, height: 32)
                 .clipShape(RoundedRectangle(cornerRadius: 4))
