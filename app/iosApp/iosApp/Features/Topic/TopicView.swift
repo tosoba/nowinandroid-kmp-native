@@ -18,14 +18,14 @@ struct TopicView: View {
 
     var body: some View {
         ScrollView {
-            LazyVStack(alignment: .center, spacing: 0) {
+            LazyVStack(alignment: .center, spacing: NiaSpacing.none) {
                 switch viewModel.topicUiState {
                 case let state as NiaKit.TopicUiStateSuccess:
                     TopicHeaderView(
                         description: state.followableTopic.topic.longDescription,
                         imageUrl: state.followableTopic.topic.imageUrl
                     )
-                    .padding(.top, 16)
+                    .padding(.top, NiaSpacing.medium)
 
                     switch viewModel.newsUiState {
                     case let state as NiaKit.NewsUiStateSuccess:
@@ -33,25 +33,25 @@ struct TopicView: View {
 
                     case is NiaKit.NewsUiStateError:
                         Text(String(\.feature_topic_api_error))
-                            .padding(24)
+                            .padding(NiaSpacing.mediumLarge)
 
                     default:
                         NiaLoadingWheelView(contentDescription: "Loading news")
-                            .padding(24)
+                            .padding(NiaSpacing.mediumLarge)
                     }
 
                 case is NiaKit.TopicUiStateError:
                     Text(String(\.feature_topic_api_error))
                         .font(.body)
                         .multilineTextAlignment(.center)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 48)
+                        .padding(.horizontal, NiaSpacing.mediumLarge)
+                        .padding(.vertical, NiaSpacing.extraLarge)
 
                 default:
                     NiaLoadingWheelView(contentDescription: String(\.feature_topic_api_loading))
                 }
             }
-            .padding(.bottom, 8)
+            .padding(.bottom, NiaSpacing.small)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .animation(.easeInOut(duration: 0.25), value: viewModel.topicAnimationKey)
@@ -89,7 +89,7 @@ struct TopicView: View {
             },
             onTopicClick: onTopicClick
         )
-        .padding(24)
+        .padding(NiaSpacing.mediumLarge)
     }
 }
 
@@ -98,18 +98,18 @@ private struct TopicHeaderView: View {
     let imageUrl: String
 
     var body: some View {
-        VStack(alignment: .center, spacing: 0) {
+        VStack(alignment: .center, spacing: NiaSpacing.none) {
             NiaDynamicAsyncImageView(imageUrl: imageUrl)
                 .frame(width: 132, height: 132)
-                .padding(.bottom, 12)
+                .padding(.bottom, NiaSpacing.mediumSmall)
 
             if !description.isEmpty {
                 Text(description)
                     .font(.body)
-                    .padding(.top, 24)
+                    .padding(.top, NiaSpacing.mediumLarge)
                     .frame(maxWidth: .infinity)
             }
         }
-        .padding(.horizontal, 24)
+        .padding(.horizontal, NiaSpacing.mediumLarge)
     }
 }

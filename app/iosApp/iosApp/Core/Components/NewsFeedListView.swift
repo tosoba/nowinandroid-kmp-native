@@ -8,7 +8,7 @@ struct NewsFeedListView: View {
     let onTopicClick: (String) -> Void
 
     var body: some View {
-        LazyVStack(alignment: .leading, spacing: 24) {
+        LazyVStack(alignment: .leading, spacing: NiaSpacing.mediumLarge) {
             ForEach(feed, id: \.id) { news in
                 NewsResourceCardExpandedView(
                     news: news,

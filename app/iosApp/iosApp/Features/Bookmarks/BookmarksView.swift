@@ -36,7 +36,7 @@ struct BookmarksView: View {
             Group {
                 if showUndoBanner {
                     undoBanner
-                        .padding(.bottom, 16)
+                        .padding(.bottom, NiaSpacing.medium)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
@@ -74,8 +74,8 @@ struct BookmarksView: View {
                 },
                 onTopicClick: onTopicClick
             )
-            .padding(16)
-            .padding(.bottom, 8)
+            .padding(NiaSpacing.medium)
+            .padding(.bottom, NiaSpacing.small)
         }
     }
 
@@ -85,13 +85,13 @@ struct BookmarksView: View {
     }
 
     private var emptyState: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: NiaSpacing.small) {
             Image(FeatureBookmarksApiMR.images().feature_bookmarks_api_mg_empty_bookmarks)
                 .renderingMode(.original)
                 .resizable()
                 .scaledToFit()
                 .frame(maxWidth: 64)
-                .padding(.horizontal, 16)
+                .padding(.horizontal, NiaSpacing.medium)
 
             Spacer().frame(height: 40)
 
@@ -106,7 +106,7 @@ struct BookmarksView: View {
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity)
         }
-        .padding(16)
+        .padding(NiaSpacing.medium)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
@@ -124,11 +124,11 @@ struct BookmarksView: View {
         }
         .font(.subheadline)
         .foregroundStyle(colors.inverseOnSurface)
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
+        .padding(.horizontal, NiaSpacing.medium)
+        .padding(.vertical, NiaSpacing.mediumSmall)
         .background(
             Capsule().fill(colors.inverseSurface.shadow(.drop(color: .black.opacity(0.3), radius: 8, y: 2)))
         )
-        .padding(.horizontal, 16)
+        .padding(.horizontal, NiaSpacing.medium)
     }
 }

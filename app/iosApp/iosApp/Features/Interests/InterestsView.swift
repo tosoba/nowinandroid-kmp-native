@@ -29,7 +29,7 @@ struct InterestsView: View {
 
     private func interestsList(_ state: InterestsUiStateInterests) -> some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 0) {
+            LazyVStack(alignment: .leading, spacing: NiaSpacing.none) {
                 ForEach(state.topics, id: \.topic.id) { followableTopic in
                     InterestsItemView(
                         name: followableTopic.topic.name,
@@ -51,8 +51,8 @@ struct InterestsView: View {
                     .transition(.opacity)
                 }
             }
-            .padding(.horizontal, 24)
-            .padding(.vertical, 16)
+            .padding(.horizontal, NiaSpacing.mediumLarge)
+            .padding(.vertical, NiaSpacing.medium)
         }
     }
 }

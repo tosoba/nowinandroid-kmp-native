@@ -26,8 +26,8 @@ struct NiaFilterChipView: View {
             Text(text)
                 .font(.caption2)
                 .foregroundColor(colors.onBackground)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
+                .padding(.horizontal, NiaSpacing.mediumSmall)
+                .padding(.vertical, NiaSpacing.small)
                 .background(
                     Capsule().fill(selected ? colors.primaryContainer : Color.clear)
                 )

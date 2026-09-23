@@ -32,10 +32,10 @@ struct InterestsItemView: View {
 
     var body: some View {
         Button(action: onClick) {
-            HStack(spacing: 16) {
+            HStack(spacing: NiaSpacing.medium) {
                 icon
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: NiaSpacing.extraSmall) {
                     Text(name)
                         .font(.body)
                         .foregroundColor(colors.onSurface)
@@ -58,8 +58,8 @@ struct InterestsItemView: View {
                     onFollowButtonClick(!following)
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+            .padding(.horizontal, NiaSpacing.medium)
+            .padding(.vertical, NiaSpacing.mediumSmall)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(isSelected ? colors.surfaceVariant : Color.clear)
         }

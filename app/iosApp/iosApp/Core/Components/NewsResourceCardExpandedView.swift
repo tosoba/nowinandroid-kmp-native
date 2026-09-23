@@ -9,18 +9,23 @@ struct NewsResourceCardExpandedView: View {
     let onClick: () -> Void
     let onTopicClick: (String) -> Void
 
+    private enum LayoutMetrics {
+        static let sectionSpacing: CGFloat = 14
+        static let metadataSpacing: CGFloat = 6
+    }
+
     private var formattedDate: String {
         NiaDateFormatter.mediumDateString(epochMilliseconds: news.publishDate.toEpochMilliseconds())
     }
 
     var body: some View {
         Button(action: onClick) {
-            VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: NiaSpacing.none) {
                 if let headerImageUrl = news.headerImageUrl, !headerImageUrl.isEmpty {
                     NewsResourceHeaderImageView(urlString: headerImageUrl)
                 }
 
-                VStack(alignment: .leading, spacing: 0) {
+                VStack(alignment: .leading, spacing: NiaSpacing.none) {
                     HStack(alignment: .top) {
                         Text(news.title)
                             .font(.title3.weight(.bold))
@@ -38,9 +43,9 @@ struct NewsResourceCardExpandedView: View {
                             _ in onToggleBookmark()
                         }
                     }
-                    .padding(.top, 12)
+                    .padding(.top, NiaSpacing.mediumSmall)
 
-                    HStack(spacing: 6) {
+                    HStack(spacing: LayoutMetrics.metadataSpacing) {
                         if !news.hasBeenViewed {
                             NiaNotificationDotView(color: colors.tertiary, size: 8)
                                 .accessibilityLabel(String(\.core_ui_unread_resource_dot_content_description))
@@ -54,17 +59,17 @@ struct NewsResourceCardExpandedView: View {
                     }
                     .font(.caption)
                     .foregroundColor(colors.onSurfaceVariant)
-                    .padding(.top, 14)
+                    .padding(.top, LayoutMetrics.sectionSpacing)
 
                     Text(news.content)
                         .font(.body)
                         .foregroundColor(colors.onSurface)
-                        .padding(.top, 14)
+                        .padding(.top, LayoutMetrics.sectionSpacing)
 
                     topicsRow
-                        .padding(.top, 12)
+                        .padding(.top, NiaSpacing.mediumSmall)
                 }
-                .padding(16)
+                .padding(NiaSpacing.medium)
             }
             .background(RoundedRectangle(cornerRadius: 16).fill(colors.surface))
             .clipShape(RoundedRectangle(cornerRadius: 16))
@@ -74,7 +79,7 @@ struct NewsResourceCardExpandedView: View {
 
     private var topicsRow: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 4) {
+            HStack(spacing: NiaSpacing.extraSmall) {
                 ForEach(news.followableTopics, id: \.topic.id) { followableTopic in
                     NiaTopicTagView(
                         followed: followableTopic.isFollowed,

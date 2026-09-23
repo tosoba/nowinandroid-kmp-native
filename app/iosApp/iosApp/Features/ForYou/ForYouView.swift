@@ -15,13 +15,13 @@ struct ForYouView: View {
     var body: some View {
         ZStack(alignment: .top) {
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: 24) {
+                LazyVStack(alignment: .leading, spacing: NiaSpacing.mediumLarge) {
                     onboarding
 
                     newsFeed
-                        .padding(.horizontal, 16)
+                        .padding(.horizontal, NiaSpacing.medium)
                 }
-                .padding(.bottom, 8)
+                .padding(.bottom, NiaSpacing.small)
             }
 
             if viewModel.isLoading {
@@ -49,7 +49,7 @@ struct ForYouView: View {
             )
             Spacer()
         }
-        .padding(.top, 8)
+        .padding(.top, NiaSpacing.small)
         .transition(.move(edge: .top).combined(with: .opacity))
     }
 
@@ -96,25 +96,25 @@ private struct ForYouOnboardingView: View {
     let saveFollowedTopics: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: NiaSpacing.none) {
             Text(String(\.feature_foryou_api_onboarding_guidance_title))
                 .font(.system(.title3, design: .default).weight(.medium))
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity)
-                .padding(.top, 24)
+                .padding(.top, NiaSpacing.mediumLarge)
 
             Text(String(\.feature_foryou_api_onboarding_guidance_subtitle))
                 .font(.body)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity)
-                .padding(.top, 8)
-                .padding(.horizontal, 24)
+                .padding(.top, NiaSpacing.small)
+                .padding(.horizontal, NiaSpacing.mediumLarge)
 
             TopicSelectionView(
                 topics: state.topics,
                 onTopicCheckedChanged: onTopicCheckedChanged
             )
-            .padding(.bottom, 8)
+            .padding(.bottom, NiaSpacing.small)
 
             HStack {
                 Spacer()
@@ -126,7 +126,7 @@ private struct ForYouOnboardingView: View {
                 ) {
                     saveFollowedTopics()
                 }
-                .padding(.horizontal, 24)
+                .padding(.horizontal, NiaSpacing.mediumLarge)
             }
         }
     }
@@ -140,7 +140,7 @@ private struct TopicSelectionView: View {
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            LazyHGrid(rows: [GridItem(), GridItem(), GridItem()], spacing: 12) {
+            LazyHGrid(rows: [GridItem(), GridItem(), GridItem()], spacing: NiaSpacing.mediumSmall) {
                 ForEach(topics, id: \.topic.id) { followableTopic in
                     TopicButtonView(
                         topic: followableTopic.topic,
@@ -152,8 +152,8 @@ private struct TopicSelectionView: View {
                 }
             }
         }
-        .contentMargins(.horizontal, 24, for: .scrollContent)
-        .contentMargins(.vertical, 24, for: .scrollContent)
+        .contentMargins(.horizontal, NiaSpacing.mediumLarge, for: .scrollContent)
+        .contentMargins(.vertical, NiaSpacing.mediumLarge, for: .scrollContent)
         .frame(height: 240)
         .frame(maxWidth: .infinity)
     }
@@ -166,22 +166,26 @@ private struct TopicButtonView: View {
     let isSelected: Bool
     let onClick: (Bool) -> Void
 
+    private enum LayoutMetrics {
+        static let iconPadding: CGFloat = 10
+    }
+
     var body: some View {
         Button(action: { onClick(!isSelected) }) {
-            HStack(spacing: 0) {
+            HStack(spacing: NiaSpacing.none) {
                 NiaDynamicAsyncImageView(
                     imageUrl: topic.imageUrl,
                     placeholder: FeatureForyouApiMR.images().feature_foryou_api_ic_icon_placeholder
                 )
                 .frame(width: 32, height: 32)
                 .clipShape(RoundedRectangle(cornerRadius: 4))
-                .padding(10)
+                .padding(LayoutMetrics.iconPadding)
 
                 Text(topic.name)
                     .font(.system(.body, design: .default).weight(.medium))
                     .foregroundColor(colors.onSurface)
                     .lineLimit(1)
-                    .padding(.horizontal, 12)
+                    .padding(.horizontal, NiaSpacing.mediumSmall)
 
                 Spacer(minLength: 0)
 
@@ -193,7 +197,7 @@ private struct TopicButtonView: View {
                 ) {
                     _ in onClick(!isSelected)
                 }
-                .padding(.trailing, 8)
+                .padding(.trailing, NiaSpacing.small)
             }
             .frame(minHeight: 56)
             .frame(width: 312)

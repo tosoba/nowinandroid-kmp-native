@@ -27,7 +27,7 @@ struct NiaFilledButtonView: View {
                 .foregroundColor(colors.onPrimary)
                 .frame(maxWidth: maxWidth ?? .infinity)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
+                .padding(.vertical, NiaSpacing.mediumSmall)
         }
         .buttonStyle(.borderedProminent)
         .tint(colors.primary)

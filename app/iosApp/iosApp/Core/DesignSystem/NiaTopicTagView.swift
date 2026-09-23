@@ -41,8 +41,8 @@ struct NiaTopicTagView: View {
             Text(text)
                 .font(.caption)
                 .foregroundColor(colors.onSurface)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
+                .padding(.horizontal, NiaSpacing.medium)
+                .padding(.vertical, NiaSpacing.mediumSmall)
                 .background(Capsule().fill(containerColor))
                 .overlay(
                     Capsule().strokeBorder(

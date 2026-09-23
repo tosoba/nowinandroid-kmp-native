@@ -113,8 +113,8 @@ private struct SearchNotReadyBodyView: View {
         Text(String(\.feature_search_api_not_ready))
             .font(.body)
             .multilineTextAlignment(.center)
-            .padding(.horizontal, 48)
-            .padding(.vertical, 24)
+            .padding(.horizontal, NiaSpacing.extraLarge)
+            .padding(.vertical, NiaSpacing.mediumLarge)
             .frame(maxWidth: .infinity)
     }
 }
@@ -125,11 +125,11 @@ private struct EmptySearchResultBodyView: View {
     var body: some View {
         let message = String(\.feature_search_api_result_not_found, parameter: searchQuery)
 
-        VStack(spacing: 0) {
+        VStack(spacing: NiaSpacing.none) {
             Text(message)
                 .font(.body)
                 .multilineTextAlignment(.center)
-                .padding(.vertical, 24)
+                .padding(.vertical, NiaSpacing.mediumLarge)
 
             (Text(String(\.feature_search_api_try_another_search) + " ")
                 .foregroundColor(.secondary)
@@ -141,11 +141,11 @@ private struct EmptySearchResultBodyView: View {
                 .foregroundColor(.secondary))
                 .font(.body)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 36)
-                .padding(.bottom, 24)
+                .padding(.horizontal, NiaSpacing.large)
+                .padding(.bottom, NiaSpacing.mediumLarge)
                 .onTapGesture {} // TODO: navigate to interests
         }
-        .padding(.horizontal, 48)
+        .padding(.horizontal, NiaSpacing.extraLarge)
     }
 }
 
@@ -155,11 +155,11 @@ private struct RecentSearchesListView: View {
     let onRecentSearchClicked: (String) -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: NiaSpacing.none) {
             HStack {
                 Text(String(\.feature_search_api_recent_searches))
                     .font(.headline)
-                    .padding(.vertical, 8)
+                    .padding(.vertical, NiaSpacing.small)
 
                 Spacer()
 
@@ -172,20 +172,20 @@ private struct RecentSearchesListView: View {
                 }
             }
 
-            VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: NiaSpacing.none) {
                 ForEach(recentSearchQueries, id: \.self) { recentSearch in
                     Button(action: { onRecentSearchClicked(recentSearch) }) {
                         Text(recentSearch)
                             .font(.title3)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.vertical, 16)
+                            .padding(.vertical, NiaSpacing.medium)
                     }
                     .buttonStyle(.plain)
                     .transition(.opacity)
                 }
             }
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, NiaSpacing.medium)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 }
@@ -205,7 +205,7 @@ private struct SearchResultListView: View {
 
     var body: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 24) {
+            LazyVStack(alignment: .leading, spacing: NiaSpacing.mediumLarge) {
                 if !topics.isEmpty {
                     sectionHeader(String(\.feature_search_api_topics))
                         .transition(.opacity)
@@ -246,15 +246,15 @@ private struct SearchResultListView: View {
                     )
                 }
             }
-            .padding(16)
-            .padding(.bottom, 8)
+            .padding(NiaSpacing.medium)
+            .padding(.bottom, NiaSpacing.small)
         }
     }
 
     private func sectionHeader(_ title: String) -> some View {
         Text(title)
             .font(.headline)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
+            .padding(.horizontal, NiaSpacing.medium)
+            .padding(.vertical, NiaSpacing.small)
     }
 }
