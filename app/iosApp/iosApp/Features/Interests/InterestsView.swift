@@ -23,7 +23,7 @@ struct InterestsView: View {
                     .transition(.opacity)
             }
         }
-        .animation(.easeInOut(duration: 0.25), value: interestsAnimationKey)
+        .animation(.easeInOut(duration: 0.25), value: viewModel.interestsAnimationKey)
         .navigationTitle(String(\.feature_interests_api_title))
     }
 
@@ -54,15 +54,5 @@ struct InterestsView: View {
             .padding(.horizontal, 24)
             .padding(.vertical, 16)
         }
-    }
-
-    private var interestsAnimationKey: String {
-        let state = String(describing: type(of: viewModel.uiState))
-        guard let interests = viewModel.uiState as? NiaKit.InterestsUiStateInterests else {
-            return state
-        }
-
-        let topicIds = interests.topics.map(\.topic.id).joined(separator: ",")
-        return "\(state)|topics:\(topicIds)"
     }
 }

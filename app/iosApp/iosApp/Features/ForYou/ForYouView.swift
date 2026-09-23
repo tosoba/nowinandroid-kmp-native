@@ -6,7 +6,6 @@ struct ForYouView: View {
 
     @StateObject private var viewModel = ForYouViewModel()
 
-    @Environment(\.niaColors) private var colors
     @Environment(\.openURL) private var openURL
 
     init(onTopicClick: @escaping (String) -> Void) {
@@ -25,41 +24,20 @@ struct ForYouView: View {
                 .padding(.bottom, 8)
             }
 
-            if isLoading {
+            if viewModel.isLoading {
                 loadingOverlay
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .animation(.easeInOut(duration: 0.25), value: isLoading)
-        .animation(.easeInOut(duration: 0.25), value: showsOnboarding)
-        .animation(.easeInOut(duration: 0.25), value: feedAnimationKey)
+        .animation(.easeInOut(duration: 0.25), value: viewModel.isLoading)
+        .animation(.easeInOut(duration: 0.25), value: viewModel.showsOnboarding)
+        .animation(.easeInOut(duration: 0.25), value: viewModel.feedAnimationKey)
         .navigationTitle(String(\.feature_foryou_api_title))
         .onChange(of: viewModel.deepLinkedNewsResource?.id) { _, _ in
-            handleDeepLink()
+            if let url = viewModel.consumeDeepLinkURL() {
+                openURL(url)
+            }
         }
-    }
-
-    private var showsOnboarding: Bool {
-        viewModel.onboardingUiState is OnboardingUiStateShown
-    }
-
-    private var feedAnimationKey: String {
-        let prefix = String(describing: type(of: viewModel.feedState))
-        guard let state = viewModel.feedState as? NewsFeedUiStateSuccess else { return prefix }
-        let resourceIds = state.feed.map(\.id).joined(separator: ",")
-        return "\(prefix)|resources:\(resourceIds)"
-    }
-
-    private var isLoading: Bool {
-        viewModel.isSyncing || isFeedLoading || isOnboardingLoading
-    }
-
-    private var isFeedLoading: Bool {
-        viewModel.feedState is NewsFeedUiStateLoading
-    }
-
-    private var isOnboardingLoading: Bool {
-        viewModel.onboardingUiState is OnboardingUiStateLoading
     }
 
     private var loadingOverlay: some View {
@@ -109,17 +87,6 @@ struct ForYouView: View {
             )
             .transition(.opacity)
         }
-    }
-
-    private func handleDeepLink() {
-        guard let newsResource = viewModel.deepLinkedNewsResource else { return }
-
-        if !newsResource.hasBeenViewed {
-            viewModel.wrapped.onDeepLinkOpened(newsResourceId: newsResource.id)
-        }
-
-        guard let url = URL(string: newsResource.url) else { return }
-        openURL(url)
     }
 }
 

@@ -14,13 +14,6 @@ struct BookmarksView: View {
         self.onTopicClick = onTopicClick
     }
 
-    private var feedAnimationKey: String {
-        let prefix = String(describing: type(of: viewModel.feedState))
-        guard let state = viewModel.feedState as? NiaKit.NewsFeedUiStateSuccess else { return prefix }
-        let resourceIds = state.feed.map(\.id).joined(separator: ",")
-        return "\(prefix)|resources:\(resourceIds)"
-    }
-
     var body: some View {
         Group {
             if let state = viewModel.feedState as? NiaKit.NewsFeedUiStateSuccess {
@@ -37,7 +30,7 @@ struct BookmarksView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .animation(.easeInOut(duration: 0.25), value: feedAnimationKey)
+        .animation(.easeInOut(duration: 0.25), value: viewModel.feedAnimationKey)
         .navigationTitle(String(\.feature_bookmarks_api_title))
         .overlay(alignment: .bottom) {
             Group {

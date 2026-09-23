@@ -23,4 +23,11 @@ final class BookmarksViewModel: ObservableObject {
     deinit {
         owner.clear()
     }
+
+    var feedAnimationKey: String {
+        let prefix = String(describing: type(of: feedState))
+        guard let state = feedState as? NewsFeedUiStateSuccess else { return prefix }
+        let resourceIds = state.feed.map(\.id).joined(separator: ",")
+        return "\(prefix)|resources:\(resourceIds)"
+    }
 }

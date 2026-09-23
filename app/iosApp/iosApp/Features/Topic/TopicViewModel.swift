@@ -29,4 +29,24 @@ final class TopicViewModel: ObservableObject {
     deinit {
         owner.clear()
     }
+
+    var topicName: String {
+        guard let state = topicUiState as? TopicUiStateSuccess else { return "" }
+        return state.followableTopic.topic.name
+    }
+
+    var isFollowed: Bool? {
+        (topicUiState as? TopicUiStateSuccess)?.followableTopic.isFollowed
+    }
+
+    var topicAnimationKey: String {
+        String(describing: type(of: topicUiState))
+    }
+
+    var newsAnimationKey: String {
+        let prefix = String(describing: type(of: newsUiState))
+        guard let state = newsUiState as? NewsUiStateSuccess else { return prefix }
+        let resourceIds = state.news.map(\.id).joined(separator: ",")
+        return "\(prefix)|resources:\(resourceIds)"
+    }
 }

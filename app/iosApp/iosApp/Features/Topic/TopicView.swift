@@ -16,22 +16,6 @@ struct TopicView: View {
         _viewModel = StateObject(wrappedValue: TopicViewModel(topicId: topicId))
     }
 
-    private var navigationTitleText: String {
-        guard let state = viewModel.topicUiState as? NiaKit.TopicUiStateSuccess else { return "" }
-        return state.followableTopic.topic.name
-    }
-
-    private var topicAnimationKey: String {
-        String(describing: type(of: viewModel.topicUiState))
-    }
-
-    private var newsAnimationKey: String {
-        let prefix = String(describing: type(of: viewModel.newsUiState))
-        guard let state = viewModel.newsUiState as? NiaKit.NewsUiStateSuccess else { return prefix }
-        let resourceIds = state.news.map(\.id).joined(separator: ",")
-        return "\(prefix)|resources:\(resourceIds)"
-    }
-
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .center, spacing: 0) {
@@ -70,16 +54,16 @@ struct TopicView: View {
             .padding(.bottom, 8)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .animation(.easeInOut(duration: 0.25), value: topicAnimationKey)
-        .animation(.easeInOut(duration: 0.25), value: newsAnimationKey)
-        .navigationTitle(navigationTitleText)
+        .animation(.easeInOut(duration: 0.25), value: viewModel.topicAnimationKey)
+        .animation(.easeInOut(duration: 0.25), value: viewModel.newsAnimationKey)
+        .navigationTitle(viewModel.topicName)
         .toolbar {
-            if let state = viewModel.topicUiState as? NiaKit.TopicUiStateSuccess {
+            if let isFollowed = viewModel.isFollowed {
                 ToolbarItem(placement: .topBarTrailing) {
                     NiaFilterChipView(
-                        selected: state.followableTopic.isFollowed,
+                        selected: isFollowed,
                         text: String(
-                            state.followableTopic.isFollowed
+                            isFollowed
                                 ? \.feature_topic_api_following
                                 : \.feature_topic_api_not_following
                         )

@@ -7,11 +7,6 @@ struct SearchView: View {
     @StateObject private var viewModel = SearchViewModel()
     @State private var query = ""
 
-    private var recentSearchQueries: [String] {
-        guard let state = viewModel.recentSearchesUiState as? NiaKit.RecentSearchQueriesUiStateSuccess else { return [] }
-        return state.recentQueries.map(\.query)
-    }
-
     init(onTopicClick: @escaping (String) -> Void) {
         self.onTopicClick = onTopicClick
     }
@@ -50,8 +45,8 @@ struct SearchView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .animation(.easeInOut(duration: 0.25), value: searchResultAnimationKey)
-        .animation(.easeInOut(duration: 0.25), value: recentSearchesAnimationKey)
+        .animation(.easeInOut(duration: 0.25), value: viewModel.searchResultAnimationKey)
+        .animation(.easeInOut(duration: 0.25), value: viewModel.recentSearchesAnimationKey)
         .searchable(
             text: $query,
             placement: .navigationBarDrawer(displayMode: .always),
@@ -67,7 +62,7 @@ struct SearchView: View {
 
     private var recentSearchesListView: some View {
         RecentSearchesListView(
-            recentSearchQueries: recentSearchQueries,
+            recentSearchQueries: viewModel.recentSearchQueries,
             onClearRecentSearches: { viewModel.wrapped.clearRecentSearches() },
             onRecentSearchClicked: { searchQuery in
                 query = searchQuery
@@ -110,21 +105,6 @@ struct SearchView: View {
             onTopicClick: onTopicClick
         )
         .transition(.opacity)
-    }
-
-    private var searchResultAnimationKey: String {
-        let prefix = String(describing: type(of: viewModel.searchResultUiState))
-        guard let state = viewModel.searchResultUiState as? NiaKit.SearchResultUiStateSuccess else { return prefix }
-        let topicIds = state.topics.map(\.topic.id).joined(separator: ",")
-        let newsResourceIds = state.newsResources.map(\.id).joined(separator: ",")
-        return "\(prefix)|topics:\(topicIds)|news:\(newsResourceIds)"
-    }
-
-    private var recentSearchesAnimationKey: String {
-        let prefix = String(describing: type(of: viewModel.recentSearchesUiState))
-        guard let state = viewModel.recentSearchesUiState as? NiaKit.RecentSearchQueriesUiStateSuccess else { return prefix }
-        let queries = state.recentQueries.map(\.query).joined(separator: "\u{1f}")
-        return "\(prefix)|queries:\(queries)"
     }
 }
 

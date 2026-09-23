@@ -23,4 +23,11 @@ final class InterestsViewModel: ObservableObject {
     deinit {
         owner.clear()
     }
+
+    var interestsAnimationKey: String {
+        let state = String(describing: type(of: uiState))
+        guard let interests = uiState as? NiaKit.InterestsUiStateInterests else { return state }
+        let topicIds = interests.topics.map(\.topic.id).joined(separator: ",")
+        return "\(state)|topics:\(topicIds)"
+    }
 }

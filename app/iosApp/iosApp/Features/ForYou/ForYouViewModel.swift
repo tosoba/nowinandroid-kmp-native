@@ -29,4 +29,29 @@ final class ForYouViewModel: ObservableObject {
     deinit {
         owner.clear()
     }
+
+    var isLoading: Bool {
+        isSyncing || feedState is NewsFeedUiStateLoading || onboardingUiState is OnboardingUiStateLoading
+    }
+
+    var showsOnboarding: Bool {
+        onboardingUiState is OnboardingUiStateShown
+    }
+
+    var feedAnimationKey: String {
+        let prefix = String(describing: type(of: feedState))
+        guard let state = feedState as? NewsFeedUiStateSuccess else { return prefix }
+        let resourceIds = state.feed.map(\.id).joined(separator: ",")
+        return "\(prefix)|resources:\(resourceIds)"
+    }
+
+    func consumeDeepLinkURL() -> URL? {
+        guard let newsResource = deepLinkedNewsResource else { return nil }
+
+        if !newsResource.hasBeenViewed {
+            wrapped.onDeepLinkOpened(newsResourceId: newsResource.id)
+        }
+
+        return URL(string: newsResource.url)
+    }
 }

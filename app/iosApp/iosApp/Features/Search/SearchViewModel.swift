@@ -29,4 +29,24 @@ final class SearchViewModel: ObservableObject {
     deinit {
         owner.clear()
     }
+
+    var recentSearchQueries: [String] {
+        guard let state = recentSearchesUiState as? RecentSearchQueriesUiStateSuccess else { return [] }
+        return state.recentQueries.map(\.query)
+    }
+
+    var searchResultAnimationKey: String {
+        let prefix = String(describing: type(of: searchResultUiState))
+        guard let state = searchResultUiState as? SearchResultUiStateSuccess else { return prefix }
+        let topicIds = state.topics.map(\.topic.id).joined(separator: ",")
+        let newsResourceIds = state.newsResources.map(\.id).joined(separator: ",")
+        return "\(prefix)|topics:\(topicIds)|news:\(newsResourceIds)"
+    }
+
+    var recentSearchesAnimationKey: String {
+        let prefix = String(describing: type(of: recentSearchesUiState))
+        guard let state = recentSearchesUiState as? RecentSearchQueriesUiStateSuccess else { return prefix }
+        let queries = state.recentQueries.map(\.query).joined(separator: "\u{1f}")
+        return "\(prefix)|queries:\(queries)"
+    }
 }
